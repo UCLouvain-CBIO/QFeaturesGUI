@@ -9,7 +9,7 @@
 #' @export
 #' @import shiny
 #' @import scp
-#' @importFrom DT renderDataTable
+#' @importFrom DT renderDataTable datatable
 #' @examples
 #' scpGui() #start a shiny app
 #'
@@ -22,13 +22,13 @@ scpGUI <- function(){
                  tabPanel("Quality Control", "Under developement ...")
       ))
 
-
     server <- function(input, output, session) {
+
       input_df <- reactive(file_to_df(input$input_table))
       output$input_df_table <- DT::renderDataTable(
         {
           req(input$input_table)
-          datatable(input_df(), extensions = 'FixedColumns',
+          DT::datatable(input_df(), extensions = 'FixedColumns',
                     options = list(
                       searching = FALSE,
                       scrollX = TRUE,
@@ -41,7 +41,7 @@ scpGUI <- function(){
       output$sample_df_table <- DT::renderDataTable(
         {
           req(input$sample_table)
-          datatable(sample_df(), extensions = 'FixedColumns',
+          DT::datatable(sample_df(), extensions = 'FixedColumns',
                     options = list(
                       searching = FALSE,
                       scrollX = TRUE,
@@ -63,15 +63,46 @@ scpGUI <- function(){
         selectInput("channel_col", "Choose the approriate channel column :", colnames_sample() )
       })
 
-      qfeat_converted <- reactive({
-        req(input$sample_table, input$input_table)
-        readSCP(
-          featureData = input_df(),
-          colData = sample_df(),
-          batchCol = input$batch_col,
-          channelCol = input$channel_col
+      readSCP_wraper <- function(sample_table,
+                                 input_table,
+                                 featureData,
+                                 colData,
+                                 batch_col,
+                                 channel_col){
+        tryCatch(
+
+          {
+            req(sample_table, input_table)
+            readSCP(
+              featureData = featureData,
+              colData = colData,
+              batchCol = batch_col,
+              channelCol = channel_col
+            )
+            showNotification("Convertion succed !")
+          },
+          #if an error occurs, tell me the error
+          error = function(err) {
+            # Display the error message in the container
+            showNotification(paste0("An error occured : ", err),duration = 10)
+            },
+          #if a warning occurs, tell me the warning
+          warning=function(war) {
+            showNotification(paste0("A warning occured : ", war), duration = 10)
+          }
         )
-      })
+      }
+
+      qfeat_converted <- reactive(
+        readSCP_wraper(sample_table = input$sample_table,
+                       input_table = input$input_table,
+                       featureData = input_df(),
+                       colData = sample_df(),
+                       batch_col = input$batch_col,
+                       channel_col = input$channel_col
+                       )
+      )
+
 
 
       observeEvent(input$convert, {
@@ -104,7 +135,7 @@ scpGUI <- function(){
 
 # todo :
 # - Delimiter parameter for the importation
-# - Error view for readSCP !!!!!!!!!!
+# - Improve the error view
 # - Make the converter menu always visible
 # - More parameter for the readSCP()
 # - More descriptive pop up

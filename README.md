@@ -1,7 +1,7 @@
 # scpGui
 
 `scpGUI` is a graphical interface for the scp package.
-Currently the app can be used to convert two separate tables (Input and Sample) to a QFeatures object.
+Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object.
 This process is performed with the readSCP function from the scp package.
 
 ## Installation 

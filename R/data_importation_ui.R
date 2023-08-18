@@ -24,8 +24,7 @@ data_importation_tab <- tabPanel(
              uiOutput("channel_col_sel"),
              actionButton("convert", "Convert to a QFeatures object"),
              downloadButton("download_qfeat",
-                            "Download the created QFeatures object as a .rds File"),
-             verbatimTextOutput("output_text")
+                            "Download the created QFeatures object as a .rds File")
            ))
   )
 )

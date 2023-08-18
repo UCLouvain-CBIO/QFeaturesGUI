@@ -3,4 +3,5 @@
 export(scpGUI)
 import(scp)
 import(shiny)
+importFrom(DT,datatable)
 importFrom(DT,renderDataTable)
