@@ -1,0 +1,16 @@
+Package: scpGUI
+Title: A simple GUI to use the main features of the scp package.
+Version: 0.0.0.9000
+Authors@R: 
+    person("Léopold", "Guyot", , "leopold.guyot@student.uclouvain.be", role = c("aut", "cre"))
+Description: scpGui is a graphical interface for the scp package.
+  Currently the app can be used to convert two separate tables (Input and Sample) to a QFeatures object.
+  This process is performed with the readSCP function from the scp package.
+License: use_gpl3_license()
+Encoding: UTF-8
+Imports:
+    scp,
+    shiny,
+    DT
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
