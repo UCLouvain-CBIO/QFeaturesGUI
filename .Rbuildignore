@@ -1,2 +1,4 @@
 ^scpGUI\.Rproj$
 ^\.Rproj\.user$
+^\.github$
+^\.git$
