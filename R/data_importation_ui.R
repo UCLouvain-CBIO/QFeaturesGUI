@@ -1,4 +1,6 @@
 library(shiny)
+# make reusable ui components with functions
+# same for server modules
 
 data_importation_tab <- tabPanel(
   "Data Importation",
