@@ -9,6 +9,7 @@
 #' @export
 #' @import shiny
 #' @import scp
+#' @import shinyBS
 #' @importFrom tools file_ext
 #' @importFrom DT renderDataTable datatable
 #' @examples
@@ -35,8 +36,6 @@ scpGUI <- function(){
 # todo :
 # - Delimiter parameter for the importation
 # - Improve the error view
-# - Make the converter menu always visible
 # - More parameter for the readSCP()
-# - More descriptive pop up
-# - Refactoring (see CytoPipelineGui)
+# - More descriptive pop up (question mark)
 # - Insert scp package ref to the doc

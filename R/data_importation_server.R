@@ -1,50 +1,77 @@
 library(shiny)
 
-# define module to render a csv into a DT object
-
 data_importation_server<- function(input, output, session){
 
   # import and visualization of the input table
-  input_df <- reactive(file_to_df(input$input_table))
-  output$input_df_table <- DT::renderDataTable(
-    {
-      req(input$input_table)
-      DT::datatable(input_df(), extensions = 'FixedColumns',
-                    options = list(
-                      searching = FALSE,
-                      scrollX = TRUE,
-                      fixedColumns = TRUE)
-      )
-    }
-  )
+  observeEvent(input$import_input,{
+    input_df <- file_to_df(input$input_table,
+                            sep = input$input_sep,
+                            dec = input$input_dec,
+                            skip = input$input_skip,
+                            stringsAsFactors = input$input_factor,
+                            comment.char = input$input_com
+                           )
+    output$input_df_table <- DT::renderDataTable(
+      {
+        req(input$input_table)
+        DT::datatable(input_df, extensions = 'FixedColumns',
+                      options = list(
+                        searching = FALSE,
+                        scrollX = TRUE,
+                        fixedColumns = TRUE)
+        )
+      }
+    )
+  })
+  input_df <- eventReactive(input$import_input,
+                            {
+                              input_df <- file_to_df(input$input_table,
+                                                     sep = input$input_sep,
+                                                     dec = input$input_dec,
+                                                     skip = input$input_skip,
+                                                     stringsAsFactors = input$input_factor,
+                                                     comment.char = input$input_com
+                              )
+                            })
 
   # import and visualization of the sample table
-  sample_df <- reactive(file_to_df(input$sample_table))
-  output$sample_df_table <- DT::renderDataTable(
-    {
+  observeEvent(input$import_sample,{
+    sample_df <- file_to_df(input$sample_table,
+                            sep = input$sample_sep,
+                            dec = input$sample_dec,
+                            skip = input$sample_skip,
+                            stringsAsFactors = input$sample_factor,
+                            comment.char = input$sample_com
+    )
+    output$sample_df_table <- DT::renderDataTable(
+      {
+        req(input$sample_table)
+        DT::datatable(sample_df, extensions = 'FixedColumns',
+                      options = list(
+                        searching = FALSE,
+                        scrollX = TRUE,
+                        fixedColumns = TRUE)
+        )
+      }
+    )
+
+    colnames_sample <-{
       req(input$sample_table)
-      DT::datatable(sample_df(), extensions = 'FixedColumns',
-                    options = list(
-                      searching = FALSE,
-                      scrollX = TRUE,
-                      fixedColumns = TRUE)
-      )
+      updateSelectInput(session, "batch_col", choices = colnames(sample_df))
+      updateSelectInput(session, "channel_col", choices = colnames(sample_df))
     }
-  )
-
-  # Get the columns names of the sample table
-  colnames_sample <- reactive({
-    req(input$sample_table)
-    colnames(sample_df())
   })
 
-  observe({
-    updateSelectInput(session, "batch_col", choices = colnames_sample())
-  })
-
-  observe({
-    updateSelectInput(session, "channel_col", choices = colnames_sample())
-  })
+  sample_df <- eventReactive(input$import_sample,
+                            {
+                              sample_df <- file_to_df(input$sample_table,
+                                                     sep = input$sample_sep,
+                                                     dec = input$sample_dec,
+                                                     skip = input$sample_skip,
+                                                     stringsAsFactors = input$sample_factor,
+                                                     comment.char = input$sample_com
+                              )
+                            })
 
   # Creation of the QFeatures object (readSCP_wraper is in utils.R)
   qfeat_converted <- reactive(

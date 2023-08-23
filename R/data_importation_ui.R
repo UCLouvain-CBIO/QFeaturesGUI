@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyBS)
 # make reusable ui components with functions
 # same for server modules
 
@@ -9,16 +10,45 @@ data_importation_tab <- tabPanel(
     column(6,
            wellPanel(
              h3("Input Table"),
-             fileInput("input_table", NULL, accept = c(".csv", ".tsv")),
+
+             fluidRow(
+               column(8, fileInput("input_table", NULL, accept = c(".csv", ".tsv"))),
+
+               column(3, actionButton("input_settings", "Import settings"), actionButton("import_input", "Import"))
+             ),
+
+             shinyBS::bsModal("modal_input_settings", "Importation settings", "input_settings", size = "large",
+                      textInput("input_sep", label = "Insert the separator character used", value = ","),
+                      textInput("input_dec", label = "Insert the decimal character used", value = "."),
+                      textInput("input_com", label = "Insert the comment character used", value = "#"),
+                      numericInput("input_skip", label = "Insert the number of line to skip before beginning to read data ", value = 0),
+                      checkboxInput("input_factor", label = "String as Factor", value = FALSE)
+                     ),
+
              DT::dataTableOutput("input_df_table")
            ),
+
+
            wellPanel(
              h3("Sample Table"),
-             fileInput("sample_table", NULL, accept = c(".csv", ".tsv")),
+             fluidRow(
+               column(8, fileInput("sample_table", NULL, accept = c(".csv", ".tsv"))),
+
+               column(3, actionButton("sample_settings", "Import settings"), actionButton("import_sample", "Import"))
+             ),
+
+             shinyBS::bsModal("modal_sample_settings", "Importation settings", "sample_settings", size = "large",
+                              textInput("sample_sep", label = "Insert the separator character used", value = ","),
+                              textInput("sample_dec", label = "Insert the decimal character used", value = "."),
+                              textInput("sample_com", label = "Insert the comment character used", value = "#"),
+                              numericInput("sample_skip", label = "Insert the number of line to skip before beginning to read data ", value = 0),
+                              checkboxInput("sample_factor", label = "String as Factor", value = FALSE)
+             ),
              DT::dataTableOutput("sample_df_table")
            )
-        )
-           ,
+        ),
+
+
     column(6,
            wellPanel(
              h3("QFeatures Converter"),

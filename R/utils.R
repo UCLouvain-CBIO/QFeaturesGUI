@@ -1,11 +1,32 @@
 # Convert csv or tsv to a dataframe
-file_to_df<- function(file_upload){
-  req(file_upload)
-  ext <- tools::file_ext(file_upload$name)
-  switch(ext,
-         csv = read.table(file_upload$datapath, header = TRUE, sep = ",", row.names = 1),
-         tsv = read.table(file_upload$datapath, header = TRUE, sep = "\t", row.names = 1),
-         validate("Invalid file; Please upload a .csv or .tsv file")
+file_to_df<- function(file_upload,
+                      sep,
+                      dec,
+                      skip,
+                      stringsAsFactors,
+                      comment.char
+                      ){
+  tryCatch(
+
+    {
+    req(file_upload)
+    table <- read.table(file_upload$datapath,
+               sep = sep,
+               dec = dec,
+               skip = skip,
+               stringsAsFactors = stringsAsFactors,
+               comment.char = comment.char,
+               header = TRUE,
+               row.names = 1)
+    showNotification("File import succed !")
+    return(table)
+    },
+    error = function(err) {
+      showNotification(paste0("An error occured during the import: ", err),duration = 10)
+    },
+    warning=function(war) {
+      showNotification(paste0("A warning occured during the import : ", war), duration = 10)
+    }
   )
 }
 
