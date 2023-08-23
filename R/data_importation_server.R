@@ -38,12 +38,12 @@ data_importation_server<- function(input, output, session){
     colnames(sample_df())
   })
 
-  output$batch_col_sel <- renderUI({
-    selectInput("batch_col", "Choose the approriate batch column :", colnames_sample() )
+  observe({
+    updateSelectInput(session, "batch_col", choices = colnames_sample())
   })
 
-  output$channel_col_sel <- renderUI({
-    selectInput("channel_col", "Choose the approriate channel column :", colnames_sample() )
+  observe({
+    updateSelectInput(session, "channel_col", choices = colnames_sample())
   })
 
   # Creation of the QFeatures object (readSCP_wraper is in utils.R)

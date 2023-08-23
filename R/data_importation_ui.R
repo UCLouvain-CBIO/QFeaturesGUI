@@ -22,8 +22,8 @@ data_importation_tab <- tabPanel(
     column(6,
            wellPanel(
              h3("QFeatures Converter"),
-             uiOutput("batch_col_sel"),
-             uiOutput("channel_col_sel"),
+             selectInput("batch_col", "Choose the approriate batch column :", choices = NULL ),
+             selectInput("channel_col", "Choose the approriate channel column :", choices = NULL),
              actionButton("convert", "Convert to a QFeatures object"),
              downloadButton("download_qfeat",
                             "Download the created QFeatures object as a .rds File")
