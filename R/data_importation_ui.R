@@ -1,5 +1,3 @@
-library(shiny)
-library(shinyBS)
 # make reusable ui components with functions
 # same for server modules
 
@@ -54,9 +52,15 @@ data_importation_tab <- tabPanel(
              h3("QFeatures Converter"),
              selectInput("batch_col", "Choose the approriate batch column :", choices = NULL ),
              selectInput("channel_col", "Choose the approriate channel column :", choices = NULL),
+             # textInput("suffix", label = "A character giving the suffix of the column names in each assay", value = NULL),
+             textInput("sep", label = "A character inserted between the assay name and the suffix", value = ""),
+             checkboxInput("removeEmptyCols", label = "Remove in each batch the columns that contain only missing values", value = FALSE),
              actionButton("convert", "Convert to a QFeatures object"),
              downloadButton("download_qfeat",
-                            "Download the created QFeatures object as a .rds File")
+                            "Download the created QFeatures object as a .rds File"),
+             bsAlert("convert_error"),
+             bsAlert("convert_warning")
+             
            ))
   )
 )

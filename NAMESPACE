@@ -3,5 +3,7 @@
 export(scpGUI)
 import(scp)
 import(shiny)
+import(shinyBS)
 importFrom(DT,datatable)
 importFrom(DT,renderDataTable)
+importFrom(tools,file_ext)

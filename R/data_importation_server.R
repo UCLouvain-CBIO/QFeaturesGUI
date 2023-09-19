@@ -1,4 +1,3 @@
-library(shiny)
 
 data_importation_server<- function(input, output, session){
 
@@ -80,7 +79,11 @@ data_importation_server<- function(input, output, session){
                    featureData = input_df(),
                    colData = sample_df(),
                    batch_col = input$batch_col,
-                   channel_col = input$channel_col
+                   channel_col = input$channel_col,
+                   # suffix = input$suffix,
+                   sep = input$sep,
+                   removeEmptyCols = input$removeEmptyCols,
+                   session = session
     )
   )
 

@@ -51,7 +51,11 @@ readSCP_wraper <- function(sample_table,
                            featureData,
                            colData,
                            batch_col,
-                           channel_col){
+                           channel_col,
+                           suffix,
+                           sep,
+                           removeEmptyCols,
+                           session){
   tryCatch(
 
     {
@@ -60,15 +64,20 @@ readSCP_wraper <- function(sample_table,
         featureData = featureData,
         colData = colData,
         batchCol = batch_col,
-        channelCol = channel_col
+        channelCol = channel_col,
+        # suffix = suffix,
+        sep = sep,
+        removeEmptyCols = removeEmptyCols
       )
       showNotification("Convertion succed !")
     },
     error = function(err) {
-      showNotification(paste0("An error occured : ", err),duration = 10)
+      createAlert(session, "convert_error", "convert_err_alert", title = "Error while converting",
+                  content = paste0(err), append = FALSE)
     },
     warning=function(war) {
-      showNotification(paste0("A warning occured : ", war), duration = 10)
+      createAlert(session, "convert_warning", "convert_war_alert", title = "Warning(s) while converting",
+                  content = paste0(war), append = FALSE)
     }
   )
 }
