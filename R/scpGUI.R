@@ -10,7 +10,6 @@
 #' @import shiny
 #' @import scp
 #' @import shinyBS
-#' @importFrom tools file_ext
 #' @importFrom DT renderDataTable datatable
 #' @examples
 #' scpGui() #start a shiny app
@@ -34,8 +33,7 @@ scpGUI <- function(){
 
 
 # todo :
-# - Delimiter parameter for the importation
-# - Improve the error view
-# - More parameter for the readSCP()
+# -replace all shinyBS
+# - Use base shiny to view errors
 # - More descriptive pop up (question mark)
-# - Insert scp package ref to the doc
+# - visualization QFeats

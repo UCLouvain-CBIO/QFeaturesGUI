@@ -1,5 +1,44 @@
-
 data_importation_server<- function(input, output, session){
+
+  # setting up helpers
+  shinyhelper::observe_helpers()
+  # Import settings for the input table
+
+  observeEvent(input$input_settings,{
+    showModal(modalDialog(
+      title = "Importation settings",
+      textInput("input_sep", label = "Insert the separator character used", value = ","),
+      textInput("input_dec", label = "Insert the decimal character used", value = "."),
+      textInput("input_com", label = "Insert the comment character used", value = "#"),
+      numericInput("input_skip", label = "Insert the number of line to skip before beginning to read data ", value = 0),
+      checkboxInput("input_factor", label = "String as Factor", value = FALSE),
+      actionButton("import_input", "Import", width = "100%",
+                   style= "color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+      size = "s",
+      easyClose = TRUE,
+      footer = modalButton("Close", icon = icon("glyphicon glyphicon-remove", lib ='glyphicon'))
+    )
+    )
+  })
+
+  # Import settings for the sample table
+
+  observeEvent(input$sample_settings,{
+    showModal(modalDialog(
+      title = "Importation settings",
+      textInput("sample_sep", label = "Insert the separator character used", value = ","),
+      textInput("sample_dec", label = "Insert the decimal character used", value = "."),
+      textInput("sample_com", label = "Insert the comment character used", value = "#"),
+      numericInput("sample_skip", label = "Insert the number of line to skip before beginning to read data ", value = 0),
+      checkboxInput("sample_factor", label = "String as Factor", value = FALSE),
+      actionButton("import_sample", "Import", width = "100%",
+                   style= "color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+      size = "s",
+      easyClose = TRUE,
+      footer = modalButton("Close", icon = icon("glyphicon glyphicon-remove", lib ='glyphicon'))
+      )
+    )
+  })
 
   # import and visualization of the input table
   observeEvent(input$import_input,{
@@ -22,6 +61,8 @@ data_importation_server<- function(input, output, session){
       }
     )
   })
+
+  # creation of a persistent object for the input dataframe
   input_df <- eventReactive(input$import_input,
                             {
                               input_df <- file_to_df(input$input_table,
@@ -60,7 +101,7 @@ data_importation_server<- function(input, output, session){
       updateSelectInput(session, "channel_col", choices = colnames(sample_df))
     }
   })
-
+  # creation of a persistent object for the sample dataframe
   sample_df <- eventReactive(input$import_sample,
                             {
                               sample_df <- file_to_df(input$sample_table,
@@ -80,8 +121,6 @@ data_importation_server<- function(input, output, session){
                    colData = sample_df(),
                    batch_col = input$batch_col,
                    channel_col = input$channel_col,
-                   # suffix = input$suffix,
-                   sep = input$sep,
                    removeEmptyCols = input$removeEmptyCols,
                    session = session
     )
