@@ -12,7 +12,8 @@ Encoding: UTF-8
 Imports:
     scp,
     shiny,
-    DT
+    DT,
+    QFeatures
 Depends: 
   shinyBS
 Roxygen: list(markdown = TRUE)

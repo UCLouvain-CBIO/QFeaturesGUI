@@ -9,6 +9,7 @@
 #' @export
 #' @import shiny
 #' @import scp
+#' @import QFeatures
 #' @import shinyBS
 #' @importFrom DT renderDataTable datatable
 #' @examples
@@ -33,7 +34,6 @@ scpGUI <- function(){
 
 
 # todo :
-# -replace all shinyBS
-# - Use base shiny to view errors
-# - More descriptive pop up (question mark)
+# - modify error message for read.table
+# - More descriptive pop up
 # - visualization QFeats

@@ -42,7 +42,7 @@ readSCP_wraper <- function(sample_table,
 
     {
       req(sample_table, input_table)
-      readSCP(
+      qfeat <- readSCP(
         featureData = featureData,
         colData = colData,
         batchCol = batch_col,
@@ -50,6 +50,7 @@ readSCP_wraper <- function(sample_table,
         removeEmptyCols = removeEmptyCols
       )
       showNotification("Convertion succed !")
+      return(qfeat)
     },
     error = function(err) {
       shinyBS::createAlert(session, "convert_error", "convert_err_alert", title = "Error while converting",
@@ -60,4 +61,22 @@ readSCP_wraper <- function(sample_table,
                   content = paste0(war), append = FALSE)
     }
   )
+}
+
+qfeat_to_df <- function(qfeat){
+  df <- data.frame(
+    "Name" = rep.int(0, length(qfeat)),
+    "Class" = rep.int(0, length(qfeat)),
+    "nrows" = rep.int(0, length(qfeat)),
+    "ncols" = rep.int(0, length(qfeat))
+  )
+  for (i in 1:length(qfeat)){
+    print(names(qfeat)[[i]])
+    df[i, "Name"] <- names(qfeat)[[i]]
+    df[i, "Class"] <- class(qfeat[[i]])[[1]]
+    df[i, "nrows"] <- nrow(qfeat[[i]])[[1]]
+    df[i, "ncols"] <- ncol(qfeat[[i]])[[1]]
+  }
+  
+  return(df)
 }
