@@ -1,7 +1,5 @@
 data_importation_server<- function(input, output, session){
 
-  # setting up helpers
-  shinyhelper::observe_helpers()
   # Import settings for the input table
 
   observeEvent(input$input_settings,{
