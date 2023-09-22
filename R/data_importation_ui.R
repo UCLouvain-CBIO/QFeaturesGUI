@@ -2,7 +2,7 @@ data_importation_tab <- tabPanel(
   "Data Importation",
 
   fluidPage(
-
+    shinyjs::useShinyjs(),
     column(6,
            wellPanel(
              h3("Input Table"),
@@ -47,10 +47,13 @@ data_importation_tab <- tabPanel(
              br(),
              shinyBS::bsAlert("convert_error"),
              shinyBS::bsAlert("convert_warning"),
-             h3("QFeatures Preview"),
-             DT::dataTableOutput("qfeat_table"),
-             h3("Selected Assay"),
-             DT::dataTableOutput("assay_table")
-           ))
+             shinyjs::hidden(div(id = "qfeat_preview",
+                 h3("QFeatures Preview"),
+                 DT::dataTableOutput("qfeat_table")
+                 )),
+            shinyjs::hidden(div(id = "selection",
+                h3("Selected Assay"),
+                DT::dataTableOutput("assay_table"))
+           )))
   )
 )

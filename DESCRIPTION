@@ -13,7 +13,8 @@ Imports:
     scp,
     shiny,
     DT,
-    QFeatures
+    QFeatures,
+    shinyjs
 Depends: 
   shinyBS
 Roxygen: list(markdown = TRUE)

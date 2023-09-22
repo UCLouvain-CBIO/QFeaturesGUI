@@ -11,13 +11,13 @@
 #' @import scp
 #' @import QFeatures
 #' @import shinyBS
+#' @import shinyjs
 #' @importFrom DT renderDataTable datatable
 #' @examples
 #' scpGui() #start a shiny app
 #'
 scpGUI <- function(){
   if(interactive()){
-
     ui <- shinyUI(
       navbarPage("scp GUI",
                  data_importation_tab,
@@ -25,7 +25,7 @@ scpGUI <- function(){
       ))
 
     server <- function(input, output, session) {
-    data_importation_server(input, output, session)
+      data_importation_server(input, output, session)
     }
 
     shinyApp(ui = ui, server = server)

@@ -54,7 +54,9 @@ data_importation_server<- function(input, output, session){
                       options = list(
                         searching = FALSE,
                         scrollX = TRUE,
-                        fixedColumns = TRUE)
+                        fixedColumns = TRUE,
+                        pageLength = 5,
+                        lengthMenu = c(5, 10, 15, 20))
         )
       }
     )
@@ -88,7 +90,9 @@ data_importation_server<- function(input, output, session){
                       options = list(
                         searching = FALSE,
                         scrollX = TRUE,
-                        fixedColumns = TRUE)
+                        fixedColumns = TRUE,
+                        pageLength = 5,
+                        lengthMenu = c(5, 10, 15, 20))
         )
       }
     )
@@ -137,6 +141,7 @@ data_importation_server<- function(input, output, session){
     # Preview of the QFeatures object
     if (class(qfeat_converted()) == "QFeatures"){
       qfeat_df <- qfeat_to_df(qfeat_converted())
+      shinyjs::show("qfeat_preview")
       output$qfeat_table <- DT::renderDataTable(
         {
           DT::datatable(qfeat_df, extensions = 'FixedColumns',
@@ -148,17 +153,20 @@ data_importation_server<- function(input, output, session){
           )
         }
       )
+      shinyjs::show("selection")
       # View of the assay of the selected row
       output$assay_table <- DT::renderDataTable(
         {
           if (!is.null(input$qfeat_table_rows_selected)){
-          row <- input$qfeat_table_rows_selected
-          DT::datatable(data.frame(SummarizedExperiment::assay(qfeat_converted()[[row]])), 
+            row <- input$qfeat_table_rows_selected
+            DT::datatable(data.frame(SummarizedExperiment::assay(qfeat_converted()[[row]])), 
                         extensions = 'FixedColumns',
                         options = list(
                           searching = FALSE,
                           scrollX = TRUE,
-                          fixedColumns = TRUE)
+                          fixedColumns = TRUE,
+                          pageLength = 5,
+                          lengthMenu = c(5, 10, 15, 20))
           )
           }
         }
