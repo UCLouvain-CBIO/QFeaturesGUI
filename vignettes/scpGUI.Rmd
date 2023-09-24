@@ -1,5 +1,7 @@
 ---
 title: "scpGUI"
+author:
+    - name: Léopold Guyot
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{scpGUI}
