@@ -3,3 +3,7 @@
 .RData
 .Ruserdata
 scpGUI.Rproj
+inst/doc
+.Rdata
+.httr-oauth
+.DS_Store

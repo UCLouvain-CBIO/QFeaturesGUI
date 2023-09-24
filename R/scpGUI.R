@@ -35,5 +35,3 @@ scpGUI <- function(){
 
 # todo :
 # - modify error message for read.table
-# - More descriptive pop up
-# - visualization QFeats

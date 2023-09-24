@@ -18,14 +18,14 @@ file_to_df<- function(file_upload,
                comment.char = comment.char,
                header = TRUE,
                row.names = 1)
-    showNotification("File import succed !")
+    showNotification("File import succeed !")
     return(table)
     },
     error = function(err) {
-      showNotification(paste0("An error occured during the import: ", err),duration = 10)
+      showNotification(paste0("An error occurred during the import: ", err),duration = 10)
     },
     warning=function(war) {
-      showNotification(paste0("A warning occured during the import : ", war), duration = 10)
+      showNotification(paste0("A warning occurred during the import : ", war), duration = 10)
     }
   )
 }
@@ -49,7 +49,7 @@ readSCP_wraper <- function(sample_table,
         channelCol = channel_col,
         removeEmptyCols = removeEmptyCols
       )
-      showNotification("Convertion succed !")
+      showNotification("Conversion succeed !")
       return(qfeat)
     },
     error = function(err) {
@@ -77,6 +77,6 @@ qfeat_to_df <- function(qfeat){
     df[i, "nrows"] <- nrow(qfeat[[i]])[[1]]
     df[i, "ncols"] <- ncol(qfeat[[i]])[[1]]
   }
-  
+
   return(df)
 }
