@@ -65,7 +65,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="scpgui">scpGui<a class="anchor" aria-label="anchor" href="#scpgui"></a>
+<div class="page-header"><h1 id="scpgui">scpGUI<a class="anchor" aria-label="anchor" href="#scpgui"></a>
 </h1></div>
 <p><code>scpGUI</code> is a graphical interface for the scp package. Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object. This process is performed with the readSCP function from the scp package.</p>
 <div class="section level2">
@@ -74,8 +74,9 @@
 <p>Get the package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check if remotes is installed. Otherwise install it.</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="co"># Install the package</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"leopoldguyot/scpGUI"</span><span class="op">)</span></span>
 <span><span class="co"># Load the package</span></span>
