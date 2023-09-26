@@ -4,74 +4,76 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="scpGUI">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>scpGUI • scpGUI</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="scpGUI">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="scpGUI">
 <meta property="og:description" content="scpGUI">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
-    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+<body data-spy="scroll" data-target="#toc">
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
-    <a class="navbar-brand me-2" href="../index.html">scpGUI</a>
+    <div class="container template-article">
+      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">scpGUI</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
+      </span>
+    </div>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9</small>
-
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto">
-<li class="active nav-item">
-  <a class="nav-link" href="../articles/scpGUI.html">Get started</a>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+<li>
+  <a href="../articles/scpGUI.html">Get started</a>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
+<li>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/leopoldguyot/scpGUI/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/leopoldguyot/scpGUI/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
       </ul>
 </div>
-
-    
+<!--/.nav-collapse -->
   </div>
-</nav><div class="container template-article">
+<!--/.container -->
+</div>
+<!--/.navbar -->
 
+      
 
-
-
-<div class="row">
-  <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>scpGUI</h1>
+      </header><div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header toc-ignore">
+      <h1 data-toc-skip>scpGUI</h1>
                         <h4 data-toc-skip class="author">Léopold
 Guyot</h4>
                         
       
       <small class="dont-index">Source: <a href="https://github.com/leopoldguyot/scpGUI/blob/HEAD/vignettes/scpGUI.Rmd" class="external-link"><code>vignettes/scpGUI.Rmd</code></a></small>
-      <div class="d-none name"><code>scpGUI.Rmd</code></div>
+      <div class="hidden name"><code>scpGUI.Rmd</code></div>
+
     </div>
 
     
@@ -99,8 +101,9 @@ Guyot</h4>
 </h2>
 <p>Once the application has been launched, the window will look like
 this:</p>
-<p><img src="screenshots/Screenshot%20from%202023-09-24%2016-00-02.png" width="700">For this demonstration, the data from the package scp will
-be used. The following code allow to retrieve the needed data sets.</p>
+<p><img src="screenshots/Screenshot%20from%202023-09-24%2016-00-02.png" width="700"></p>
+<p>For this demonstration, the data from the scp package will be used.
+The following code allows to retrieve the needed data sets.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></span>
@@ -123,14 +126,14 @@ a sample in the experiment and the columns correspond to the available
 annotations about the sample.</p></li>
 </ul>
 <p>More information about these tables can be found in the documentation
-of the function readSCP() from the package scp.</p>
+of the function readSCP() from the scp package.</p>
 <p>To provide a table, press the <code>Browse…</code> button then choose
 the appropriate <code>.csv</code> or <code>.tsv</code> file on your
-computer. Once the file has been sectioned, the path to it is visible
+computer. Once the file has been selectioned, the path to it is visible
 next to the <code>Browse…</code> button.</p>
-<p>After that press the <code>Import settings</code> button, a new
-window will appear. Choose the appropriate options to import your file
-(see read.table() documentation for more information):</p>
+<p>When pressing the <code>Import settings</code> button, a new window
+will appear. Choose the appropriate options to import your file (see
+read.table() documentation for more information):</p>
 <ul>
 <li><p><code>separator character</code> (default = “,”)</p></li>
 <li><p><code>decimal character</code> (default = “.”)</p></li>
@@ -139,22 +142,23 @@ window will appear. Choose the appropriate options to import your file
 (default = 0)</p></li>
 <li><p><code>strings as factor</code> (default = FALSE)</p></li>
 </ul>
-<p>Once all these options are correctly chosen for your file, click on
-the <code>Import</code> button and close the window. Your table is now
+<p>Once all these options are selected for your file, click on the
+<code>Import</code> button and close the window. Your table is now
 visible on the interface, make sure it is well formatted before
 continuing.</p>
 <p>The process to import both tables is identical.</p>
+<p><img src="screenshots/csvimport.gif" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="qfeatures-conversion">QFeatures conversion<a class="anchor" aria-label="anchor" href="#qfeatures-conversion"></a>
 </h3>
 <p>The QFeatures converter tool is available on the right side of the
 application. The first step to perform a QFeatures conversion is to
-supply the columns that will be used to create the links between the two
-table:</p>
+define the columns that will be used to create the links between the two
+tables:</p>
 <ul>
 <li><p><code>batch column</code>: The column of the Input table and the
-Sample table that contain the batch names.</p></li>
+Sample table that contains the batch names.</p></li>
 <li><p><code>channel column</code>: The column of the Sample table that
 contains the column names of the quantitative data in the Input
 table</p></li>
@@ -162,50 +166,59 @@ table</p></li>
 <p>If the Sample table has correctly been imported, the column names
 will be available in the drop-down list. Select for each drop-down list
 the appropriate column. An option to remove in each batch the columns
-that contains only missing values is also available using checkbox.</p>
+that contains only missing values is also available using a
+checkbox.</p>
 <p>Once everything is correctly setup, press the
 <code>Convert to a QFeatures object</code> button, a loading menu will
-appear. If an error occurred during the conversion, the error message
-will pop up bellow the Convert button, refer to the readSCP() function
-to find the origin of the error. If everything went well, a notification
+appear. If an error occurred during the conversion, an error message
+will pop up below the Convert button, refer to the readSCP() function to
+find the origin of the error. If everything went well, a notification
 will appear with a “conversion succeed” message.</p>
+<p><img src="screenshots/convert.gif" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="qfeatures-object-export">QFeatures object export<a class="anchor" aria-label="anchor" href="#qfeatures-object-export"></a>
 </h3>
-<p>A QFeatures Preview panel is now present below the QFeatures
+<p>A QFeatures Preview panel is now available below the QFeatures
 converter tool. Check with this preview if the conversion went fine. By
-clicking on a row (corresponding to an assay), the sectioned assay will
-appear below, once again check if everything looks at your
-convenience.</p>
+clicking on a row (corresponding to an assay), the selected assay will
+appear below, once again check if everything looks as expected.</p>
 <p>Once everything looks fine, click on the <code>Download</code>
 button, this will download a <code>.rds</code> file containing the
 QFeatures object on your computer. Choose the destination folder, the
 name of the file and click on save. Your QFeatures object is now
 available on your computer, it can be used in combination with the scp
 package to continue the data processing.</p>
+<p><img src="screenshots/download.gif" width="700"></p>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
-    </nav></aside>
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
+
 </div>
 
 
 
-    <footer><div class="pkgdown-footer-left">
+      <footer><div class="copyright">
   <p></p>
 <p>Developed by Léopold Guyot.</p>
 </div>
 
-<div class="pkgdown-footer-right">
+<div class="pkgdown">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
-    </footer>
+      </footer>
 </div>
 
   
+
 
   
 
