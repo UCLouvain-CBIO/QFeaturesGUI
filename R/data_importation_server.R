@@ -129,13 +129,7 @@ data_importation_server<- function(input, output, session){
   )
 
   observeEvent(input$convert, { # On click on the convert button
-    showModal(modalDialog(
-      title = "Loading",
-      div(class = "progress",
-          div(class = "progress-bar progress-bar-striped active", role = "progressbar",
-              style = "width: 100%;")
-      )
-    ))
+    loading()
     qfeat_converted()  # Trigger the reactive expression to compute
     removeModal()
     # Preview of the QFeatures object

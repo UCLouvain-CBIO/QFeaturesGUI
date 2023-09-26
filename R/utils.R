@@ -1,3 +1,15 @@
+loading <- function(){
+  showModal(modalDialog(
+    title = "Loading",
+    div(class = "progress",
+        div(class = "progress-bar progress-bar-striped active", role = "progressbar",
+            style = "width: 100%;")
+    ),
+    "Be aware that this operation can be quite time consuming for large data sets"
+  ))
+}
+
+
 # Convert csv or tsv to a dataframe
 file_to_df<- function(file_upload,
                       sep,
@@ -10,6 +22,7 @@ file_to_df<- function(file_upload,
 
     {
     req(file_upload)
+    loading()
     table <- read.table(file_upload$datapath,
                sep = sep,
                dec = dec,
@@ -19,6 +32,7 @@ file_to_df<- function(file_upload,
                header = TRUE,
                row.names = 1)
     showNotification("File import succeed !")
+    removeModal()
     return(table)
     },
     error = function(err) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/scpGUI.R
 \name{scpGUI}
 \alias{scpGUI}
-\title{scpGUI}
+\title{A simple graphical interface to handle SCP data}
 \usage{
 scpGUI()
 }
@@ -15,6 +15,6 @@ The first page of the app allow to convert two tables (Input and Sample) to a QF
 This process is performed with the \code{\link[scp]{readSCP}} function from the scp package.
 }
 \examples{
-scpGui() #start a shiny app
+scpGUI() #start a shiny app
 
 }
