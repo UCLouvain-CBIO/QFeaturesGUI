@@ -32,7 +32,6 @@ file_to_df<- function(file_upload,
                header = TRUE,
                row.names = 1)
     showNotification("File import succeed !")
-    removeModal()
     return(table)
     },
     error = function(err) {

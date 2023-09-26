@@ -60,6 +60,7 @@ data_importation_server<- function(input, output, session){
         )
       }
     )
+    removeModal()
   })
 
   # creation of a persistent object for the input dataframe
@@ -102,6 +103,7 @@ data_importation_server<- function(input, output, session){
       updateSelectInput(session, "batch_col", choices = colnames(sample_df))
       updateSelectInput(session, "channel_col", choices = colnames(sample_df))
     }
+    removeModal()
   })
   # creation of a persistent object for the sample dataframe
   sample_df <- eventReactive(input$import_sample,
