@@ -31,7 +31,7 @@ library(scpGUI)
 # Application launch
 
 ```{r, eval = FALSE}
-scpGUI()
+scpGUIImport()
 ```
 
 # Create a QFeatures object
