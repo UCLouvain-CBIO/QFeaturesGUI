@@ -6,8 +6,8 @@ Authors@R:
 Description: scpGUI is a graphical interface for the scp package.
   Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object.
   This process is performed with the readSCP function from the scp package.
-URL: https://github.com/leopoldguyot/scpGUI, https://leopoldguyot.github.io/scpGUI/
-License: MIT + file LICENSE
+URL: https://uclouvain-cbio.github.io/scpGUI/, https://github.com/leopoldguyot/scpGUI
+License: MIT
 Encoding: UTF-8
 Imports:
     scp,

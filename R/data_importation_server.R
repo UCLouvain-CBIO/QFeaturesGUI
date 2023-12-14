@@ -137,7 +137,7 @@ data_importation_server<- function(input, output, session){
     # Preview of the QFeatures object
     if (class(qfeat_converted()) == "QFeatures"){
       qfeat_df <- qfeat_to_df(qfeat_converted())
-      shinyjs::show("qfeat_preview")
+      shinyjs::showElement("qfeat_preview")
       output$qfeat_table <- DT::renderDataTable(
         {
           DT::datatable(qfeat_df, extensions = 'FixedColumns',
@@ -149,13 +149,13 @@ data_importation_server<- function(input, output, session){
           )
         }
       )
-      shinyjs::show("selection")
+      shinyjs::showElement("selection")
       # View of the assay of the selected row
       output$assay_table <- DT::renderDataTable(
         {
           if (!is.null(input$qfeat_table_rows_selected)){
             row <- input$qfeat_table_rows_selected
-            DT::datatable(data.frame(SummarizedExperiment::assay(qfeat_converted()[[row]])), 
+            DT::datatable(data.frame(SummarizedExperiment::assay(qfeat_converted()[[row]])),
                         extensions = 'FixedColumns',
                         options = list(
                           searching = FALSE,
@@ -169,7 +169,7 @@ data_importation_server<- function(input, output, session){
       )
     }
   })
-  
+
   output$download_qfeat <- downloadHandler(
     filename = function() {
       "scp_qfeature_object.rds"

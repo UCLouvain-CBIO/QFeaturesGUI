@@ -55,7 +55,7 @@ readSCP_wraper <- function(sample_table,
 
     {
       req(sample_table, input_table)
-      qfeat <- readSCP(
+      qfeat <- scp::readSCP(
         featureData = featureData,
         colData = colData,
         batchCol = batch_col,

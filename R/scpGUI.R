@@ -8,17 +8,18 @@
 #' @return Launch the scpGUIImport shiny app.
 #' @export
 #' @import shiny
-#' @import scp
-#' @import QFeatures
-#' @import shinyBS
-#' @import shinyjs
+#' @importFrom SummarizedExperiment assay
+#' @importFrom scp readSCP
+#' @importFrom shinyBS createAlert bsAlert
 #' @importFrom DT renderDataTable datatable
+#' @importFrom shinyjs useShinyjs hidden showElement
 #' @examples
 #' scpGUIImport() #start a shiny app
 #'
 scpGUIImport <- function(){
   if(interactive()){
-    ui <- shinyUI(
+    ui <- tagList(
+      shinyjs::useShinyjs(),
       navbarPage("scpGUIImport",
                  data_importation_tab,
                  tabPanel("Quality Control", "Under developement ...")
@@ -32,7 +33,3 @@ scpGUIImport <- function(){
     shinyApp(ui = ui, server = server)
   }
 }
-
-
-# todo :
-# - modify error message for read.table
