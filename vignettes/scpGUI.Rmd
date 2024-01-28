@@ -11,8 +11,8 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
 
@@ -20,8 +20,9 @@ knitr::opts_chunk$set(
 
 ```{r, eval = FALSE}
 # Check if remotes is installed. Otherwise install it.
-if (!require("remotes", quietly = TRUE))
+if (!require("remotes", quietly = TRUE)) {
     install.packages("remotes")
+}
 # Install the package
 remotes::install_github("leopoldguyot/scpGUI")
 # Load the package
@@ -31,7 +32,7 @@ library(scpGUI)
 # Application launch
 
 ```{r, eval = FALSE}
-scpGUIImport()
+#scpGUIImport()
 ```
 
 # Create a QFeatures object
