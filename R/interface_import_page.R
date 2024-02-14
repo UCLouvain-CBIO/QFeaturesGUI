@@ -1,12 +1,20 @@
 import_page <- function() {
     fluidRow(
-        box(
-            title = "Import",
-            status = "primary",
-            width = 12,
-            solidHeader = TRUE,
-            collapsible = TRUE,
-            h2("Import")
+        column(
+            width = 6,
+            box_read_table_ui("input"),
+            box_read_table_ui("sample")
+        ),
+        column(
+            width = 6,
+            box(
+                title = "QFeatures object",
+                status = "primary",
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = FALSE,
+                h2("QFeatures object")
+            )
         )
     )
 }

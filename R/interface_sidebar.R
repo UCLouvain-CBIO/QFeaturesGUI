@@ -11,7 +11,6 @@ sidebar <- function() {
                 tabName = "qc_tab",
                 icon = shiny::icon("check")
             )
-
         )
     )
 }

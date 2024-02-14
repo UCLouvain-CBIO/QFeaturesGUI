@@ -9,5 +9,4 @@ qc_page <- function() {
             h2("Quality control")
         )
     )
-
 }

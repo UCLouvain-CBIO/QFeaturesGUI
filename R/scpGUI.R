@@ -25,5 +25,4 @@ scpGUI <- function() {
     ui <- .build_ui()
     server <- .build_server()
     app <- shinyApp(ui = ui, server = server)
-    return(app)
 }
