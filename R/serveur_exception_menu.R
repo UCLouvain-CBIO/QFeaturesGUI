@@ -1,13 +1,15 @@
-server_exception_menu <- function(input, output, session, exception_data) {
-    stopifnot(is.reactive(exception_data))
-
+server_exception_menu <- function(input, output, session) {
     msgs <- reactive({
-        if (nrow(exception_data()) == 0) {
+        if (nrow(global_rv$exception_data) == 0) {
             return(list())
         }
-        apply(exception_data(), 1, function(row) {
-            print("test")
-            messageItem(from = row[["type"]], message = row[["message"]])
+        apply(global_rv$exception_data, 1, function(row) {
+            messageItem(
+                from = row[["type"]],
+                message = row[["message"]],
+                icon = icon("exclamation"),
+                time = row[["time"]]
+            )
         })
     })
     output$exception_menu <- renderMenu({
@@ -18,7 +20,4 @@ server_exception_menu <- function(input, output, session, exception_data) {
             .list = msgs()
         )
     })
-    
-
-    return(exception_data)
 }

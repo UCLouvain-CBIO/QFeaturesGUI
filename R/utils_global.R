@@ -1,4 +1,4 @@
-error_handler <- function(func, exception_data, ...) {
+error_handler <- function(func, ...) {
     tryCatch(
         {
             func(...)
@@ -13,7 +13,7 @@ error_handler <- function(func, exception_data, ...) {
                 type = "warning",
                 message = conditionMessage(w),
                 full_message = w,
-                exception_data = exception_data
+                time = Sys.time()
             )
             return(NULL)
         },
@@ -27,20 +27,21 @@ error_handler <- function(func, exception_data, ...) {
                 type = "error",
                 message = conditionMessage(e),
                 full_message = e,
-                exception_data = exception_data
+                time = Sys.time()
             )
             return(NULL)
         }
     )
 }
 
-add_exception <- function(type, message, full_message, exception_data) {
+add_exception <- function(type, message, full_message, time) {
     new_data <- data.frame(
         type = as.character(type),
         message = as.character(message),
         full_message = as.character(full_message),
+        time = as.POSIXct(time),
         stringsAsFactors = FALSE
     )
-    old_data <- exception_data()
-    exception_data(rbind(old_data, new_data))
+    old_data <- global_rv$exception_data
+    global_rv$exception_data <- rbind(new_data, old_data)
 }
