@@ -23,6 +23,41 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 choices = colnames(sample_table())
             )
         })
+
+        qfeatures_df <- reactive({
+            req(qfeatures())
+            qfeatures_to_df(qfeatures())
+        })
+
+        output$qfeatures_dt <- renderDataTable({
+            DT::datatable(qfeatures_df(),
+                extensions = "FixedColumns",
+                selection = "single",
+                options = list(
+                    searching = FALSE,
+                    scrollX = TRUE,
+                    fixedColumns = TRUE,
+                    pageLength = 5,
+                    lengthMenu = c(5, 10, 15)
+                )
+            )
+        })
+
+        output$assay_table <- DT::renderDataTable({
+            if (!is.null(input$qfeatures_dt_rows_selected)) {
+                row <- input$qfeatures_dt_rows_selected
+                DT::datatable(data.frame(SummarizedExperiment::assay(qfeatures()[[row]])),
+                    extensions = "FixedColumns",
+                    options = list(
+                        searching = FALSE,
+                        scrollX = TRUE,
+                        fixedColumns = TRUE,
+                        pageLength = 5,
+                        lengthMenu = c(5, 10, 15, 20)
+                    )
+                )
+            }
+        })
         qfeatures
     })
 }
