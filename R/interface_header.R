@@ -1,3 +1,6 @@
 header <- function() {
-    dashboardHeader(title = "scpGUI")
+    dashboardHeader(
+        title = "scpGUI",
+        dropdownMenuOutput("exception_menu")
+    )
 }

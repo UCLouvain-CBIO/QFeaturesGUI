@@ -1,20 +1,25 @@
-box_read_table_server <- function(id) {
+box_read_table_server <- function(id, exception_data) {
     moduleServer(id, function(input, output, session) {
         table <- eventReactive(
             input$import_button,
             {
                 req(input$file)
-                read.table(input$file$datapath,
+                print(exception_data())
+                error_handler(
+                    read.table,
+                    input$file$datapath,
                     sep = input$sep,
                     dec = input$dec,
                     skip = input$skip,
                     stringsAsFactors = input$stringsAsFactors,
                     comment.char = input$comment_char,
                     header = TRUE,
-                    row.names = 1
+                    row.names = 1,
+                    exception_data = exception_data
                 )
             }
         )
+
 
         output$dt_table <- renderDataTable({
             req(input$file)
@@ -30,6 +35,6 @@ box_read_table_server <- function(id) {
             )
         })
 
-        return(table)
+        table
     })
 }

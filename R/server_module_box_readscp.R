@@ -4,7 +4,8 @@ box_readscp_server <- function(id, input_table, sample_table) {
 
     moduleServer(id, function(input, output, session) {
         qfeatures <- eventReactive(input$convert, {
-            scp::readSCP(
+            error_handler(
+                scp::readSCP,
                 featureData = input_table(),
                 colData = sample_table(),
                 batchCol = input$batch_col,
@@ -26,7 +27,10 @@ box_readscp_server <- function(id, input_table, sample_table) {
 
         qfeatures_df <- reactive({
             req(qfeatures())
-            qfeatures_to_df(qfeatures())
+            error_handler(
+                qfeatures_to_df,
+                qfeatures()
+            )
         })
 
         output$qfeatures_dt <- renderDataTable({
