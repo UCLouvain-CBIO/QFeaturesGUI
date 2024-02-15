@@ -7,14 +7,7 @@ import_page <- function() {
         ),
         column(
             width = 6,
-            box(
-                title = "QFeatures object",
-                status = "primary",
-                width = 12,
-                solidHeader = TRUE,
-                collapsible = FALSE,
-                h2("QFeatures object")
-            )
+            box_readscp_ui("readscp")
         )
     )
 }
