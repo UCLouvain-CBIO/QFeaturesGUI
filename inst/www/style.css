@@ -2,8 +2,19 @@
   max-height: 400px;
   overflow-y: auto;
   overflow-x: auto;
-  background-color: #ffffff;
-  border: 1px solid #ff0000;
+  background-color: #f8f9fa;
+  border: 1px solid #b33131;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  white-space: pre-wrap;
+}
+
+.normal-text .shiny-text-output {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #f8f9fa;
+  border: 1px solid #2b6bcc;
   border-radius: 0.25rem;
   padding: 0.5rem;
   white-space: pre-wrap;
@@ -25,4 +36,8 @@
 }
 .no-margin {
   margin: 0;
+}
+
+.italic-text {
+  font-style: italic;
 }

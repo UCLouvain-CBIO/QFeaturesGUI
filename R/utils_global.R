@@ -1,6 +1,10 @@
 error_handler <- function(func, component_name, ...) {
     tryCatch(
         {
+            func_call <- gsub(
+                "\\s+", " ",
+                paste(deparse(substitute(func(...))), collapse = " ")
+            )
             func(...)
         },
         warning = function(w) {
@@ -20,12 +24,13 @@ error_handler <- function(func, component_name, ...) {
                         ))
                     )
                 ),
-                duration = 60,
+                duration = 30,
                 type = "warning"
             )
             add_exception(
                 title = paste0("Warning in ", component_name),
                 type = "warning",
+                func_call = func_call,
                 message = conditionMessage(w),
                 full_message = w,
                 time = time
@@ -49,12 +54,13 @@ error_handler <- function(func, component_name, ...) {
                         ))
                     )
                 ),
-                duration = 60,
+                duration = 30,
                 type = "error"
             )
             add_exception(
                 title = paste0("Error in ", component_name),
                 type = "error",
+                func_call = func_call,
                 message = conditionMessage(e),
                 full_message = e,
                 time = time
@@ -64,10 +70,11 @@ error_handler <- function(func, component_name, ...) {
     )
 }
 
-add_exception <- function(title, type, message, full_message, time) {
+add_exception <- function(title, type, func_call, message, full_message, time) {
     new_data <- data.frame(
         title = as.character(title),
         type = as.character(type),
+        func_call = as.character(func_call),
         message = as.character(message),
         full_message = as.character(full_message),
         time = as.POSIXct(time),

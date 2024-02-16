@@ -11,7 +11,8 @@ server_exception_menu <- function(input, output, session) {
                 message = HTML(paste0(
                     row[["title"]], br(),
                     span(HTML("<i>click for more details</i>"),
-                     class = "right-align")
+                        class = "right-align"
+                    )
                 )),
                 icon = icon("exclamation"),
                 time = format(
@@ -38,18 +39,48 @@ server_exception_menu <- function(input, output, session) {
                 {
                     showModal(modalDialog(
                         title = paste0(
-                            global_rv$exception_data[i, "type"],
-                            " #",
-                            i
+                            upper_first(global_rv$exception_data[i, "type"]),
+                            " #", i, ": ", global_rv$exception_data[i, "title"]
                         ),
-                        global_rv$exception_data[i, "message"],
+                        div(
+                            class = "italic-text",
+                            "This error occurred at ",
+                            format(
+                                global_rv$exception_data[i, "time"],
+                                "%H:%M:%S"
+                            )
+                        ),
+                        h3("Function call:"),
+                        div(
+                            class = "normal-text",
+                            verbatimTextOutput(paste0("func_call_", i))
+                        ),
+                        h3(paste0(
+                            "Full ",
+                            global_rv$exception_data[i, "type"],
+                            " message:"
+                        )),
                         div(
                             class = "error-text",
                             verbatimTextOutput(paste0("message_", i))
                         ),
+                        div(
+                            class = "italic-text right-align",
+                            HTML(paste0(
+                                "Note that this error message comes from a function that is not part of this shiny package. <br>",
+                                "Please refer to the adequate documentation for more information about the cause of the error."
+                            ))
+                        ),
                         easyClose = TRUE,
-                        size = "l"
+                        size = "l",
+                        footer = modalButton("Close")
                     ))
+                    output[[paste0("func_call_", i)]] <- renderText({
+                        gsub(
+                            ",", ",\n    ",
+                            global_rv$exception_data[i, "func_call"]
+                        )
+                    })
                     output[[paste0("message_", i)]] <- renderText({
                         global_rv$exception_data[i, "full_message"]
                     })
