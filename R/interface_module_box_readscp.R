@@ -25,7 +25,7 @@ box_readscp_ui <- function(id) {
                 ),
                 checkboxInput(
                     inputId = NS(id, "removeEmptyCols"),
-                    label = "Removing columns that contain only missing values",
+                    label = "Remove columns that contain only missing values",
                     value = FALSE
                 ),
                 actionButton(

@@ -6,7 +6,7 @@ error_handler <- function(func, ...) {
         warning = function(w) {
             showNotification("Caught a warning: ",
                 conditionMessage(w),
-                duration = NULL,
+                duration = 60,
                 type = "warning"
             )
             add_exception(
@@ -20,7 +20,7 @@ error_handler <- function(func, ...) {
         error = function(e) {
             showNotification("Caught an error: ",
                 conditionMessage(e),
-                duration = NULL,
+                duration = 60,
                 type = "error"
             )
             add_exception(
