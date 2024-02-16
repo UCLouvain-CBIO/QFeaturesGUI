@@ -7,12 +7,16 @@ server_exception_menu <- function(input, output, session) {
             row <- global_rv$exception_data[i, ]
             id <- paste0("exception_", as.character(i))
             messageItem(
-                from = paste0(row[["type"]], " #", i),
-                message = row[["message"]],
+                from = paste0(upper_first(row[["type"]]), " #", i),
+                message = HTML(paste0(
+                    row[["title"]], br(),
+                    span(HTML("<i>click for more details</i>"),
+                     class = "right-align")
+                )),
                 icon = icon("exclamation"),
                 time = format(
                     row[["time"]],
-                    "%m/%d/%Y %H:%M:%S"
+                    "%H:%M:%S"
                 ),
                 inputId = id
             )

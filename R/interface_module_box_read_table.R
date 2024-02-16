@@ -2,7 +2,7 @@ box_read_table_ui <- function(id) {
     tagList(
         box(
             title = paste(
-                paste0(toupper(substr(id, 1, 1)), substr(id, 2, nchar(id))),
+                upper_first(id),
                 "Table",
                 sep = " "
             ),

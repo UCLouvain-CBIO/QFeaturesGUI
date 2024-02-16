@@ -1,5 +1,6 @@
 global_rv <- reactiveValues(
     "exception_data" = data.frame(
+        title = character(),
         type = character(),
         message = character(),
         full_message = character(),

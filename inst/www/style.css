@@ -8,3 +8,21 @@
   padding: 0.5rem;
   white-space: pre-wrap;
 }
+
+.custom-message {
+  max-width: 300px;
+  white-space: pre-wrap;
+  overflow: auto;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;  
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+}
+
+.right-align {
+  text-align: right;
+  display: block;
+}
+.no-margin {
+  margin: 0;
+}

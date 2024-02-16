@@ -4,38 +4,69 @@ error_handler <- function(func, component_name, ...) {
             func(...)
         },
         warning = function(w) {
-            showNotification("Caught a warning: ",
-                paste0("Warning in ", component_name),
+            time <- Sys.time()
+            showNotification(
+                HTML(
+                    paste0(
+                        div(HTML(
+                            paste0(
+                                "<b> Error in ",
+                                component_name,
+                                " </b> at ", format(time, "%H:%M:%S")
+                            )
+                        )),
+                        div(HTML(
+                            "<i>Check the top right exception dropdown menu for more details</i>" # nolint
+                        ))
+                    )
+                ),
                 duration = 60,
                 type = "warning"
             )
             add_exception(
+                title = paste0("Warning in ", component_name),
                 type = "warning",
                 message = conditionMessage(w),
                 full_message = w,
-                time = Sys.time()
+                time = time
             )
             return(NULL)
         },
         error = function(e) {
-            showNotification("Caught an error: ",
-                paste0("Error in ", component_name),
+            time <- Sys.time()
+            showNotification(
+                HTML(
+                    paste0(
+                        div(HTML(
+                            paste0(
+                                "<b> Error in ",
+                                component_name,
+                                " </b> at ", format(time, "%H:%M:%S")
+                            )
+                        )),
+                        div(HTML(
+                            "<i>Check the top right exception dropdown menu for more details</i>" # nolint
+                        ))
+                    )
+                ),
                 duration = 60,
                 type = "error"
             )
             add_exception(
+                title = paste0("Error in ", component_name),
                 type = "error",
                 message = conditionMessage(e),
                 full_message = e,
-                time = Sys.time()
+                time = time
             )
             return(NULL)
         }
     )
 }
 
-add_exception <- function(type, message, full_message, time) {
+add_exception <- function(title, type, message, full_message, time) {
     new_data <- data.frame(
+        title = as.character(title),
         type = as.character(type),
         message = as.character(message),
         full_message = as.character(full_message),
@@ -44,4 +75,9 @@ add_exception <- function(type, message, full_message, time) {
     )
     old_data <- global_rv$exception_data
     global_rv$exception_data <- rbind(new_data, old_data)
+}
+
+upper_first <- function(string) {
+    substr(string, 1, 1) <- toupper(substr(string, 1, 1))
+    return(string)
 }

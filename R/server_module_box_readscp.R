@@ -6,7 +6,7 @@ box_readscp_server <- function(id, input_table, sample_table) {
         qfeatures <- eventReactive(input$convert, {
             error_handler(
                 scp::readSCP,
-                component_name = "readSCP",
+                component_name = "QFeatures converting (readSCP)",
                 featureData = input_table(),
                 colData = sample_table(),
                 batchCol = input$batch_col,
@@ -52,7 +52,8 @@ box_readscp_server <- function(id, input_table, sample_table) {
         output$assay_table <- DT::renderDataTable({
             if (!is.null(input$qfeatures_dt_rows_selected)) {
                 row <- input$qfeatures_dt_rows_selected
-                DT::datatable(data.frame(SummarizedExperiment::assay(qfeatures()[[row]])),
+                DT::datatable(
+                    data.frame(SummarizedExperiment::assay(qfeatures()[[row]])),
                     extensions = "FixedColumns",
                     options = list(
                         searching = FALSE,
