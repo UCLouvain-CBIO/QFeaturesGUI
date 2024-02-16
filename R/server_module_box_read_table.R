@@ -6,6 +6,7 @@ box_read_table_server <- function(id) {
                 req(input$file)
                 error_handler(
                     read.table,
+                    component_name = paste0("read.table ", id),
                     input$file$datapath,
                     sep = input$sep,
                     dec = input$dec,

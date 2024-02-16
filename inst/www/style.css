@@ -1,0 +1,10 @@
+.error-text .shiny-text-output {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #ffffff;
+  border: 1px solid #ff0000;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  white-space: pre-wrap;
+}

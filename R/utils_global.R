@@ -1,11 +1,11 @@
-error_handler <- function(func, ...) {
+error_handler <- function(func, component_name, ...) {
     tryCatch(
         {
             func(...)
         },
         warning = function(w) {
             showNotification("Caught a warning: ",
-                conditionMessage(w),
+                paste0("Warning in ", component_name),
                 duration = 60,
                 type = "warning"
             )
@@ -19,7 +19,7 @@ error_handler <- function(func, ...) {
         },
         error = function(e) {
             showNotification("Caught an error: ",
-                conditionMessage(e),
+                paste0("Error in ", component_name),
                 duration = 60,
                 type = "error"
             )
