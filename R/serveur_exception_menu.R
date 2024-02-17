@@ -7,9 +7,9 @@ server_exception_menu <- function(input, output, session) {
             row <- global_rv$exception_data[i, ]
             id <- paste0("exception_", as.character(i))
             messageItem(
-                from = paste0(upper_first(row[["type"]]), " #", i),
+                from = HTML("<br>"),
                 message = HTML(paste0(
-                    row[["title"]], br(),
+                    "<b>", row[["title"]], "</b>", br(),
                     span(HTML("<i>click for more details</i>"),
                         class = "right-align"
                     )
@@ -38,10 +38,7 @@ server_exception_menu <- function(input, output, session) {
             observeEvent(input[[id]],
                 {
                     showModal(modalDialog(
-                        title = paste0(
-                            upper_first(global_rv$exception_data[i, "type"]),
-                            " #", i, ": ", global_rv$exception_data[i, "title"]
-                        ),
+                        title = global_rv$exception_data[i, "title"],
                         div(
                             class = "italic-text",
                             "This error occurred at ",
@@ -67,7 +64,8 @@ server_exception_menu <- function(input, output, session) {
                         div(
                             class = "italic-text right-align",
                             HTML(paste0(
-                                "Note that this error message comes from a function that is not part of this shiny package. <br>",
+                                "Note that this error message comes from a function that is not part of this shiny package.",
+                                br(),
                                 "Please refer to the adequate documentation for more information about the cause of the error."
                             ))
                         ),
@@ -77,7 +75,8 @@ server_exception_menu <- function(input, output, session) {
                     ))
                     output[[paste0("func_call_", i)]] <- renderText({
                         gsub(
-                            ",", ",\n    ",
+                            ",",
+                            ",\n    ",
                             global_rv$exception_data[i, "func_call"]
                         )
                     })
