@@ -14,9 +14,9 @@ Imports:
     shiny,
     DT,
     QFeatures,
-    shinyjs
-Depends: 
-  shinyBS
+    waiter,
+    shinydashboard,
+    shinydashboardPlus
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.0
 Suggests: 
