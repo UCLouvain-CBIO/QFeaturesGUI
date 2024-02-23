@@ -1,11 +1,25 @@
 box_read_table_server <- function(id) {
     moduleServer(id, function(input, output, session) {
-        table <- eventReactive(
+        table <- reactiveVal()
+        observe(
+            if (global_rv$example) {
+                if (id == "sample") {
+                    data("sampleAnnotation", package = "scp")
+                    table(sampleAnnotation)
+                }
+                if (id == "input") {
+                    data("mqScpData", package = "scp")
+                    table(mqScpData)
+                }
+            }
+        )
+
+        observeEvent(
             input$import_button,
             {
                 req(input$file)
                 loading("Be aware that this operation can be quite time consuming for large data sets")
-                table <- error_handler(
+                new_table <- error_handler(
                     read.table,
                     component_name = paste0("read.table ", id),
                     input$file$datapath,
@@ -18,13 +32,13 @@ box_read_table_server <- function(id) {
                     row.names = 1
                 )
                 removeModal()
-                table
+                table(new_table)
             }
         )
 
 
         output$dt_table <- renderDataTable({
-            req(input$file)
+            req(table)
             DT::datatable(table(),
                 extensions = "FixedColumns",
                 options = list(

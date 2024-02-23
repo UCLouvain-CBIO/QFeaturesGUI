@@ -4,7 +4,7 @@
 \alias{scpGUI}
 \title{A simple graphical interface to import SCP data}
 \usage{
-scpGUI()
+scpGUI(example = FALSE)
 }
 \value{
 Return the "scpGUI" shiny app object.
@@ -17,10 +17,10 @@ This process is performed with the \code{\link[scp]{readSCP}} function from the 
 \examples{
 library(scpGUI)
 
-app <- scpGUI()
+app <- scpGUI(example = TRUE)
 
 if (interactive()) {
-    shiny::runApp(app, ...)
+    shiny::runApp(app)
 }
 
 }

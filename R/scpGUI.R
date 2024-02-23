@@ -10,18 +10,19 @@
 #' @import shinydashboard
 #' @import shinydashboardPlus
 #' @importFrom SummarizedExperiment assay
-#' @importFrom scp readSCP
+#' @import scp
 #' @importFrom DT renderDataTable datatable
 #' @examples
 #' library(scpGUI)
 #'
-#' app <- scpGUI()
+#' app <- scpGUI(example = TRUE)
 #'
 #' if (interactive()) {
-#'     shiny::runApp(app, ...)
+#'     shiny::runApp(app)
 #' }
 #'
-scpGUI <- function() {
+scpGUI <- function(example = FALSE) {
+    global_rv$example <- example
     ui <- .build_ui()
     server <- .build_server()
     shinyApp(ui = ui, server = server)
