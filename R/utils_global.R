@@ -88,3 +88,18 @@ upper_first <- function(string) {
     substr(string, 1, 1) <- toupper(substr(string, 1, 1))
     return(string)
 }
+
+loading <- function(msg) {
+    showModal(modalDialog(
+        title = "Loading",
+        div(
+            class = "progress",
+            div(
+                class = "progress-bar progress-bar-striped active",
+                role = "progressbar",
+                style = "width: 100%;"
+            )
+        ),
+        HTML(paste0("<i>", msg, "</i>"))
+    ))
+}

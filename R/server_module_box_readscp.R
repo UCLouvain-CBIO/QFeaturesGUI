@@ -4,7 +4,8 @@ box_readscp_server <- function(id, input_table, sample_table) {
 
     moduleServer(id, function(input, output, session) {
         qfeatures <- eventReactive(input$convert, {
-            error_handler(
+            loading("Be aware that this operation can be quite time consuming for large data sets")
+            qfeatures <- error_handler(
                 scp::readSCP,
                 component_name = "QFeatures converting (readSCP)",
                 featureData = input_table(),
@@ -13,6 +14,8 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 channelCol = input$channel_col,
                 removeEmptyCols = input$removeEmptyCols
             )
+            removeModal()
+            qfeatures
         })
 
         observe({

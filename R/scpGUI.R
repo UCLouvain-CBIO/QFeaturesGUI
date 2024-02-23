@@ -12,7 +12,6 @@
 #' @importFrom SummarizedExperiment assay
 #' @importFrom scp readSCP
 #' @importFrom DT renderDataTable datatable
-#' @importFrom waiter autoWaiter
 #' @examples
 #' library(scpGUI)
 #'

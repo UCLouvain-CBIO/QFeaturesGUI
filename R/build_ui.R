@@ -4,7 +4,6 @@
         sidebar = sidebar(),
         body = dashboardBody(
             includeCSS("inst/www/style.css"),
-            waiter::autoWaiter(),
             tabItems(
                 tabItem(
                     tabName = "import_tab",
