@@ -1,7 +1,7 @@
-#' @title A simple graphical interface to import SCP data
+#' @title A simple graphical interface for the scp package
 #'
 #' @description scpGUI is a simple graphical interface to handle SCP data.
-#' The first page of the app allow to convert two tables (Input and Sample) to a QFeatures object.
+#' The first section (Import) of the app allow to convert two tables (Input and Sample) to a QFeatures object.
 #' This process is performed with the \code{\link[scp]{readSCP}} function from the scp package.
 #'
 #' @return Return the "scpGUI" shiny app object.

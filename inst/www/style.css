@@ -41,3 +41,12 @@
 .italic-text {
   font-style: italic;
 }
+
+.icon-container {
+      width: 1.5em;
+      height: 1.5em;
+      background-color: transparent; 
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      margin-left: 15px;
+    }
