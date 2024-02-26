@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scpGUI</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1</span>
       </span>
     </div>
 
@@ -45,10 +45,22 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="../articles/import_section.html">Import Section</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/leopoldguyot/scpGUI/" class="external-link">
+  <a href="https://github.com/UCLouvain-CBIO/scpGUI/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -70,8 +82,9 @@
                         <h4 data-toc-skip class="author">Léopold
 Guyot</h4>
                         
+            <h4 data-toc-skip class="date">26 February 2024</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/leopoldguyot/scpGUI/blob/HEAD/vignettes/scpGUI.Rmd" class="external-link"><code>vignettes/scpGUI.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scpGUI/blob/HEAD/vignettes/scpGUI.Rmd" class="external-link"><code>vignettes/scpGUI.Rmd</code></a></small>
       <div class="hidden name"><code>scpGUI.Rmd</code></div>
 
     </div>
@@ -79,117 +92,139 @@ Guyot</h4>
     
     
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="scpgui">scpGUI<a class="anchor" aria-label="anchor" href="#scpgui"></a>
 </h2>
+<p><code>scpGUI</code> is a shiny application that serves as a graphical
+interface for the <a href="https://bioconductor.org/packages/release/bioc/html/scp.html" class="external-link"><code>scp</code>
+package</a> (<span class="citation">Vanderaa and Gatto (2021)</span>).
+It leverages the power of Shiny and ShinydashboardPlus to provide a
+user-friendly interface for SCP data analysis. The app is organized into
+multiple sections, each dedicated to a specific aspect of SCP data
+processing. These sections are documented in separate vignettes to make
+it easy for users to navigate and find information relevant to their
+needs.</p>
+</div>
+<div class="section level2">
+<h2 id="the-scp-package">The <code>scp</code> Package<a class="anchor" aria-label="anchor" href="#the-scp-package"></a>
+</h2>
+<p><code>scpGUI</code> is a graphical interface for the <a href="https://bioconductor.org/packages/release/bioc/html/scp.html" class="external-link"><code>scp</code>
+package</a> it is therefore recommended to understand how
+<code>scp</code> will handle the SCP data. In this short section, the
+general idea behind <code>scp</code> is presented refer to the <a href="https://uclouvain-cbio.github.io/scp/index.html" class="external-link">documentation</a>
+of the package for more information.</p>
+<p>The <a href="https://bioconductor.org/packages/release/bioc/html/scp.html" class="external-link"><code>scp</code>
+package</a> is a robust tool for processing and analyzing MS-based SCP
+data. It operates on a specialized data structure that wraps <a href="https://rformassspectrometry.github.io/QFeatures/" class="external-link"><code>QFeatures</code></a>
+objects (<span class="citation">Gatto (2020)</span>) around <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html" class="external-link"><code>SingleCellExperiment</code></a>
+objects (<span class="citation">Amezquita et al. (2020)</span>). This
+unique data structure can be conceptualized as Matryoshka dolls, where
+SingleCellExperiment objects are the small dolls contained within the
+larger QFeatures doll.</p>
+<p>The <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html" class="external-link"><code>SingleCellExperiment</code></a>
+class provides a dedicated framework for single-cell data, acting as an
+interface to cutting-edge methods for processing, visualizing, and
+analyzing single-cell data. The <a href="https://rformassspectrometry.github.io/QFeatures/" class="external-link"><code>QFeatures</code></a>
+class, on the other hand, is a data framework specifically designed to
+manipulate and process MS-based quantitative data. It preserves the
+relationship between different levels of information, such as peptide to
+spectrum match (PSM) data, peptide data, and protein data. Additionally,
+the QFeatures package offers an interface to various utility functions
+that streamline the processing of MS data. For further details on MS
+data analysis tools, refer to the <a href="https://www.rformassspectrometry.org/" class="external-link">RforMassSpectrometry
+project</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="before-you-start">Before You Start<a class="anchor" aria-label="anchor" href="#before-you-start"></a>
+</h2>
+<p>Before diving into the SCP data analysis using <code>scpGUI</code>,
+it’s essential to note that this app serves as an interface to the
+<code>scp</code> package. When errors occur during the analysis,
+<code>scpGUI</code> will simply report the error message. In such cases,
+users are encouraged to refer to the documentation of the associated
+function within the <code>scp</code> package to identify and resolve the
+issue. The error messages provide valuable clues, and searching the
+<code>scp</code> package documentation will help users troubleshoot
+effectively.</p>
+</div>
+<div class="section level2">
+<h2 id="installation-and-launch">Installation and Launch<a class="anchor" aria-label="anchor" href="#installation-and-launch"></a>
+</h2>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check if remotes is installed. Otherwise install it.</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span><span class="co"># Install the package</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"leopoldguyot/scpGUI"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"UCLouvain-CBIO/scpGUI"</span><span class="op">)</span></span>
 <span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://uclouvain-cbio.github.io/scpGUI/" class="external-link">scpGUI</a></span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="application-launch">Application launch<a class="anchor" aria-label="anchor" href="#application-launch"></a>
-</h2>
+<div class="section level3">
+<h3 id="application-launch">Application launch<a class="anchor" aria-label="anchor" href="#application-launch"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/scpGUIImport.html">scpGUIImport</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scpGUI.html">scpGUI</a></span><span class="op">(</span>example <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
-<h2 id="create-a-qfeatures-object">Create a QFeatures object<a class="anchor" aria-label="anchor" href="#create-a-qfeatures-object"></a>
+<h2 id="app-sections">App sections<a class="anchor" aria-label="anchor" href="#app-sections"></a>
 </h2>
-<p>Once the application has been launched, the window will look like
-this:</p>
-<p><img src="screenshots/Screenshot%20from%202023-09-24%2016-00-02.png" width="700"></p>
-<p>For this demonstration, the data from the scp package will be used.
-The following code allows to retrieve the needed data sets.</p>
+<p>When launching <code>scpGUI</code>, the user can see section of the
+app on the right sidebar. Each section will serve one step of the
+workflow. Each section is documented in its own vignette:</p>
+<ul>
+<li><a href="https://uclouvain-cbio.github.io/scpGUI/articles/import_section.html" class="external-link">Import
+Section</a></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sampleAnnotation"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">mqScpData</span>, file <span class="op">=</span> <span class="st">"mqScpData.csv"</span><span class="op">)</span> <span class="co"># Corresponds to the Input Table</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">sampleAnnotation</span>, file <span class="op">=</span> <span class="st">"sampleAnnotation.csv"</span><span class="op">)</span> <span class="co"># Corresponds to the Sample Table</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="table-imports">Table imports<a class="anchor" aria-label="anchor" href="#table-imports"></a>
-</h3>
-<p>The first step to create a QFeatures object is to provide two
-tables:</p>
-<ul>
-<li><p>An Input Table: The input table is generated after the
-identification and quantification of the MS spectra by a pre-processing
-software such as MaxQuant, ProteomeDiscoverer or MSFragger .</p></li>
-<li><p>A Sample Table: The sample table contains the experimental design
-generated by the researcher. The rows of the sample table correspond to
-a sample in the experiment and the columns correspond to the available
-annotations about the sample.</p></li>
-</ul>
-<p>More information about these tables can be found in the documentation
-of the function readSCP() from the scp package.</p>
-<p>To provide a table, press the <code>Browse…</code> button then choose
-the appropriate <code>.csv</code> or <code>.tsv</code> file on your
-computer. Once the file has been selectioned, the path to it is visible
-next to the <code>Browse…</code> button.</p>
-<p>When pressing the <code>Import settings</code> button, a new window
-will appear. Choose the appropriate options to import your file (see
-read.table() documentation for more information):</p>
-<ul>
-<li><p><code>separator character</code> (default = “,”)</p></li>
-<li><p><code>decimal character</code> (default = “.”)</p></li>
-<li><p><code>comment character</code> (default = “#”)</p></li>
-<li><p><code>number of lines to skip before reading the file</code>
-(default = 0)</p></li>
-<li><p><code>strings as factor</code> (default = FALSE)</p></li>
-</ul>
-<p>Once all these options are selected for your file, click on the
-<code>Import</code> button and close the window. Your table is now
-visible on the interface, make sure it is well formatted before
-continuing.</p>
-<p>The process to import both tables is identical.</p>
-<p><img src="screenshots/csvimport.gif" width="700"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"scpGUI"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; To cite package 'scpGUI' in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Guyot L (2024). _scpGUI: A graphical interface for the scp package._.</span></span>
+<span><span class="co">#&gt;   R package version 0.1, https://github.com/UCLouvain-CBIO/scpGUI,</span></span>
+<span><span class="co">#&gt;   &lt;https://uclouvain-cbio.github.io/scpGUI/&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Manual{,</span></span>
+<span><span class="co">#&gt;     title = {scpGUI: A graphical interface for the scp package.},</span></span>
+<span><span class="co">#&gt;     author = {Léopold Guyot},</span></span>
+<span><span class="co">#&gt;     year = {2024},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.1, </span></span>
+<span><span class="co">#&gt; https://github.com/UCLouvain-CBIO/scpGUI},</span></span>
+<span><span class="co">#&gt;     url = {https://uclouvain-cbio.github.io/scpGUI/},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="qfeatures-conversion">QFeatures conversion<a class="anchor" aria-label="anchor" href="#qfeatures-conversion"></a>
-</h3>
-<p>The QFeatures converter tool is available on the right side of the
-application. The first step to perform a QFeatures conversion is to
-define the columns that will be used to create the links between the two
-tables:</p>
-<ul>
-<li><p><code>batch column</code>: The column of the Input table and the
-Sample table that contains the batch names.</p></li>
-<li><p><code>channel column</code>: The column of the Sample table that
-contains the column names of the quantitative data in the Input
-table</p></li>
-</ul>
-<p>If the Sample table has correctly been imported, the column names
-will be available in the drop-down list. Select for each drop-down list
-the appropriate column. An option to remove in each batch the columns
-that contains only missing values is also available using a
-checkbox.</p>
-<p>Once everything is correctly setup, press the
-<code>Convert to a QFeatures object</code> button, a loading menu will
-appear. If an error occurred during the conversion, an error message
-will pop up below the Convert button, refer to the readSCP() function to
-find the origin of the error. If everything went well, a notification
-will appear with a “conversion succeed” message.</p>
-<p><img src="screenshots/convert.gif" width="700"></p>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Amezquita2019-bf" class="csl-entry">
+Amezquita, Robert A, Aaron T L Lun, Etienne Becht, Vince J Carey,
+Lindsay N Carpp, Ludwig Geistlinger, Federico Marini, et al. 2020.
+<span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span>
+<em>Nat. Methods</em> 17 (2): 137–45.
 </div>
-<div class="section level3">
-<h3 id="qfeatures-object-export">QFeatures object export<a class="anchor" aria-label="anchor" href="#qfeatures-object-export"></a>
-</h3>
-<p>A QFeatures Preview panel is now available below the QFeatures
-converter tool. Check with this preview if the conversion went fine. By
-clicking on a row (corresponding to an assay), the selected assay will
-appear below, once again check if everything looks as expected.</p>
-<p>Once everything looks fine, click on the <code>Download</code>
-button, this will download a <code>.rds</code> file containing the
-QFeatures object on your computer. Choose the destination folder, the
-name of the file and click on save. Your QFeatures object is now
-available on your computer, it can be used in combination with the scp
-package to continue the data processing.</p>
-<p><img src="screenshots/download.gif" width="700"></p>
+<div id="ref-Gatto2020-ry" class="csl-entry">
+Gatto, Laurent. 2020. <span>“<span>QFeatures</span>: Quantitative
+Features for Mass Spectrometry Data.”</span>
+</div>
+<div id="ref-scpVanderaa" class="csl-entry">
+Vanderaa, Christophe, and Laurent Gatto. 2021. <span>“Replication of
+Single-Cell Proteomics Data Reveals Important Computational
+Challenges.”</span> <em>Expert Review of Proteomics</em>, 1–9.
+</div>
 </div>
 </div>
   </div>
