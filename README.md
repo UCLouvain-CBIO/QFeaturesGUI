@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
 # scpGUI
 
 `scpGUI` is a graphical interface for the scp package.
@@ -21,5 +25,3 @@ remotes::install_github("UCLouvain-CBIO/scpGUI",
 # Load the package
 library(scpGUI)
 ```
-
-
