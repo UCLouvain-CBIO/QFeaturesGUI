@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 # Create a QFeatures object
 
-![A view of the import section. Divided into three different boxes; Input Table, Sample Table and QFeatures Converter](screenshots/import_section_edited.jpg)
+![A view of the import section. Divided into three different boxes; Input Table, Sample Table and QFeatures Converter](screenshots/import_section.jpg)
 
 ## Table imports
 

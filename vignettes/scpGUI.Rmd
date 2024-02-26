@@ -41,7 +41,7 @@ The [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/) class, on t
 
 # Before You Start
 
-Before diving into the SCP data analysis using `scpGUI`, it's essential to note that this app serves as an interface to the `scp` package. When errors occur during the analysis, `scpGUI` will simply report the error message. In such cases, users are encouraged to refer to the documentation of the associated function within the `scp` package to identify and resolve the issue. The error messages provide valuable clues, and searching the `scp` package documentation will help users troubleshoot effectively.
+Before diving into the SCP data analysis using `scpGUI`, it's essential to note that this app serves as an interface to the `scp` package. When errors occur during the analysis, `scpGUI` will report the error message in a dropdown menu at the top right of the screen. In such cases, users are encouraged to refer to the documentation of the associated function within the `scp` package to identify and resolve the issue. The error messages provide valuable clues, and searching the `scp` package documentation will help users troubleshoot effectively.
 
 # Installation and Launch
 ## Installation

@@ -12,9 +12,12 @@ Get the package:
 # Check if remotes is installed. Otherwise install it.
 if (!require("remotes", quietly = TRUE)){
     install.packages("remotes")
-  }
+}
 # Install the package
-remotes::install_github("leopoldguyot/scpGUI")
+remotes::install_github("UCLouvain-CBIO/scpGUI",
+    build_manual = TRUE,
+    build_vignettes = TRUE
+)
 # Load the package
 library(scpGUI)
 ```
