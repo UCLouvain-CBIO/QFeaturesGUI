@@ -2,7 +2,16 @@
 title: "Import Section"
 author:
     - name: Léopold Guyot
-output: rmarkdown::html_vignette
+output:
+    BiocStyle::html_document:
+        self_contained: yes
+        toc: true
+        toc_float: true
+        toc_depth: 2
+        code_folding: show
+bibliography: scpGUI.bib
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('scpGUI')`"
 vignette: >
   %\VignetteIndexEntry{Import Section}
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,7 +21,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
-    comment = "#>"
+    comment = "#>",
+    crop = NULL
 )
 ```
 
@@ -65,6 +75,6 @@ Once everything is correctly setup, press the `Convert to a QFeatures object` bu
 
 A QFeatures Preview panel is now visible in the Preview QFeatures box (green box). Check with this preview if the conversion process went fine. By clicking on a row (corresponding to an assay), the selected assay will appear below, once again check if everything looks as expected.
 
-Once everything looks fine, you can continue the analysis using scpGUI (the QFeatures object will be available for the other sections of the app) or download the QFeatures to use it with R. 
+Once everything looks fine, you can continue the analysis using scpGUI (the QFeatures object will be available for the other sections of the app) or download the QFeatures to use it with R.
 
 To download click on the `Download` button, this will download a `.rds` file containing the QFeatures object on your computer. Choose the destination folder, the name of the file and click on save. Your QFeatures object is now available on your computer, it can be used in combination with the scp package to continue the data processing.
