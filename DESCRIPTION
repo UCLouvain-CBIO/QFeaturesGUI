@@ -17,7 +17,8 @@ Imports:
     DT,
     QFeatures,
     shinydashboard,
-    shinydashboardPlus
+    shinydashboardPlus,
+    SummarizedExperiment
 Suggests: 
     knitr,
     rmarkdown,
