@@ -3,7 +3,7 @@
         header = header(),
         sidebar = sidebar(),
         body = dashboardBody(
-            includeCSS("inst/www/style.css"),
+            includeCSS(system.file(package="scpGUI", "www", "style.css")),
             tabItems(
                 tabItem(
                     tabName = "import_tab",

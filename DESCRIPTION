@@ -9,7 +9,7 @@ Description: scpGUI is a graphical interface for the scp package.
   This process is performed with the readSCP function from the scp package.
 URL: https://uclouvain-cbio.github.io/scpGUI/, https://github.com/UCLouvain-CBIO/scpGUI
 BugReports: https://github.com/UCLouvain-CBIO/scpGUI/issues
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
     scp,
@@ -18,11 +18,12 @@ Imports:
     QFeatures,
     shinydashboard,
     shinydashboardPlus,
-    SummarizedExperiment
+    SummarizedExperiment,
+    utils
 Suggests: 
     knitr,
     rmarkdown,
     BiocStyle
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 VignetteBuilder: knitr

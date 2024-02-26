@@ -6,6 +6,7 @@
 #' \item The first section (Import) of the app allow to convert two tables (Input and Sample) to a QFeatures object.
 #' This process is performed with the \code{\link[scp]{readSCP}} function from the scp package.
 #' }
+#' @param example A logical value indicating if the app should be launched with an example dataset.
 #' @return Return the "scpGUI" shiny app object.
 #' @export
 #' @import shiny
@@ -13,7 +14,9 @@
 #' @import shinydashboardPlus
 #' @importFrom SummarizedExperiment assay
 #' @import scp
+#' @import QFeatures
 #' @importFrom DT renderDataTable datatable
+#' @importFrom utils data read.table
 #' @examples
 #' library(scpGUI)
 #'

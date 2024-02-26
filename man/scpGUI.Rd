@@ -6,6 +6,9 @@
 \usage{
 scpGUI(example = FALSE)
 }
+\arguments{
+\item{example}{A logical value indicating if the app should be launched with an example dataset.}
+}
 \value{
 Return the "scpGUI" shiny app object.
 }
