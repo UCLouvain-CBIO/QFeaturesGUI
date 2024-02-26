@@ -18,11 +18,10 @@ Imports:
     QFeatures,
     shinydashboard,
     shinydashboardPlus
-
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.0
 Suggests: 
     knitr,
     rmarkdown,
     BiocStyle
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.0
 VignetteBuilder: knitr
