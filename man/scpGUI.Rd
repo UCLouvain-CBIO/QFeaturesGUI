@@ -10,9 +10,12 @@ scpGUI(example = FALSE)
 Return the "scpGUI" shiny app object.
 }
 \description{
-scpGUI is a simple graphical interface to handle SCP data.
-The first section (Import) of the app allow to convert two tables (Input and Sample) to a QFeatures object.
+scpGUI is a simple graphical interface to handle SCP data powered by the scp package.
+The app is divided into mutliple sections that represent the different steps of a typical SCP analysis.
+\itemize{
+\item The first section (Import) of the app allow to convert two tables (Input and Sample) to a QFeatures object.
 This process is performed with the \code{\link[scp]{readSCP}} function from the scp package.
+}
 }
 \examples{
 library(scpGUI)
