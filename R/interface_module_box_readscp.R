@@ -31,6 +31,10 @@ box_readscp_ui <- function(id) {
                 actionButton(
                     inputId = NS(id, "convert"),
                     "Convert to a QFeatures object"
+                ),
+                downloadButton(
+                    outputId = NS(id, "download_qfeatures"),
+                    "Download"
                 )
             ),
             box(

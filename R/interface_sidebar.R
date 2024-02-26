@@ -4,7 +4,7 @@ sidebar <- function() {
             menuItem(
                 "Import",
                 tabName = "import_tab",
-                icon = shiny::icon("1") #, class = "icon-container")
+                icon = shiny::icon("1") # , class = "icon-container")
             ),
             menuItem(
                 "Quality Control",

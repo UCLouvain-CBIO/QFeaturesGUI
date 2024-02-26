@@ -37,7 +37,14 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 qfeatures()
             )
         })
-
+        output$download_qfeatures <- downloadHandler(
+            filename = function() {
+                "scp_qfeature_object.rds"
+            },
+            content = function(file) {
+                saveRDS(qfeatures(), file)
+            }
+        )
         output$qfeatures_dt <- renderDataTable({
             DT::datatable(qfeatures_df(),
                 extensions = "FixedColumns",
