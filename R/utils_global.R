@@ -4,7 +4,7 @@
 #' @param component_name `str` name of the component (will be reported in the exception message)
 #' @param ... arguments to be passed to the function
 #'
-#' @return NULL
+#' @return Does not return anything but will create a notification and add the exception to the global exception data
 #' @rdname INTERNAL_error_handler
 #' @keywords internal
 #'
@@ -91,7 +91,7 @@ error_handler <- function(func, component_name, ...) {
 #' @param full_message `str` full message of the exception
 #' @param time `POSIXct` time of the exception
 #'
-#' @return NULL
+#' @return does not return anything but adds an exception to the global exception data
 #' @rdname INTERNAL_add_exception
 #' @keywords internal
 #'
@@ -126,7 +126,7 @@ upper_first <- function(string) {
 #'
 #' @param msg `str` message to display in the loading modal
 #'
-#' @return NULL
+#' @return does not return anything but will display a loading modal
 #' @rdname INTERNAL_loading
 #' @keywords internal
 #'

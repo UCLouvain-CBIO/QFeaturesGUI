@@ -1,4 +1,4 @@
-#' The server logic behind the ecxeption dropdown menu
+#' The server logic behind the exception dropdown menu
 #'
 #' @param input input parameter that should be given by
 #'  the higher level server builder
@@ -7,7 +7,7 @@
 #' @param session session parameter that should be given by
 #'  the higher level server builder
 #'
-#' @return NULL
+#' @return The server logic behind the exception dropdown menu
 #' @rdname INTERNAL_server_exception_menu
 #' @keywords internal
 #'

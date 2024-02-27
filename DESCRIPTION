@@ -1,12 +1,13 @@
 Package: scpGUI
 Title: A graphical interface for the scp package.
-Version: 0.1
+Version: 0.1.1
 Date: 2024-02-23
 Authors@R: 
-    person("Léopold", "Guyot", , "leopold.guyot@ulb.be", role = c("aut", "cre"))
+    person(given = "Léopold", family = "Guyot", email = "leopold.guyot@ulb.be", role = c("aut", "cre"))
 Description: scpGUI is a graphical interface for the scp package.
   Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object.
   This process is performed with the readSCP function from the scp package.
+biocViews: Software, ShinyApps, GUI, SingleCell, Proteomics
 URL: https://uclouvain-cbio.github.io/scpGUI/, https://github.com/UCLouvain-CBIO/scpGUI
 BugReports: https://github.com/UCLouvain-CBIO/scpGUI/issues
 License: MIT + file LICENSE
@@ -15,7 +16,6 @@ Imports:
     scp,
     shiny,
     DT,
-    QFeatures,
     shinydashboard,
     shinydashboardPlus,
     SummarizedExperiment,
