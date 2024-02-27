@@ -1,5 +1,9 @@
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
+[![R-CMD-check-bioc](https://github.com/UCLouvain-CBIO/scpGUI/workflows/check-bioc.yml/badge.svg)](https://github.com/UCLouvain-CBIO/scpGUI/actions/workflows/check-bioc.yml)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
 # scpGUI
