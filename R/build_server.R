@@ -1,4 +1,10 @@
-.build_server <- function() {
+#' Server Builder
+#'
+#' @return return the server function for the scpGUI app.
+#' @rdname INTERNAL_build_server
+#' @keywords internal
+#'
+build_server <- function() {
     server <- function(input, output, session) {
         global_rv$exception_data <- data.frame(
             title = character(),

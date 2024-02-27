@@ -1,3 +1,11 @@
+#' Will convert a qfeatures object to a summary data.frame object
+#'
+#' @param qfeatures a qfeatures object
+#'
+#' @return a data.frame object
+#' @rdname INTERNAL_qfeatures_to_df
+#' @keywords internal
+#'
 qfeatures_to_df <- function(qfeatures) {
     df <- data.frame(
         "Name" = rep.int(0, length(qfeatures)),

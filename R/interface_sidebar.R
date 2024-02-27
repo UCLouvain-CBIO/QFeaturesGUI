@@ -1,3 +1,13 @@
+#' sidebar builder for the scpGUI app
+#'
+#' @return return a dashboardSidebar object that contains the sidebar menu
+#' that contains the tabNames
+#' @rdname INTERNAL_interface_sidebar
+#' @keywords internal
+#'
+#' @importFrom shiny icon
+#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem
+#'
 sidebar <- function() {
     dashboardSidebar(
         sidebarMenu(

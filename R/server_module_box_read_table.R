@@ -1,3 +1,13 @@
+#' A server module that contains the server logic to the read_table box module
+#'
+#' @param id module id
+#'
+#' @return the table reactiveVal that contains a dataframe
+#' @rdname INTERNAL_box_read_table_server
+#' @keywords internal
+#'
+#' @importFrom shiny moduleServer observe observeEvent reactiveVal req
+#' @importFrom utils data
 box_read_table_server <- function(id) {
     moduleServer(id, function(input, output, session) {
         table <- reactiveVal()

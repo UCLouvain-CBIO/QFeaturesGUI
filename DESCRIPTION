@@ -19,7 +19,8 @@ Imports:
     shinydashboard,
     shinydashboardPlus,
     SummarizedExperiment,
-    utils
+    utils,
+    htmltools
 Suggests: 
     knitr,
     rmarkdown,

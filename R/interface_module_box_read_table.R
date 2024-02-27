@@ -1,3 +1,15 @@
+#' A UI module that return a box that contains the UI components to read a table
+#'
+#' @param id module id
+#'
+#' @return A shiny box object that contains the UI components to read a table
+#' @rdname INTERNAL_box_read_table_ui
+#' @keywords internal
+#'
+#' @importFrom shiny tagList fileInput fluidRow NS textInput numericInput checkboxInput actionButton
+#' @importFrom shinydashboardPlus box
+#' @importFrom DT dataTableOutput
+#'
 box_read_table_ui <- function(id) {
     tagList(
         box(

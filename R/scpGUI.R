@@ -9,14 +9,8 @@
 #' @param example A logical value indicating if the app should be launched with an example dataset.
 #' @return Return the "scpGUI" shiny app object.
 #' @export
-#' @import shiny
-#' @import shinydashboard
-#' @import shinydashboardPlus
-#' @importFrom SummarizedExperiment assay
-#' @import scp
-#' @import QFeatures
-#' @importFrom DT renderDataTable datatable
-#' @importFrom utils data read.table
+#' @importFrom shiny shinyApp runApp
+#'
 #' @examples
 #' library(scpGUI)
 #'
@@ -28,7 +22,7 @@
 #'
 scpGUI <- function(example = FALSE) {
     global_rv$example <- example
-    ui <- .build_ui()
-    server <- .build_server()
+    ui <- build_ui()
+    server <- build_server()
     shinyApp(ui = ui, server = server)
 }

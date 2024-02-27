@@ -1,3 +1,19 @@
+#' The server logic behind the ecxeption dropdown menu
+#'
+#' @param input input parameter that should be given by
+#'  the higher level server builder
+#' @param output output parameter that should be given by
+#'  the higher level server builder
+#' @param session session parameter that should be given by
+#'  the higher level server builder
+#'
+#' @return NULL
+#' @rdname INTERNAL_server_exception_menu
+#' @keywords internal
+#'
+#' @importFrom shiny reactive observe observeEvent showModal modalDialog modalButton verbatimTextOutput renderText
+#' @importFrom shinydashboard dropdownMenu renderMenu
+#' @importFrom htmltools div h3 HTML span br
 server_exception_menu <- function(input, output, session) {
     msgs <- reactive({
         if (nrow(global_rv$exception_data) == 0) {

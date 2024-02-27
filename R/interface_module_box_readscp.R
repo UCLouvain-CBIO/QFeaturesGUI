@@ -1,3 +1,16 @@
+#' A UI module that return a box that contains the UI components
+#'  to create an preview a QFeatures object
+#'
+#' @param id module id
+#'
+#' @return A shinydashboardPlus box object that contains the UI components to create an preview a QFeatures object
+#' @rdname INTERNAL_box_readscp_ui
+#' @keywords internal
+#'
+#' @importFrom shiny tagList selectInput checkboxInput actionButton downloadButton NS
+#' @importFrom shinydashboardPlus box
+#' @importFrom DT dataTableOutput
+#'
 box_readscp_ui <- function(id) {
     tagList(
         box(

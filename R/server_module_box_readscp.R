@@ -1,3 +1,18 @@
+#' A server module that contains the server logic to the readscp box module
+#'
+#' @param id module id
+#' @param input_table a reactiveVal containing the input table
+#' @param sample_table a reactiveVal containing the sample table
+#'
+#' @return A QFeatures object
+#' @rdname INTERNAL_box_readscp_server
+#' @keywords internal
+#'
+#' @importFrom shiny is.reactive reactive moduleServer observe eventReactive updateSelectInput removeModal downloadHandler
+#' @importFrom DT renderDataTable datatable
+#' @importFrom scp readSCP
+#' @importFrom SummarizedExperiment assay
+#'
 box_readscp_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
     stopifnot(is.reactive(sample_table))
@@ -45,7 +60,7 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 saveRDS(qfeatures(), file)
             }
         )
-        output$qfeatures_dt <- renderDataTable({
+        output$qfeatures_dt <- DT::renderDataTable({
             DT::datatable(qfeatures_df(),
                 extensions = "FixedColumns",
                 selection = "single",
