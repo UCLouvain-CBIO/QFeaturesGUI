@@ -10,7 +10,7 @@
 Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object.
 This process is performed with the readSCP function from the scp package.
 
-## Installation 
+## Installation
 
 Get the package:
 

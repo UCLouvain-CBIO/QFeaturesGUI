@@ -12,6 +12,7 @@
 #' @importFrom DT renderDataTable datatable
 #' @importFrom scp readSCP
 #' @importFrom SummarizedExperiment assay
+#' @importFrom utils saveRDS
 #'
 box_readscp_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))

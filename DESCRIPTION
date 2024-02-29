@@ -1,5 +1,5 @@
 Package: scpGUI
-Title: A graphical interface for the scp package.
+Title: A graphical interface for the scp package
 Version: 0.1.1
 Date: 2024-02-23
 Authors@R: 

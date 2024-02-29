@@ -7,7 +7,7 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer observe observeEvent reactiveVal req
-#' @importFrom utils data
+#' @importFrom utils data read.table
 box_read_table_server <- function(id) {
     moduleServer(id, function(input, output, session) {
         table <- reactiveVal()
