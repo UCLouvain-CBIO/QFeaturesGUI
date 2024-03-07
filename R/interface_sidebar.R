@@ -6,7 +6,7 @@
 #' @keywords internal
 #'
 #' @importFrom shiny icon
-#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem
+#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem menuSubItem
 #'
 sidebar <- function() {
     dashboardSidebar(
@@ -18,8 +18,29 @@ sidebar <- function() {
             ),
             menuItem(
                 "Quality Control",
-                tabName = "qc_tab",
-                icon = shiny::icon("2")
+                icon = shiny::icon("2"),
+                startExpanded = FALSE,
+                menuSubItem(
+                    "PSM Filtering",
+                    tabName = "psm_filtering_tab"
+                ),
+                menuSubItem(
+                    "Cells Filtering",
+                    tabName = "cell_filtering_tab"
+                )
+            ),
+            menuItem(
+                "NA report",
+                icon = shiny::icon("3"),
+                startExpanded = FALSE,
+                menuSubItem(
+                    "PSM NA report",
+                    tabName = "psm_na_report_tab"
+                ),
+                menuSubItem(
+                    "Peptides NA report",
+                    tabName = "peptides_na_report_tab"
+                )
             )
         )
     )

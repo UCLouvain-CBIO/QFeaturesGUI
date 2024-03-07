@@ -13,7 +13,6 @@
 #' @importFrom scp readSCP
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom SummarizedExperiment assay
-#' @importFrom utils saveRDS
 #'
 box_readscp_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))

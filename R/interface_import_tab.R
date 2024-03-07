@@ -1,11 +1,11 @@
-#' import page (section) ui builder
+#' import tab (section) ui builder
 #'
 #' @return A shiny fluidRow object that contains the import page UI components (3 boxes)
-#' @rdname INTERNAL_interface_import_page
+#' @rdname INTERNAL_interface_import_tab
 #' @keywords internal
 #'
 #' @importFrom shiny fluidRow column
-import_page <- function() {
+import_tab <- function() {
     fluidRow(
         column(
             width = 6,

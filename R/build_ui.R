@@ -17,11 +17,23 @@ build_ui <- function() {
             tabItems(
                 tabItem(
                     tabName = "import_tab",
-                    import_page()
+                    import_tab()
                 ),
                 tabItem(
-                    tabName = "qc_tab",
-                    qc_page()
+                    tabName = "psm_filtering_tab",
+                    psm_filtering_tab()
+                ),
+                tabItem(
+                    tabName = "cell_filtering_tab",
+                    "WIP"
+                ),
+                tabItem(
+                    tabName = "psm_na_report_tab",
+                    "WIP"
+                ),
+                tabItem(
+                    tabName = "peptides_na_report_tab",
+                    "WIP"
                 )
             )
         ),

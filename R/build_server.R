@@ -15,7 +15,7 @@ build_server <- function() {
             time = as.POSIXct(character())
         )
         server_exception_menu(input, output, session)
-        server_import_page(input, output, session)
+        server_import_tab(input, output, session)
     }
 
     server
