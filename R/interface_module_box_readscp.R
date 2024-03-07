@@ -41,6 +41,11 @@ box_readscp_ui <- function(id) {
                     label = "Remove columns that contain only missing values",
                     value = FALSE
                 ),
+                checkboxInput(
+                    inputId = NS(id, "zero_as_NA"),
+                    label = "Convert zeros to NA",
+                    value = TRUE
+                ),
                 actionButton(
                     inputId = NS(id, "convert"),
                     "Convert to a QFeatures object"

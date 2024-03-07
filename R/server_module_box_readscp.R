@@ -11,6 +11,7 @@
 #' @importFrom shiny is.reactive reactive moduleServer observe eventReactive updateSelectInput removeModal downloadHandler
 #' @importFrom DT renderDataTable datatable
 #' @importFrom scp readSCP
+#' @importFrom QFeatures zeroIsNA
 #' @importFrom SummarizedExperiment assay
 #' @importFrom utils saveRDS
 #'
@@ -30,6 +31,14 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 channelCol = input$channel_col,
                 removeEmptyCols = input$removeEmptyCols
             )
+            if (input$zero_as_NA) {
+                qfeatures <- error_handler(
+                    QFeatures::zeroIsNA,
+                    component_name = "QFeatures converting (zero_as_NA)",
+                    object = qfeatures,
+                    i = seq_along(qfeatures)
+                )
+            }
             removeModal()
             qfeatures
         })
