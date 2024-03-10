@@ -1,4 +1,4 @@
-#' psm quality control tab (section) ui builder
+#' features quality control tab (section) ui builder
 #'
 #' @return A shiny fluidRow object that contains the psm quality control tab UI components
 #' @rdname INTERNAL_interface_psm_filtering_tab
@@ -8,7 +8,7 @@
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList h2
 #'
-psm_filtering_tab <- function() {
+features_filtering_tab <- function() {
     tagList(
         fluidRow(
             box(
@@ -17,7 +17,7 @@ psm_filtering_tab <- function() {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics()
+                interface_module_qc_metrics("psm_pre")
             )
         ),
         fluidRow(
@@ -53,37 +53,8 @@ psm_filtering_tab <- function() {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics()
+                interface_module_qc_metrics("psm_filtered")
             )
-        )
-    )
-}
-
-interface_module_qc_metrics <- function() {
-    fluidRow(
-        box(
-            title = "SCR",
-            status = "primary",
-            width = 4,
-            solidHeader = FALSE,
-            collapsible = TRUE,
-            "WIP"
-        ),
-        box(
-            title = "PCA",
-            status = "primary",
-            width = 4,
-            solidHeader = FALSE,
-            collapsible = TRUE,
-            "WIP"
-        ),
-        box(
-            title = "Feature Annotations",
-            status = "primary",
-            width = 4,
-            solidHeader = FALSE,
-            collapsible = TRUE,
-            "WIP"
         )
     )
 }

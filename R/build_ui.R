@@ -20,8 +20,8 @@ build_ui <- function() {
                     import_tab()
                 ),
                 tabItem(
-                    tabName = "psm_filtering_tab",
-                    psm_filtering_tab()
+                    tabName = "features_filtering_tab",
+                    features_filtering_tab()
                 ),
                 tabItem(
                     tabName = "cell_filtering_tab",

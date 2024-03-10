@@ -22,7 +22,7 @@ sidebar <- function() {
                 startExpanded = FALSE,
                 menuSubItem(
                     "PSM Filtering",
-                    tabName = "psm_filtering_tab"
+                    tabName = "features_filtering_tab"
                 ),
                 menuSubItem(
                     "Cells Filtering",
