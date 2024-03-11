@@ -147,3 +147,41 @@ loading <- function(msg) {
         HTML(paste0("<i>", msg, "</i>"))
     ))
 }
+
+#' A function that remove the "(scpGUI#x)" suffix from a string
+#' @param string `str` string to remove the suffix from
+#' @return `str` the string without the suffix
+#' @rdname INTERNAL_remove_scpGUI
+#' @keywords internal
+#'
+#'
+remove_scpGUI <- function(string) {
+    return(gsub("\\_(scpGUI#[0-9]+\\)", "", string))
+}
+
+#' PCA Methods Wrapper
+#'
+#' This function performs Principal Component Analysis (PCA) on a SingleCellExperiment object using the specified method.
+#'
+#' @param sce A SingleCellExperiment object. The PCA is performed on the assay of this object.
+#' @param method A character string specifying the PCA method to use. This should be one of the methods supported by the pcaMethods package.
+#'
+#' @return A pcaRes object resulting from the PCA.
+#' @rdname INTERNAL_pcaMethods_wraper
+#' @keywords internal
+#'
+#' @importFrom pcaMethods pca
+#' @importFrom SummarizedExperiment assay
+#'
+pcaMethods_wraper <- function(sce, method, transpose = FALSE) {
+    mat <- assay(sce)
+    mat <- mat[rowSums(is.na(mat)) != ncol(mat), ]
+    mat <- mat[, colSums(is.na(mat)) < nrow(mat)]
+    if (transpose) {
+        mat <- t(mat)
+    }
+    pca <- pcaMethods::pca(mat,
+        method = method
+    )
+    pca
+}

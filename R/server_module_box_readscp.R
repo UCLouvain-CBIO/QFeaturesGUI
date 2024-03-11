@@ -19,9 +19,9 @@ box_readscp_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(sample_table))
 
     moduleServer(id, function(input, output, session) {
-        qfeatures <- eventReactive(input$convert, {
+        observeEvent(input$convert, {
             loading("Be aware that this operation can be quite time consuming for large data sets")
-            qfeatures <- error_handler(
+            global_rv$qfeatures <- error_handler(
                 scp::readSCP,
                 component_name = "QFeatures converting (readSCP)",
                 featureData = input_table(),
@@ -30,16 +30,22 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 channelCol = input$channel_col,
                 removeEmptyCols = input$removeEmptyCols
             )
-            if (input$zero_as_NA) {
-                qfeatures <- error_handler(
+            if (input$zero_as_NA && length(global_rv$qfeatures) > 0) {
+                global_rv$qfeatures <- error_handler(
                     QFeatures::zeroIsNA,
                     component_name = "QFeatures converting (zero_as_NA)",
-                    object = qfeatures,
-                    i = seq_along(qfeatures)
+                    object = global_rv$qfeatures,
+                    i = seq_along(global_rv$qfeatures)
+                )
+            }
+            global_rv$initial_PSM_names <- names(global_rv$qfeatures)
+            for (i in seq_along(global_rv$qfeatures)) {
+                names(global_rv$qfeatures)[i] <- paste0(
+                    names(global_rv$qfeatures)[i],
+                    "_(scpGUI#1)"
                 )
             }
             removeModal()
-            qfeatures
         })
 
         observe({
@@ -54,11 +60,10 @@ box_readscp_server <- function(id, input_table, sample_table) {
         })
 
         qfeatures_df <- reactive({
-            req(qfeatures())
             error_handler(
                 qfeatures_to_df,
                 component_name = "qfeatures_to_df",
-                qfeatures()
+                global_rv$qfeatures
             )
         })
         output$download_qfeatures <- downloadHandler(
@@ -66,7 +71,7 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 "scp_qfeature_object.rds"
             },
             content = function(file) {
-                saveRDS(qfeatures(), file)
+                saveRDS(global_rv$qfeatures, file)
             }
         )
         output$qfeatures_dt <- DT::renderDataTable({
@@ -87,7 +92,7 @@ box_readscp_server <- function(id, input_table, sample_table) {
             if (!is.null(input$qfeatures_dt_rows_selected)) {
                 row <- input$qfeatures_dt_rows_selected
                 DT::datatable(
-                    data.frame(SummarizedExperiment::assay(qfeatures()[[row]])),
+                    data.frame(assay(global_rv$qfeatures[[row]])),
                     extensions = "FixedColumns",
                     options = list(
                         searching = FALSE,
@@ -99,6 +104,5 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 )
             }
         })
-        qfeatures
     })
 }

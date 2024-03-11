@@ -14,7 +14,7 @@
 server_import_tab <- function(input, output, session) {
     input_table <- box_read_table_server("input")
     sample_table <- box_read_table_server("sample")
-    global_rv$qfeatures_object <- box_readscp_server(
+    box_readscp_server(
         "readscp",
         input_table,
         sample_table

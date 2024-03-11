@@ -1,17 +1,22 @@
 #' Title
 #'
-#' @param id 
+#' @param id
 #'
-#' @return
+#' @return a tagList object that contains the UI for the qc metrics module
+#' @rdname INTERNAL_interface_module_qc_metrics
+#' @keywords internal
 #'
-#' @importFrom shiny plotOutput fluidRow tagList selectInput NS
+#' @importFrom shiny fluidRow tagList selectInput NS
 #' @importFrom shinydashboardPlus box
+#' @importFrom plotly plotlyOutput
 interface_module_qc_metrics <- function(id) {
     tagList(
         selectInput(
             inputId = NS(id, "selected_assay"),
             choices = NULL,
-            label = "Selected assay"),
+            label = "Selected assay"
+        ),
+        actionButton(NS(id, "reload"), "Reload"),
         fluidRow(
             box(
                 title = "PCA",
@@ -19,7 +24,7 @@ interface_module_qc_metrics <- function(id) {
                 width = 8,
                 solidHeader = FALSE,
                 collapsible = TRUE,
-                plotOutput(outputId = NS(id, "pca"))
+                plotlyOutput(outputId = NS(id, "pca"))
             ),
             box(
                 title = "Feature Annotations",

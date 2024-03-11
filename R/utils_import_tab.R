@@ -14,7 +14,6 @@ qfeatures_to_df <- function(qfeatures) {
         "ncols" = rep.int(0, length(qfeatures))
     )
     for (i in seq_along(qfeatures)) {
-        print(names(qfeatures)[[i]])
         df[i, "Name"] <- names(qfeatures)[[i]]
         df[i, "Class"] <- class(qfeatures[[i]])[[1]]
         df[i, "nrows"] <- nrow(qfeatures[[i]])[[1]]

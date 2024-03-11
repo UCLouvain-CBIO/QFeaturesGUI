@@ -21,7 +21,10 @@ Imports:
     shinydashboardPlus,
     SummarizedExperiment,
     utils,
-    htmltools
+    htmltools,
+    ggplot2,
+    pcaMethods,
+    plotly
 Suggests: 
     knitr,
     rmarkdown,
