@@ -1,6 +1,7 @@
 #' A server module that contains the server logic to the read_table box module
 #'
 #' @param id module id
+#' @param given_table a dataframe that contains the table given by the user
 #'
 #' @return the table reactiveVal that contains a dataframe
 #' @rdname INTERNAL_box_read_table_server
@@ -8,19 +9,12 @@
 #'
 #' @importFrom shiny moduleServer observe observeEvent reactiveVal req
 #' @importFrom utils data read.table
-box_read_table_server <- function(id) {
+box_read_table_server <- function(id, given_table = NULL) {
     moduleServer(id, function(input, output, session) {
         table <- reactiveVal()
         observe(
-            if (global_rv$example) {
-                if (id == "sample") {
-                    data("sampleAnnotation", package = "scp")
-                    table(sampleAnnotation)
-                }
-                if (id == "input") {
-                    data("mqScpData", package = "scp")
-                    table(mqScpData)
-                }
+            if (!is.null(given_table)) {
+                table(given_table)
             }
         )
 

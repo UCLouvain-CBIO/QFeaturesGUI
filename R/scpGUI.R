@@ -6,7 +6,9 @@
 #' \item The first section (Import) of the app allow to convert two tables (Input and Sample) to a QFeatures object.
 #' This process is performed with the \code{\link[scp]{readSCP}} function from the scp package.
 #' }
-#' @param example A logical value indicating if the app should be launched with an example dataset.
+#' @param sample_table A dataframe that contains the sample table.
+#' @param input_table A dataframe that contains the input table.
+#'
 #' @return Return the "scpGUI" shiny app object.
 #' @export
 #' @importFrom shiny shinyApp runApp
@@ -14,15 +16,16 @@
 #' @examples
 #' library(scpGUI)
 #'
-#' app <- scpGUI(example = TRUE)
+#' data("sampleTable")
+#' data("inputTable")
+#' app <- scpGUI(sample_table = sampleTable, input_table = inputTable)
 #'
 #' if (interactive()) {
 #'     shiny::runApp(app)
 #' }
 #'
-scpGUI <- function(example = FALSE) {
-    global_rv$example <- example
+scpGUI <- function(sample_table = NULL, input_table = NULL) {
     ui <- build_ui()
-    server <- build_server()
+    server <- build_server(sample_table, input_table)
     shinyApp(ui = ui, server = server)
 }

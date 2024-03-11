@@ -40,9 +40,9 @@ server_module_qc_metrics <- function(id) {
                 method = "nipals"
             )
             df <- data.frame(scores(pca))
-             # TODO: Add color (e.g. cell type), annotation.
-             # TODO: Add a table with the selected points.
-             # TODO: make the pca + selected points reactive to the table. A module?
+            # TODO: Add color (e.g. cell type), annotation.
+            # TODO: Add a table with the selected points.
+            # TODO: make the pca + selected points reactive to the table. A module?
             plot <- ggplot(df, aes(x = PC1, y = PC2, text = rownames(df))) +
                 geom_point() +
                 xlab(paste("PC1", pca@R2[1] * 100, "% of the variance")) +

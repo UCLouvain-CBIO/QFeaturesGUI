@@ -4,10 +4,12 @@
 \alias{scpGUI}
 \title{A simple graphical interface for the scp package}
 \usage{
-scpGUI(example = FALSE)
+scpGUI(sample_table = NULL, input_table = NULL)
 }
 \arguments{
-\item{example}{A logical value indicating if the app should be launched with an example dataset.}
+\item{sample_table}{A dataframe that contains the sample table.}
+
+\item{input_table}{A dataframe that contains the input table.}
 }
 \value{
 Return the "scpGUI" shiny app object.
@@ -23,7 +25,9 @@ This process is performed with the \code{\link[scp]{readSCP}} function from the 
 \examples{
 library(scpGUI)
 
-app <- scpGUI(example = TRUE)
+data("sampleTable")
+data("inputTable")
+app <- scpGUI(sample_table = sampleTable, input_table = inputTable)
 
 if (interactive()) {
     shiny::runApp(app)

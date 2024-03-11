@@ -6,17 +6,30 @@
 #'  by the higher level server builder
 #' @param session session parameter that should be given
 #'  by the higher level server builder
+#' @param sample_table a dataframe that contains the sample table given by the user
+#' @param input_table a dataframe that contains the input table given by the user
 #'
 #' @return A shiny server function that contains the import tab server logic
 #' @rdname INTERNAL_server_import_tab
 #' @keywords internal
 #'
-server_import_tab <- function(input, output, session) {
-    input_table <- box_read_table_server("input")
-    sample_table <- box_read_table_server("sample")
+server_import_tab <- function(
+        input,
+        output,
+        session,
+        sample_table,
+        input_table) {
+    imported_input <- box_read_table_server(
+        id = "input",
+        given_table = input_table
+    )
+    imported_sample <- box_read_table_server(
+        id = "sample",
+        given_table = sample_table
+    )
     box_readscp_server(
         "readscp",
-        input_table,
-        sample_table
+        imported_input,
+        imported_sample
     )
 }
