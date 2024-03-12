@@ -14,7 +14,7 @@
   overflow-y: auto;
   overflow-x: auto;
   background-color: #f8f9fa;
-  border: 1px solid #2b6bcc;
+  border: 1px solid #3c8dbc;
   border-radius: 0.25rem;
   padding: 0.5rem;
   white-space: pre-wrap;
@@ -43,10 +43,25 @@
 }
 
 .icon-container {
-      width: 1.5em;
-      height: 1.5em;
-      background-color: transparent; 
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      margin-left: 15px;
-    }
+  width: 1.5em;
+  height: 1.5em;
+  background-color: transparent; 
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  margin-left: 15px;
+}
+
+.load-button {
+  color: #fff;
+  background-color: #3c8dbc;
+  border: 1px solid #3c8dbc;
+  margin: 10px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 3px;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
+  font-size: 16px;
+}

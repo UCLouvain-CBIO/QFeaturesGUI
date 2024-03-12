@@ -41,7 +41,7 @@ box_read_table_server <- function(id, given_table = NULL) {
         )
 
 
-        output$dt_table <- renderDataTable({
+        output$dt_table <- DT::renderDataTable({
             req(table)
             DT::datatable(table(),
                 extensions = "FixedColumns",

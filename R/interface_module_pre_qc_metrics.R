@@ -9,14 +9,8 @@
 #' @importFrom shiny fluidRow tagList selectInput NS
 #' @importFrom shinydashboardPlus box
 #' @importFrom plotly plotlyOutput
-interface_module_qc_metrics <- function(id) {
+interface_module_pre_qc_metrics <- function(id) {
     tagList(
-        selectInput(
-            inputId = NS(id, "selected_assay"),
-            choices = NULL,
-            label = "Selected assay"
-        ),
-        actionButton(NS(id, "reload"), "Reload"),
         fluidRow(
             box(
                 title = "PCA",
@@ -24,6 +18,11 @@ interface_module_qc_metrics <- function(id) {
                 width = 8,
                 solidHeader = FALSE,
                 collapsible = TRUE,
+                selectInput(
+                    inputId = NS(id, "selected_assay"),
+                    choices = NULL,
+                    label = "Selected assay"
+                ),
                 plotlyOutput(outputId = NS(id, "pca"))
             ),
             box(

@@ -1,9 +1,7 @@
 #' Title
 #'
-#' @param input input parameter that should be given by the higher level server builder
-#' @param output output parameter that should be given by the higher level server builder
-#' @param session session parameter that should be given by the higher level server builder
-#'
+#' @param id module id
+#' @param assays_to_process a reactiveVal that contains the different assays that will be used in the module
 #' @return The different assays that will be processed in the page
 #' @rdname INTERNAL_server_module_qc_metrics
 #' @keywords internal
@@ -13,16 +11,8 @@
 #' @importFrom ggplot2 ggplot aes geom_point xlab ylab
 #' @importFrom plotly ggplotly renderPlotly
 #'
-server_module_qc_metrics <- function(id) {
+server_module_pre_qc_metrics <- function(id, assays_to_process) {
     moduleServer(id, function(input, output, session) {
-        assays_to_process <- eventReactive(input$reload, {
-            to_process <- grepl(
-                paste0("_(scpGUI#", "1", ")"),
-                names(global_rv$qfeatures),
-                fixed = TRUE
-            )
-            global_rv$qfeatures[to_process]
-        })
         observe({
             updateSelectInput(session,
                 "selected_assay",
@@ -42,11 +32,18 @@ server_module_qc_metrics <- function(id) {
             df <- data.frame(scores(pca))
             # TODO: Add color (e.g. cell type), annotation.
             # TODO: Add a table with the selected points.
-            # TODO: make the pca + selected points reactive to the table. A module?
+            # TODO: make the pca
+            # + selected points reactive to the table. A module?
             plot <- ggplot(df, aes(x = PC1, y = PC2, text = rownames(df))) +
                 geom_point() +
-                xlab(paste("PC1", pca@R2[1] * 100, "% of the variance")) +
-                ylab(paste("PC2", pca@R2[2] * 100, "% of the variance"))
+                xlab(paste(
+                    "PC1", round(pca@R2[1] * 100, 2),
+                    "% of the variance"
+                )) +
+                ylab(paste(
+                    "PC2", round(pca@R2[2] * 100, 2),
+                    "% of the variance"
+                ))
 
             ggplotly(plot, tooltip = "text")
         })

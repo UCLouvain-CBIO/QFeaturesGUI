@@ -21,7 +21,7 @@ build_ui <- function() {
                 ),
                 tabItem(
                     tabName = "features_filtering_tab",
-                    features_filtering_tab()
+                    interface_module_features_filtering_tab("PSM1")
                 ),
                 tabItem(
                     tabName = "cell_filtering_tab",

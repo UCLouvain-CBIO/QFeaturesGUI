@@ -185,3 +185,19 @@ pcaMethods_wraper <- function(sce, method, transpose = FALSE) {
     )
     pca
 }
+
+#' A function that will subset the assays of a QFeatures object
+#' @param qfeatures `QFeatures` object to subset
+#' @param pattern `str` pattern to match the assays names
+#' @return `QFeatures` object with the subsetted assays
+#' @rdname INTERNAL_page_assays_subset
+#' @keywords internal
+#'
+page_assays_subset <- function(qfeatures, pattern) {
+    to_process <- grepl(
+        pattern,
+        names(qfeatures),
+        fixed = TRUE
+    )
+    qfeatures[to_process]
+}

@@ -30,7 +30,7 @@ build_server <- function(sample_table, input_table) {
             sample_table,
             input_table
         )
-        server_features_filtering_tab(input, output, session)
+        server_module_features_filtering_tab("PSM1")
     }
 
     server

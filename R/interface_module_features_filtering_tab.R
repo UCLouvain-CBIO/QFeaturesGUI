@@ -4,12 +4,28 @@
 #' @rdname INTERNAL_interface_psm_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow
+#' @importFrom shiny fluidRow NS actionButton icon
 #' @importFrom shinydashboardPlus box
-#' @importFrom htmltools tagList h2
+#' @importFrom htmltools tagList
+#' @importFrom shinyBS bsTooltip
 #'
-features_filtering_tab <- function() {
+interface_module_features_filtering_tab <- function(id) {
     tagList(
+        actionButton(NS(id, "reload"),
+            "Load assays from previous step",
+            icon("hand-pointer", class = "fa-solid"),
+            width = "100%",
+            class = "load-button"
+        ),
+        shinyBS::bsTooltip(
+            id = NS(id, "reload"),
+            title = paste("Load the assays from the previous step.",
+                "Click on this button the first time you visit this page",
+                "or if you updated the previous steps.",
+                sep = " "
+            ),
+            trigger = "hover"
+        ),
         fluidRow(
             box(
                 title = "Pre-Filtering Metrics",
@@ -17,7 +33,7 @@ features_filtering_tab <- function() {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics("psm_pre")
+                interface_module_pre_qc_metrics(NS(id, "psm_pre"))
             )
         ),
         fluidRow(
@@ -53,7 +69,7 @@ features_filtering_tab <- function() {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics("psm_filtered")
+                interface_module_pre_qc_metrics(NS(id, "psm_filtered"))
             )
         )
     )
