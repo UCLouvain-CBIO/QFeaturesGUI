@@ -37,18 +37,24 @@ interface_module_pre_qc_metrics <- function(id) {
                     )
                 ),
                 fluidRow(
-                    interface_module_pca_box(NS(id, "features"), title = "Features PCA"),
-                    interface_module_pca_box(NS(id, "samples"), title = "Samples PCA")
+                    interface_module_pca_box(
+                        NS(id, "features"),
+                        title = "Features PCA"
+                    ),
+                    interface_module_pca_box(
+                        NS(id, "samples"),
+                        title = "Samples PCA"
+                    )
                 )
+            ),
+            box(
+                title = "Feature Annotations",
+                status = "primary",
+                width = 4,
+                solidHeader = FALSE,
+                collapsible = TRUE,
+                "WIP"
             )
-        ),
-        box(
-            title = "Feature Annotations",
-            status = "primary",
-            width = 4,
-            solidHeader = FALSE,
-            collapsible = TRUE,
-            "WIP"
         )
     )
 }

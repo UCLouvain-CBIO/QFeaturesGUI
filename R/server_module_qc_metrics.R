@@ -8,8 +8,6 @@
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive
 #' @importFrom pcaMethods pca scores
-#' @importFrom ggplot2 ggplot aes geom_point xlab ylab
-#' @importFrom plotly ggplotly renderPlotly
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_pre_qc_metrics <- function(id, assays_to_process) {
@@ -20,8 +18,7 @@ server_module_pre_qc_metrics <- function(id, assays_to_process) {
                 choices = names(assays_to_process())
             )
         })
-        single_assay <- reactive({
-            req(input$selected_assay)
+        single_assay <- eventReactive(input$selected_assay, {
             # Warning appears here
             # Warning message: 'experiments' dropped; see 'drops()'
             # see with Chris
@@ -55,31 +52,89 @@ server_module_pre_qc_metrics <- function(id, assays_to_process) {
 #' @rdname INTERNAL_server_module_pca_box
 #' @keywords internal
 #'
+#' @importFrom shiny moduleServer observe req reactive
+#' @importFrom ggplot2 ggplot aes geom_point xlab ylab
+#' @importFrom plotly ggplotly renderPlotly layout
+#' @importFrom SummarizedExperiment colData rowData
+#'
 server_module_pca_box <- function(id, single_assay, method, transpose) {
     moduleServer(id, function(input, output, session) {
-        output$pca <- renderPlotly({
-            pca <- pcaMethods_wrapper(
+        annotation_names <- reactive({
+            req(single_assay())
+            if (id == "features") {
+                colnames(rowData(single_assay()))
+            } else {
+                colnames(colData(single_assay()))
+            }
+        })
+
+        observe({
+            req(single_assay())
+            req(annotation_names())
+            stopifnot(is(single_assay(), "SummarizedExperiment"))
+            updateSelectInput(session,
+                "pca_color",
+                choices = annotation_names()
+            )
+        })
+
+        color_data <- reactive({
+            req(single_assay())
+            req(input$pca_color)
+            if (id == "features") {
+                df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
+            } else {
+                df <- colData(single_assay())[, input$pca_color, drop = FALSE]
+            }
+            colnames(df) <- "color"
+            return(df)
+        })
+
+        pca_result <- reactive({
+            req(single_assay())
+            pcaMethods_wrapper(
                 single_assay(),
                 method = method,
                 transpose = transpose
             )
-            df <- data.frame(scores(pca))
+        })
+        df <- reactive({
+            req(pca_result())
+            req(color_data())
+            print(color_data())
+            merge(
+                data.frame(scores(pca_result())),
+                color_data(),
+                by = "row.names"
+            )
+        })
+
+        output$pca <- renderPlotly({
+            req(df())
             # TODO: Add color (e.g. cell type), annotation.
             # TODO: Add a table with the selected points.
-            # TODO: make the pca
-            # + selected points reactive to the table. A module?
-            plot <- ggplot(df, aes(x = PC1, y = PC2, text = rownames(df))) +
+            print(df())
+            plot <- ggplot(
+                df(),
+                aes(x = PC1, y = PC2, color = color, text = Row.names)
+            ) +
                 geom_point() +
                 xlab(paste(
-                    "PC1", round(pca@R2[1] * 100, 2),
+                    "PC1", round(pca_result()@R2[1] * 100, 2),
                     "% of the variance"
                 )) +
                 ylab(paste(
-                    "PC2", round(pca@R2[2] * 100, 2),
+                    "PC2", round(pca_result()@R2[2] * 100, 2),
                     "% of the variance"
-                ))
+                ))+
+                theme(legend.position = c(0.8, 0.2))
 
-            ggplotly(plot, tooltip = "text")
+                ggplotly(plot, tooltip = "text", dynamicTicks = TRUE)
+
+            # Find a way to make the legend readable (legend box ?)
+            # change the color argument to the annotation name
+            # some annotation cause errors
+
         })
     })
 }
