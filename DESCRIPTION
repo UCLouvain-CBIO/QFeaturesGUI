@@ -25,7 +25,8 @@ Imports:
     htmltools,
     ggplot2,
     pcaMethods,
-    plotly
+    plotly,
+    MultiAssayExperiment
 Depends:
     shinyBS,
     R (>= 4.3.0)

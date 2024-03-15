@@ -20,7 +20,10 @@ box_readscp_server <- function(id, input_table, sample_table) {
 
     moduleServer(id, function(input, output, session) {
         observeEvent(input$convert, {
-            loading("Be aware that this operation can be quite time consuming for large data sets")
+            loading(paste("Be aware that this operation",
+                "can be quite time consuming for large data sets",
+                sep = " "
+            ))
             global_rv$qfeatures <- error_handler(
                 scp::readSCP,
                 component_name = "QFeatures converting (readSCP)",
@@ -28,7 +31,8 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 colData = sample_table(),
                 batchCol = input$batch_col,
                 channelCol = input$channel_col,
-                removeEmptyCols = input$removeEmptyCols
+                removeEmptyCols = input$removeEmptyCols,
+                verbose = FALSE
             )
             if (input$zero_as_NA && length(global_rv$qfeatures) > 0) {
                 global_rv$qfeatures <- error_handler(

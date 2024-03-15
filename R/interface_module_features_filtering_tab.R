@@ -11,7 +11,8 @@
 #'
 interface_module_features_filtering_tab <- function(id) {
     tagList(
-        actionButton(NS(id, "reload"),
+        actionButton(
+            NS(id, "reload"),
             "Load assays from previous step",
             icon("hand-pointer", class = "fa-solid"),
             width = "100%",
@@ -21,7 +22,7 @@ interface_module_features_filtering_tab <- function(id) {
             id = NS(id, "reload"),
             title = paste("Load the assays from the previous step.",
                 "Click on this button the first time you visit this page",
-                "or if you updated the previous steps.",
+                "or if you updated the assays from the previous steps.",
                 sep = " "
             ),
             trigger = "hover"

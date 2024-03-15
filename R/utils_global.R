@@ -167,13 +167,13 @@ remove_scpGUI <- function(string) {
 #' @param method A character string specifying the PCA method to use. This should be one of the methods supported by the pcaMethods package.
 #'
 #' @return A pcaRes object resulting from the PCA.
-#' @rdname INTERNAL_pcaMethods_wraper
+#' @rdname INTERNAL_pcaMethods_wrapper
 #' @keywords internal
 #'
 #' @importFrom pcaMethods pca
 #' @importFrom SummarizedExperiment assay
 #'
-pcaMethods_wraper <- function(sce, method, transpose = FALSE) {
+pcaMethods_wrapper <- function(sce, method, transpose = FALSE) {
     mat <- assay(sce)
     mat <- mat[rowSums(is.na(mat)) != ncol(mat), ]
     mat <- mat[, colSums(is.na(mat)) < nrow(mat)]

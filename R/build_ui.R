@@ -10,6 +10,7 @@
 #'
 build_ui <- function() {
     ui <- dashboardPage(
+        skin = "blue",
         header = header(),
         sidebar = sidebar(),
         body = dashboardBody(
