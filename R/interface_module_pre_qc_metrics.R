@@ -1,6 +1,6 @@
-#' Title
+#' @title Interface for the qc metrics module
 #'
-#' @param id
+#' @param id module id
 #'
 #' @return a tagList object that contains the UI for the qc metrics module
 #' @rdname INTERNAL_interface_module_qc_metrics
@@ -9,6 +9,7 @@
 #' @importFrom shiny fluidRow tagList selectInput NS column
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom plotly plotlyOutput
+#'
 interface_module_pre_qc_metrics <- function(id) {
     tagList(
         fluidRow(
@@ -59,8 +60,9 @@ interface_module_pre_qc_metrics <- function(id) {
     )
 }
 
+#' PCA Box interface module
 #'
-#' @param id
+#' @param id module id
 #' @param title title of the box
 #' @return a box object that contains the UI for the pca module
 #' @rdname INTERNAL_interface_module_pca_box
@@ -85,6 +87,18 @@ interface_module_pca_box <- function(id, title) {
                 inputId = NS(id, "pca_color"),
                 label = "Color by",
                 choices = NULL
+            ),
+            checkboxInput(
+                inputId = NS(id, "show_legend"),
+                label = "Show Legend",
+                value = FALSE
+            ),
+            numericInput(
+                inputId = NS(id, "color_width"),
+                label = "Color value max length (chr)",
+                value = 10,
+                min = 5,
+                max = 30
             )
         ),
         plotlyOutput(outputId = NS(id, "pca"))

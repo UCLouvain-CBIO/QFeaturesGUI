@@ -201,3 +201,60 @@ page_assays_subset <- function(qfeatures, pattern) {
     )
     qfeatures[to_process]
 }
+
+#' Create a plotly PCA plot
+#'
+#' @param df a data.frame that contains the PCA results and the color column
+#' @param color_name a character string that contains the name of the color column
+#' @param pca_result a pcaRes object that contains the PCA results
+#'
+#' @return a plotly object
+#' @rdname INTERNAL_pca_plotly
+#' @keywords internal
+#'
+#' @importFrom plotly plot_ly layout
+#' @importFrom magrittr %>%
+#'
+pca_plotly <- function(df, pca_result, color_name, show_legend) {
+    warning("This function is deprecated, use `scpGUI::pca_plotly` instead")
+    plotly <- plot_ly(df,
+        x = ~PC1,
+        y = ~PC2,
+        color = as.formula(paste0("~", color_name)),
+        text = ~Row.names,
+        type = "scatter",
+        mode = "markers",
+        hovertemplate = paste(
+            "%{text}<br>",
+            paste0(color_name, ": %{customdata}<extra></extra>")
+        ),
+        customdata = as.formula(paste0("~", color_name))
+    ) %>%
+        layout(
+            xaxis = list(title = paste(
+                "PC1",
+                round(pca_result@R2[1] * 100, 2),
+                "% of the variance"
+            )),
+            yaxis = list(title = paste(
+                "PC2",
+                round(pca_result@R2[2] * 100, 2),
+                "% of the variance"
+            )),
+            showlegend = show_legend,
+            legend = list(
+                x = 1,
+                y = 1,
+                traceorder = "normal",
+                font = list(
+                    family = "sans-serif",
+                    size = 10,
+                    color = "black"
+                ),
+                bgcolor = "#E2E2E2",
+                bordercolor = "#FFFFFF",
+                borderwidth = 2
+            )
+        )
+    return(plotly)
+}

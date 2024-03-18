@@ -7,7 +7,6 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive
-#' @importFrom pcaMethods pca scores
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_pre_qc_metrics <- function(id, assays_to_process) {
@@ -53,9 +52,10 @@ server_module_pre_qc_metrics <- function(id, assays_to_process) {
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer observe req reactive
-#' @importFrom ggplot2 ggplot aes geom_point xlab ylab
 #' @importFrom plotly ggplotly renderPlotly layout
 #' @importFrom SummarizedExperiment colData rowData
+#' @importFrom pcaMethods pca scores
+#' @importFrom magrittr %>%
 #'
 server_module_pca_box <- function(id, single_assay, method, transpose) {
     moduleServer(id, function(input, output, session) {
@@ -86,7 +86,14 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             } else {
                 df <- colData(single_assay())[, input$pca_color, drop = FALSE]
             }
-            colnames(df) <- "color"
+            if (is.character(df[, 1])) {
+                df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
+                    paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
+                )
+            }
+            df[is.na(df)] <- "NA"
+            colnames(df) <- input$pca_color
+
             return(df)
         })
 
@@ -98,10 +105,9 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
                 transpose = transpose
             )
         })
-        df <- reactive({
+        dataframe <- reactive({
             req(pca_result())
             req(color_data())
-            print(color_data())
             merge(
                 data.frame(scores(pca_result())),
                 color_data(),
@@ -110,31 +116,17 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
         })
 
         output$pca <- renderPlotly({
-            req(df())
-            # TODO: Add color (e.g. cell type), annotation.
+            req(dataframe())
+            req(pca_result())
             # TODO: Add a table with the selected points.
-            print(df())
-            plot <- ggplot(
-                df(),
-                aes(x = PC1, y = PC2, color = color, text = Row.names)
-            ) +
-                geom_point() +
-                xlab(paste(
-                    "PC1", round(pca_result()@R2[1] * 100, 2),
-                    "% of the variance"
-                )) +
-                ylab(paste(
-                    "PC2", round(pca_result()@R2[2] * 100, 2),
-                    "% of the variance"
-                ))+
-                theme(legend.position = c(0.8, 0.2))
-
-                ggplotly(plot, tooltip = "text", dynamicTicks = TRUE)
-
-            # Find a way to make the legend readable (legend box ?)
-            # change the color argument to the annotation name
-            # some annotation cause errors
-
+            error_handler( # ERROR make infinite loops
+                pca_plotly,
+                component_name = "PCA quality control plot",
+                df = dataframe(),
+                pca_result = pca_result(),
+                color_name = input$pca_color,
+                show_legend = input$show_legend
+            )
         })
     })
 }
