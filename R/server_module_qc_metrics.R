@@ -52,10 +52,10 @@ server_module_pre_qc_metrics <- function(id, assays_to_process) {
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer observe req reactive
-#' @importFrom plotly ggplotly renderPlotly layout
+#' @importFrom plotly plot_ly renderPlotly layout %>%
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom pcaMethods pca scores
-#' @importFrom magrittr %>%
+#' @importFrom methods is
 #'
 server_module_pca_box <- function(id, single_assay, method, transpose) {
     moduleServer(id, function(input, output, session) {

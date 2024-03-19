@@ -26,7 +26,7 @@ error_handler <- function(func, component_name, ...) {
                     paste0(
                         div(HTML(
                             paste0(
-                                "<b> Error in ",
+                                "<b> Warning in ",
                                 component_name,
                                 " </b> at ", format(time, "%H:%M:%S")
                             )
@@ -47,7 +47,7 @@ error_handler <- function(func, component_name, ...) {
                 full_message = w,
                 time = time
             )
-            return(NULL)
+            suppressWarnings(func(...))
         },
         error = function(e) {
             time <- Sys.time()
@@ -95,6 +95,7 @@ error_handler <- function(func, component_name, ...) {
 #' @rdname INTERNAL_add_exception
 #' @keywords internal
 #'
+#' @importFrom shiny isolate
 add_exception <- function(title, type, func_call, message, full_message, time) {
     new_data <- data.frame(
         title = as.character(title),
@@ -105,7 +106,7 @@ add_exception <- function(title, type, func_call, message, full_message, time) {
         time = as.POSIXct(time),
         stringsAsFactors = FALSE
     )
-    old_data <- global_rv$exception_data
+    old_data <- isolate(global_rv$exception_data)
     global_rv$exception_data <- rbind(new_data, old_data)
 }
 
@@ -212,11 +213,11 @@ page_assays_subset <- function(qfeatures, pattern) {
 #' @rdname INTERNAL_pca_plotly
 #' @keywords internal
 #'
-#' @importFrom plotly plot_ly layout
-#' @importFrom magrittr %>%
+#' @importFrom plotly plot_ly layout %>%
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom stats as.formula
 #'
 pca_plotly <- function(df, pca_result, color_name, show_legend) {
-    warning("This function is deprecated, use `scpGUI::pca_plotly` instead")
     plotly <- plot_ly(df,
         x = ~PC1,
         y = ~PC2,
@@ -224,6 +225,10 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         text = ~Row.names,
         type = "scatter",
         mode = "markers",
+        colors = suppressWarnings(RColorBrewer::brewer.pal(
+            length(unique(df[[color_name]])),
+            "Set1"
+        )),
         hovertemplate = paste(
             "%{text}<br>",
             paste0(color_name, ": %{customdata}<extra></extra>")

@@ -23,10 +23,11 @@ Imports:
     SummarizedExperiment,
     utils,
     htmltools,
-    ggplot2,
     pcaMethods,
     plotly,
-    MultiAssayExperiment
+    MultiAssayExperiment,
+    RColorBrewer,
+    methods
 Depends:
     shinyBS,
     R (>= 4.3.0)

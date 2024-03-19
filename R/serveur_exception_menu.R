@@ -47,8 +47,11 @@ server_exception_menu <- function(input, output, session) {
             .list = msgs()
         )
     })
-
-    observe({
+    # In certain case, the modal does not show up when the user clicks on the message
+    # This do not happen for the oldest exception message and the x new messages
+    # With x being the number of messages that were already present in the dropdown menu
+    # Maybe the observeEvents increment indefinitely
+    observeEvent(global_rv$exception_data, {
         for (i in seq_len(nrow(global_rv$exception_data))) {
             id <- paste0("exception_", i)
             observeEvent(input[[id]],
