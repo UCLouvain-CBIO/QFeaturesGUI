@@ -225,10 +225,14 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         text = ~Row.names,
         type = "scatter",
         mode = "markers",
-        colors = suppressWarnings(RColorBrewer::brewer.pal(
-            length(unique(df[[color_name]])),
-            "Set1"
-        )),
+        colors = if (is.numeric(df[[color_name]])) {
+            viridisLite::viridis(10)
+        } else {
+            suppressWarnings(RColorBrewer::brewer.pal(
+                length(unique(df[[color_name]])),
+                "Set2"
+            ))
+        },
         hovertemplate = paste(
             "%{text}<br>",
             paste0(color_name, ": %{customdata}<extra></extra>")

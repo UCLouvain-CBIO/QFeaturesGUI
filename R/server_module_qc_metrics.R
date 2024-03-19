@@ -91,7 +91,9 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
                     paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
                 )
             }
-            df[is.na(df)] <- "NA"
+            if (all(is.na(df))) {
+                df[, 1] <- "NA"
+            }
             colnames(df) <- input$pca_color
 
             return(df)
