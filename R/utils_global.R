@@ -216,6 +216,7 @@ page_assays_subset <- function(qfeatures, pattern) {
 #' @importFrom plotly plot_ly layout %>% hide_colorbar config
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats as.formula
+#' @importFrom viridisLite viridis
 #'
 pca_plotly <- function(df, pca_result, color_name, show_legend) {
     plotly <- plot_ly(df,
