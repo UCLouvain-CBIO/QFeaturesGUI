@@ -213,7 +213,7 @@ page_assays_subset <- function(qfeatures, pattern) {
 #' @rdname INTERNAL_pca_plotly
 #' @keywords internal
 #'
-#' @importFrom plotly plot_ly layout %>%
+#' @importFrom plotly plot_ly layout %>% hide_colorbar config
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats as.formula
 #'
@@ -264,6 +264,16 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
                 bordercolor = "#FFFFFF",
                 borderwidth = 2
             )
-        )
+        ) %>%
+        config(displaylogo = FALSE, toImageButtonOptions = list(
+            format = "svg",
+            filename = "pca_plot",
+            height = 500,
+            width = 700,
+            scale = 1
+        ))
+    if (!show_legend) {
+        plotly <- plotly %>% hide_colorbar()
+    }
     return(plotly)
 }
