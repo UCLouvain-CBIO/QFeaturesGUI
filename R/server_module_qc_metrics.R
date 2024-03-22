@@ -51,7 +51,7 @@ server_module_pre_qc_metrics <- function(id, assays_to_process) {
 #' @rdname INTERNAL_server_module_pca_box
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer observe req reactive
+#' @importFrom shiny moduleServer observe req reactive updateSelectInput
 #' @importFrom plotly plot_ly renderPlotly layout %>%
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom pcaMethods pca scores

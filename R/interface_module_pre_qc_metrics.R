@@ -69,7 +69,8 @@ interface_module_pre_qc_metrics <- function(id) {
 #' @keywords internal
 #'
 #' @importFrom shinydashboardPlus box boxSidebar
-#' @importFrom shiny selectInput
+#' @importFrom shiny selectInput checkboxInput numericInput NS
+#' @importFrom shinycssloaders withSpinner
 #' @importFrom plotly plotlyOutput
 #'
 interface_module_pca_box <- function(id, title) {
@@ -101,6 +102,9 @@ interface_module_pca_box <- function(id, title) {
                 max = 30
             )
         ),
-        plotlyOutput(outputId = NS(id, "pca"))
+        withSpinner(plotlyOutput(outputId = NS(id, "pca")),
+            type = 6,
+            color = "#3c8dbc"
+        )
     )
 }

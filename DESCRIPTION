@@ -27,7 +27,8 @@ Imports:
     plotly,
     MultiAssayExperiment,
     RColorBrewer,
-    methods
+    methods,
+    shinycssloaders
 Depends:
     shinyBS,
     R (>= 4.3.0)

@@ -274,7 +274,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
             scale = 1
         ))
     if (!show_legend) {
-        plotly <- plotly %>% hide_colorbar()
+        plotly <- hide_colorbar(plotly)
     }
     return(plotly)
 }
