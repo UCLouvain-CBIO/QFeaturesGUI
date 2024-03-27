@@ -8,6 +8,10 @@ server_module_features_filtering_tab <- function(id) {
             )
         })
         server_module_pre_qc_metrics("psm_pre", assays_to_process)
+        server_module_filtering_box(
+            "filtering_1",
+            assays_to_process, "features"
+        )
         server_module_pre_qc_metrics("psm_filtered", assays_to_process)
     })
 }

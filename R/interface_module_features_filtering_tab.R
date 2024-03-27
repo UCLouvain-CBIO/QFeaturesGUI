@@ -38,6 +38,7 @@ interface_module_features_filtering_tab <- function(id) {
             )
         ),
         fluidRow(
+            interface_module_filtering_box(NS(id, "filtering_1")),
             box(
                 title = "Placeholder Filtering",
                 status = "primary",
