@@ -75,6 +75,6 @@ interface_module_annotation_plot <- function(id) {
             type = 6,
             color = "#3c8dbc"
         ),
-        bsAlert("alert")
+        bsAlert(NS(id, "alert")) # Not working with NS
     )
 }

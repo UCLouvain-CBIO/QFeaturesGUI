@@ -72,25 +72,19 @@ server_module_filtering_box <- function(id, assays_to_process, type) {
                 input$filter_operator
             })
         )
-        filtered_qfeatures <- eventReactive(input$apply_filter, {
+        condition <- eventReactive(input$apply_filter, {
             filter_value <- clean_filter_value()
             if (is.character(filter_value)) {
                 filter_value <- paste0("\"", filter_value, "\"")
             }
-            condition <- as.formula(paste(
-                "~",
+            paste(
                 input$annotation_selection,
                 input$filter_operator,
                 filter_value
-            ))
-            error_handler(
-                filterFeatures,
-                component_name = "filterFeatures (QFeatures)",
-                object = assays_to_process(),
-                filter = condition
             )
         })
-        return(filtered_qfeatures)
+
+        return(condition)
     })
 }
 
@@ -127,7 +121,7 @@ server_module_annotation_plot <- function(
                 choices = names(assays_to_process())
             )
         })
-        single_assay <- eventReactive(input$selected_assay, {
+        single_assay <- reactive({
             req(assays_to_process())
             req(input$selected_assay)
             # Warning appears here
@@ -157,7 +151,8 @@ server_module_annotation_plot <- function(
         observe({
             req(annotation_values())
             if (length(filtered_annotation()) == 0) {
-                createAlert(session, "alert",
+                createAlert(session,
+                    anchorId = "alert",
                     alertId = "alert_filter",
                     title = "Warning",
                     content = "With the selected filtering parameters, no data will be remaining in this assay.",

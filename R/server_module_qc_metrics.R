@@ -18,7 +18,9 @@ server_module_pre_qc_metrics <- function(id, assays_to_process) {
                 choices = names(assays_to_process())
             )
         })
-        single_assay <- eventReactive(input$selected_assay, {
+        single_assay <- reactive({
+            req(input$selected_assay)
+            req(assays_to_process())
             # Warning appears here
             # Warning message: 'experiments' dropped; see 'drops()'
             # see with Chris

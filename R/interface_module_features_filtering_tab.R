@@ -4,7 +4,7 @@
 #' @rdname INTERNAL_interface_psm_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow NS actionButton icon
+#' @importFrom shiny fluidRow NS actionButton icon uiOutput
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList
 #' @importFrom shinyBS bsTooltip
@@ -38,34 +38,16 @@ interface_module_features_filtering_tab <- function(id) {
             )
         ),
         fluidRow(
-            interface_module_filtering_box(NS(id, "filtering_1")),
-            interface_module_filtering_box(NS(id, "filtering_2")),
-            interface_module_filtering_box(NS(id, "filtering_3")),
-            interface_module_filtering_box(NS(id, "filtering_4")),
             box(
-                title = "Placeholder Filtering",
+                title = "Filtering Boxes Congifuration",
                 status = "primary",
                 width = 4,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                "WIP"
+                numericInput(NS(id, "n_boxes"), "Number of filtering boxes", value = 3, min = 1, max = 10),
+                actionButton(NS(id, "generate_boxes"), "Generate Boxes")
             ),
-            box(
-                title = "Placeholder Filtering",
-                status = "primary",
-                width = 4,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                "WIP"
-            ),
-            box(
-                title = "Placeholder Filtering",
-                status = "primary",
-                width = 4,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                "WIP"
-            )
+            uiOutput(NS(id, "filtering_boxes"))
         ),
         fluidRow(
             box(
