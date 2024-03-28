@@ -47,10 +47,11 @@ interface_module_filtering_box <- function(id) {
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom plotly renderPlotly
 #' @importFrom shinycssloaders withSpinner
+#' @importFrom shinyBS bsAlert
 #'
 interface_module_annotation_plot <- function(id) {
     box(
-        title = "Annotation Distribution Plot",
+        title = "Annotation Distribution",
         status = "primary",
         width = 12,
         solidHeader = TRUE,
@@ -67,6 +68,7 @@ interface_module_annotation_plot <- function(id) {
         ),
         withSpinner(plotlyOutput(NS(id, "plot")),
             type = 6,
-            color = "#3c8dbc")
+            color = "#3c8dbc"),
+        bsAlert("alert")
     )
 }

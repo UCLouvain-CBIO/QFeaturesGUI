@@ -94,6 +94,7 @@ server_module_filtering_box <- function(id, qfeat, type) {
 #'
 #' @importFrom shiny moduleServer observe req eventReactive reactive
 #' @importFrom plotly plot_ly renderPlotly
+#' @importFrom shinyBS createAlert closeAlert
 #'
 server_module_annotation_plot <- function(
         id,
@@ -140,11 +141,16 @@ server_module_annotation_plot <- function(
         })
         observe({
             req(annotation_values())
-            #feedbackDanger("filter_value",
-            #    show = length(filtered_annotation()) == 0,
-            #    "With the current filter, no data will be remaining in this assay.",
-            #    session = parent_session
-            #)
+            if(length(filtered_annotation()) == 0){
+                createAlert(session, "alert",
+                alertId = "alert_filter",
+                 title = "Warning",
+                 content = "With the selected filtering parameters, no data will be remaining in this assay.",
+                 append = FALSE,
+                 style = "warning")
+            } else {
+                closeAlert(session, "alert_filter")
+            }
             output$plot <- renderPlotly({
                 error_handler(annotation_plot_wrapper,
                     "annotation_plot (filtering_box)",
@@ -174,7 +180,7 @@ annotation_plot_wrapper <- function(
         filtered_annotation,
         assay_name,
         annotation_name) {
-    plot <- plot_ly(alpha = 0.5) %>%
+    plot <- plot_ly() %>%
         add_histogram(x = annotation, name = "Before Filtering") %>%
         layout(barmode = "group",
             xaxis = list(title = paste0("Annotation Values (", annotation_name, ")")),
@@ -190,8 +196,6 @@ annotation_plot_wrapper <- function(
     if (length(filtered_annotation) > 0) {
         plot <- plot %>%
             add_histogram(x = filtered_annotation, name = "After Filtering")
-    } else {
-        warning("No data remaining in this assay after filtering.")
     }
     return(plot)
 }
