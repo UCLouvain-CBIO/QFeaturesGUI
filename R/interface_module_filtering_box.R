@@ -32,6 +32,11 @@ interface_module_filtering_box <- function(id) {
             label = "Filtering Value",
             value = "",
             placeholder = "A value that will be used in combinaison with the filter operator."
+        ),
+        actionButton(NS(id, "apply_filter"),
+            "Apply Filter",
+            width = "100%",
+            class = "load-button"
         )
     )
 }
@@ -68,7 +73,8 @@ interface_module_annotation_plot <- function(id) {
         ),
         withSpinner(plotlyOutput(NS(id, "plot")),
             type = 6,
-            color = "#3c8dbc"),
+            color = "#3c8dbc"
+        ),
         bsAlert("alert")
     )
 }

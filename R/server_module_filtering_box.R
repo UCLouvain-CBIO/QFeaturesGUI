@@ -1,7 +1,7 @@
 #' @title server_module_annotation_plot
 #'
 #' @param id The module id
-#' @param qfeat A reactiveVal that contains the different assays that will be used in the module
+#' @param assays_to_process A reactiveVal that contains the different assays that will be used in the module
 #' @param type A character string specifying the type of the filtering (sample or feature based)
 #' @return The updated assays
 #' @rdname INTERNAL_server_module_filtering_box
@@ -10,16 +10,17 @@
 #' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom shinyFeedback feedbackDanger
+#' @importFrom QFeatures filterFeatures
 #'
-server_module_filtering_box <- function(id, qfeat, type) {
-    is.reactive(qfeat)
+server_module_filtering_box <- function(id, assays_to_process, type) {
+    is.reactive(assays_to_process)
     moduleServer(id, function(input, output, session) {
         annotations_names <- reactive({
-            req(qfeat())
+            req(assays_to_process())
             if (type == "samples") {
-                colnames(colData(qfeat()[[1]]))
+                colnames(colData(assays_to_process()[[1]]))
             } else if (type == "features") {
-                colnames(rowData(qfeat()[[1]]))
+                colnames(rowData(assays_to_process()[[1]]))
             }
         })
         observe({
@@ -29,11 +30,11 @@ server_module_filtering_box <- function(id, qfeat, type) {
             )
         })
         annotations_type <- reactive({
-            req(qfeat())
+            req(assays_to_process())
             if (type == "samples") {
-                typeof(colData(qfeat()[[1]])[[input$annotation_selection]])
+                typeof(colData(assays_to_process()[[1]])[[input$annotation_selection]])
             } else if (type == "features") {
-                typeof(rowData(qfeat()[[1]])[[input$annotation_selection]])
+                typeof(rowData(assays_to_process()[[1]])[[input$annotation_selection]])
             }
         })
         clean_filter_value <- reactive({
@@ -61,19 +62,35 @@ server_module_filtering_box <- function(id, qfeat, type) {
         })
         server_module_annotation_plot(
             "annotation_plot",
-            qfeat,
+            assays_to_process,
             type,
             clean_filter_value,
             reactive({
                 input$annotation_selection
             }),
-            reactive(
-                {
-                    input$filter_operator
-                }
-            ),
-            parent_session = session
+            reactive({
+                input$filter_operator
+            })
         )
+        filtered_qfeatures <- eventReactive(input$apply_filter, {
+            filter_value <- clean_filter_value()
+            if (is.character(filter_value)) {
+                filter_value <- paste0("\"", filter_value, "\"")
+            }
+            condition <- as.formula(paste(
+                "~",
+                input$annotation_selection,
+                input$filter_operator,
+                filter_value
+            ))
+            error_handler(
+                filterFeatures,
+                component_name = "filterFeatures (QFeatures)",
+                object = assays_to_process(),
+                filter = condition
+            )
+        })
+        return(filtered_qfeatures)
     })
 }
 
@@ -81,13 +98,12 @@ server_module_filtering_box <- function(id, qfeat, type) {
 #' @title Annotation Plot server module
 #'
 #' @param id The module id
-#' @param qfeat A reactiveVal that contains the different assays that will be used in the module
+#' @param assays_to_process A reactiveVal that contains the different assays that will be used in the module
 #' @param type A character string specifying the type of the filtering (sample or feature based)
 #' @param filter_value The value that will be used in combinaison with the filter operator
 #' @param annotation The annotation that will be used to filter the data
 #' @param filter_operator The operator that will be used to filter the data
-#' @param parent_session The parent session
-#' 
+#'
 #' @return A plot of the distribution of the selected annotation in a specific assay
 #' @rdname INTERNAL_server_module_annotation_plot
 #' @keywords internal
@@ -98,27 +114,26 @@ server_module_filtering_box <- function(id, qfeat, type) {
 #'
 server_module_annotation_plot <- function(
         id,
-        qfeat,
+        assays_to_process,
         type,
         filter_value,
         selected_annotation,
-        filter_operator,
-        parent_session) {
+        filter_operator) {
     moduleServer(id, function(input, output, session) {
         observe({
-            req(qfeat())
+            req(assays_to_process())
             updateSelectInput(
                 inputId = "selected_assay",
-                choices = names(qfeat())
+                choices = names(assays_to_process())
             )
         })
         single_assay <- eventReactive(input$selected_assay, {
-            req(qfeat())
+            req(assays_to_process())
             req(input$selected_assay)
             # Warning appears here
             # Warning message: 'experiments' dropped; see 'drops()'
             # see with Chris
-            getWithColData(qfeat(), input$selected_assay)
+            getWithColData(assays_to_process(), input$selected_assay)
         })
         annotation_values <- reactive({
             req(single_assay())
@@ -141,13 +156,14 @@ server_module_annotation_plot <- function(
         })
         observe({
             req(annotation_values())
-            if(length(filtered_annotation()) == 0){
+            if (length(filtered_annotation()) == 0) {
                 createAlert(session, "alert",
-                alertId = "alert_filter",
-                 title = "Warning",
-                 content = "With the selected filtering parameters, no data will be remaining in this assay.",
-                 append = FALSE,
-                 style = "warning")
+                    alertId = "alert_filter",
+                    title = "Warning",
+                    content = "With the selected filtering parameters, no data will be remaining in this assay.",
+                    append = FALSE,
+                    style = "warning"
+                )
             } else {
                 closeAlert(session, "alert_filter")
             }
@@ -174,18 +190,51 @@ server_module_annotation_plot <- function(
 #' @rdname INTERNAL_annotation_plot
 #' @keywords internal
 #'
-#' @importFrom plotly plot_ly config %>% add_histogram layout
+#' @importFrom plotly plot_ly config %>% add_histogram layout add_annotations
+#'
 annotation_plot_wrapper <- function(
         annotation,
         filtered_annotation,
         assay_name,
         annotation_name) {
+    if (all(is.na(annotation))) {
+        plot <- plot_ly(
+            x = numeric(0),
+            y = numeric(0),
+            type = "scatter",
+            mode = "markers"
+        ) %>%
+            add_annotations(
+                text = "All values are NA, cannot create histogram.",
+                xref = "paper",
+                yref = "paper",
+                x = 0.5,
+                y = 0.5,
+                showarrow = FALSE
+            ) %>%
+            layout(
+                showlegend = FALSE,
+                xaxis = list(
+                    showticklabels = FALSE,
+                    zeroline = FALSE,
+                    showgrid = FALSE
+                ),
+                yaxis = list(
+                    showticklabels = FALSE,
+                    zeroline = FALSE,
+                    showgrid = FALSE
+                )
+            )
+        return(plot)
+    }
     plot <- plot_ly() %>%
         add_histogram(x = annotation, name = "Before Filtering") %>%
-        layout(barmode = "group",
+        layout(
+            barmode = "group",
             xaxis = list(title = paste0("Annotation Values (", annotation_name, ")")),
             yaxis = list(title = "Number of Appearance"),
-            title = assay_name) %>%
+            title = assay_name
+        ) %>%
         config(displaylogo = FALSE, toImageButtonOptions = list(
             format = "svg",
             filename = "annotation_plot",
