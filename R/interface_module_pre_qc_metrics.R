@@ -78,8 +78,8 @@ interface_module_pca_box <- function(id, title) {
         title = title,
         status = "primary",
         width = 6,
-        solidHeader = FALSE,
-        collapsible = TRUE,
+        solidHeader = TRUE,
+        collapsible = FALSE,
         sidebar = boxSidebar(
             id = NS(id, "pca_sidebar"),
             width = 50,

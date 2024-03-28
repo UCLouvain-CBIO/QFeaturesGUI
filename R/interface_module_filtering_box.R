@@ -25,7 +25,7 @@ interface_module_filtering_box <- function(id) {
         selectInput(
             inputId = NS(id, "filter_operator"),
             label = "Filtering Operator",
-            choices = c("<", "<=", ">", ">=", "==")
+            choices = c("<", "<=", ">", ">=", "==", "!=")
         ),
         textInput(
             inputId = NS(id, "filter_value"),
@@ -46,27 +46,27 @@ interface_module_filtering_box <- function(id) {
 #' @importFrom shiny NS selectInput actionButton
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom plotly renderPlotly
-#' 
+#' @importFrom shinycssloaders withSpinner
+#'
 interface_module_annotation_plot <- function(id) {
     box(
-        title = "",
+        title = "Annotation Distribution Plot",
         status = "primary",
         width = 12,
-        solidHeader = FALSE,
+        solidHeader = TRUE,
         collapsible = TRUE,
+        collapsed = TRUE,
         sidebar = boxSidebar(
             id = NS(id, "sidebar"),
-            width = 50,
+            width = 100,
             selectInput(
                 inputId = NS(id, "selected_assay"),
                 label = "Select Assay",
                 choices = NULL
-            ),
-            actionButton(
-                inputId = NS(id, "plot_button"),
-                label = "Plot",
-                icon = icon("chart-line")
-        )),
-        plotlyOutput(NS(id, "plot"))
+            )
+        ),
+        withSpinner(plotlyOutput(NS(id, "plot")),
+            type = 6,
+            color = "#3c8dbc")
     )
 }

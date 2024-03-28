@@ -28,7 +28,8 @@ Imports:
     MultiAssayExperiment,
     RColorBrewer,
     methods,
-    shinycssloaders
+    shinycssloaders,
+    shinyFeedback
 Depends:
     shinyBS,
     R (>= 4.3.0)

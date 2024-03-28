@@ -7,6 +7,7 @@
 #' @importFrom shinydashboard dashboardBody tabItem tabItems
 #' @importFrom shinydashboardPlus dashboardPage
 #' @importFrom htmltools includeCSS
+#' @importFrom shinyFeedback useShinyFeedback
 #'
 build_ui <- function() {
     ui <- dashboardPage(
@@ -14,6 +15,7 @@ build_ui <- function() {
         header = header(),
         sidebar = sidebar(),
         body = dashboardBody(
+            useShinyFeedback(),
             includeCSS(system.file(package = "scpGUI", "www", "style.css")),
             tabItems(
                 tabItem(
