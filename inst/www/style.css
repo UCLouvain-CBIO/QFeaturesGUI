@@ -65,3 +65,33 @@
   position: relative;
   font-size: 16px;
 }
+
+.suppress-button {
+  color: #fff;
+  background-color: #d9534f ;
+  border: 1px solid #d9534f ;
+  margin: 10px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 3px;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
+  font-size: 16px;
+}
+
+.no-bottom-margin {
+  margin: 0px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+}
+
+.list-element {
+  list-style-type: decimal;
+  list-style-position: inside;
+  border: 2px solid #3c8dbc;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 5px;
+}

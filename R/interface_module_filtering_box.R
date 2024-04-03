@@ -9,9 +9,9 @@
 #' @importFrom shiny NS selectInput textInput
 #' @importFrom shinydashboardPlus box
 #'
-interface_module_filtering_box <- function(id) {
+interface_module_filtering_box <- function(id, box_title) {
     box(
-        title = "Filtering Box",
+        title = box_title,
         status = "primary",
         width = 4,
         solidHeader = TRUE,

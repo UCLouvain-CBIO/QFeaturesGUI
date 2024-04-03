@@ -39,7 +39,8 @@ server_module_features_filtering_tab <- function(id) {
                     lapply(seq_len(n_boxes()), function(i) {
                         # Call the server part of the filtering box module and store the output
                         interface_module_filtering_box(
-                            NS(id, paste0("filtering_", i))
+                            NS(id, paste0("filtering_", i)),
+                            box_title = paste0("Filtering Box #", i)
                         )
                     })
                 }
@@ -63,11 +64,56 @@ server_module_features_filtering_tab <- function(id) {
                     })
                 })
             }
+
+            output$boxes_summary <- renderUI({
+                tags$div(
+                    tags$p(tags$b(paste0("Number of boxes: ", n_boxes()))),
+                    tags$ul(
+                        lapply(seq_len(n_boxes()), function(i) {
+                            tags$li(
+                                style = "font-size: 20px;",
+                                class = "list-element",
+                                tags$span(
+                                    style = "font-size: 15px",
+                                    paste0("Filtering Box #", i, ":")
+                                ),
+                                tags$br(),
+                                tags$span(
+                                    style = "margin-left: 20px; font-size: 13px;",
+                                    paste0(
+                                        "Annotation Used: ",
+                                        boxes_states[[paste0("box_", i)]]$annotation_selection
+                                    )
+                                )
+                            )
+                        }),
+                        class = "list-group"
+                    )
+                )
+            })
+
             output$filtering_summary <- renderUI({
                 if (n_boxes() > 0) {
-                    lapply(seq_len(n_boxes()), function(i) {
-                        tags$p(filtering_conditions[[paste0("condition_", i)]])
-                    })
+                    tags$ul(
+                        lapply(seq_len(n_boxes()), function(i) {
+                            tags$li(
+                                class = "list-element",
+                                style = "font-size: 20px;",
+                                tags$span(
+                                    style = "font-size: 14px;",
+                                    paste0("Filtering Condition #", i, ":"),
+                                    tags$br(),
+                                    tags$span(
+                                        style = "margin-left: 20px;",
+                                        tags$b(
+                                            filtering_conditions[[paste0("condition_", i)]]
+                                        )
+                                    )
+                                )
+                            )
+                        }),
+                        class = "list-group"
+                    )
                 }
             })
         })

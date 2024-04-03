@@ -45,8 +45,15 @@ interface_module_features_filtering_tab <- function(id) {
                 solidHeader = TRUE,
                 collapsible = TRUE,
                 uiOutput(NS(id, "boxes_summary")),
-                actionButton(NS(id, "add_box"), "Add Box"),
-                actionButton(NS(id, "remove_box"), "Remove Box")
+                style = "min-height: 200px;",
+                actionButton(NS(id, "add_box"), "Add Box",
+                    width = "100%",
+                    class = "load-button no-bottom-margin"
+                ),
+                actionButton(NS(id, "remove_box"), "Remove Last Box",
+                    width = "100%",
+                    class = "suppress-button"
+                )
             ),
             uiOutput(NS(id, "filtering_boxes")),
             box(
@@ -55,6 +62,7 @@ interface_module_features_filtering_tab <- function(id) {
                 width = 4,
                 solidHeader = TRUE,
                 collapsible = TRUE,
+                style = "min-height: 200px;",
                 uiOutput(NS(id, "filtering_summary")),
                 actionButton(NS(id, "apply_filters"),
                     "Apply Filters",
