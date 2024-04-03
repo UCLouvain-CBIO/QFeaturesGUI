@@ -44,10 +44,24 @@ interface_module_features_filtering_tab <- function(id) {
                 width = 4,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                numericInput(NS(id, "n_boxes"), "Number of filtering boxes", value = 3, min = 1, max = 10),
-                actionButton(NS(id, "generate_boxes"), "Generate Boxes")
+                uiOutput(NS(id, "boxes_summary")),
+                actionButton(NS(id, "add_box"), "Add Box"),
+                actionButton(NS(id, "remove_box"), "Remove Box")
             ),
-            uiOutput(NS(id, "filtering_boxes"))
+            uiOutput(NS(id, "filtering_boxes")),
+            box(
+                title = "Filtering Summary",
+                status = "primary",
+                width = 4,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                uiOutput(NS(id, "filtering_summary")),
+                actionButton(NS(id, "apply_filters"),
+                    "Apply Filters",
+                    width = "100%",
+                    class = "load-button"
+                )
+            )
         ),
         fluidRow(
             box(

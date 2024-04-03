@@ -3,16 +3,17 @@
 #' @param id The module id
 #' @param assays_to_process A reactiveVal that contains the different assays that will be used in the module
 #' @param type A character string specifying the type of the filtering (sample or feature based)
+#' @param state A list that contains the state of the module (input states)
 #' @return The updated assays
 #' @rdname INTERNAL_server_module_filtering_box
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req
+#' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req updateTextInput updateSelectInput
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom shinyFeedback feedbackDanger
 #' @importFrom QFeatures filterFeatures
 #'
-server_module_filtering_box <- function(id, assays_to_process, type) {
+server_module_filtering_box <- function(id, assays_to_process, type, state) {
     is.reactive(assays_to_process)
     moduleServer(id, function(input, output, session) {
         annotations_names <- reactive({
@@ -29,7 +30,30 @@ server_module_filtering_box <- function(id, assays_to_process, type) {
                 choices = as.character(annotations_names())
             )
         })
+        if (!is.null(state)) {
+            print(state)
+            updateSelectInput(
+                inputId = "filter_operator",
+                selected = state$filter_operator
+            )
+
+            updateTextInput(
+                inputId = "filter_value",
+                value = state$filter_value
+            )
+
+            observe({
+                updateSelectInput(
+                    inputId = "annotation_selection",
+                    choices = as.character(annotations_names()),
+                    selected = state$annotation_selection
+                )
+            })
+        }
+
+
         annotations_type <- reactive({
+            req(input$annotation_selection)
             req(assays_to_process())
             if (type == "samples") {
                 typeof(colData(assays_to_process()[[1]])[[input$annotation_selection]])
@@ -72,7 +96,7 @@ server_module_filtering_box <- function(id, assays_to_process, type) {
                 input$filter_operator
             })
         )
-        condition <- eventReactive(input$apply_filter, {
+        condition <- reactive({
             filter_value <- clean_filter_value()
             if (is.character(filter_value)) {
                 filter_value <- paste0("\"", filter_value, "\"")
@@ -84,7 +108,12 @@ server_module_filtering_box <- function(id, assays_to_process, type) {
             )
         })
 
-        return(condition)
+        return(list(
+            condition = condition,
+            annotation_selection = reactive(input$annotation_selection),
+            filter_operator = reactive(input$filter_operator),
+            filter_value = reactive(input$filter_value)
+        ))
     })
 }
 

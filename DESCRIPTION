@@ -29,7 +29,9 @@ Imports:
     RColorBrewer,
     methods,
     shinycssloaders,
-    shinyFeedback
+    shinyFeedback,
+    viridisLite,
+    stats
 Depends:
     shinyBS,
     R (>= 4.3.0)

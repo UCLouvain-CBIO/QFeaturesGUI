@@ -7,7 +7,7 @@
 #'
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
-#'
+#' @importFrom htmltools tags
 server_module_features_filtering_tab <- function(id) {
     moduleServer(id, function(input, output, session) {
         assays_to_process <- eventReactive(input$reload, {
@@ -17,12 +17,26 @@ server_module_features_filtering_tab <- function(id) {
                 pattern = "_(scpGUI#1)"
             )
         })
-        filtering_conditions <- reactiveValues()
         server_module_pre_qc_metrics("psm_pre", assays_to_process)
-        observeEvent(input$generate_boxes, {
+
+        n_boxes <- reactiveVal(0)
+
+        filtering_conditions <- reactiveValues()
+        boxes_states <- reactiveValues()
+        observeEvent(input$add_box, {
+            n_boxes(n_boxes() + 1)
+        })
+
+        observeEvent(input$remove_box, {
+            if (n_boxes() > 0) {
+                n_boxes(n_boxes() - 1)
+            }
+        })
+
+        observeEvent(n_boxes(), {
             output$filtering_boxes <- renderUI({
-                if (input$n_boxes > 0) {
-                    lapply(1:input$n_boxes, function(i) {
+                if (n_boxes() > 0) {
+                    lapply(seq_len(n_boxes()), function(i) {
                         # Call the server part of the filtering box module and store the output
                         interface_module_filtering_box(
                             NS(id, paste0("filtering_", i))
@@ -30,21 +44,32 @@ server_module_features_filtering_tab <- function(id) {
                     })
                 }
             })
-            if (input$n_boxes > 0) {
-                lapply(1:input$n_boxes, function(i) {
-                    condition <- server_module_filtering_box(
+            if (n_boxes() > 0) {
+                lapply(seq_len(n_boxes()), function(i) {
+                    res <- server_module_filtering_box(
                         paste0("filtering_", i),
                         assays_to_process,
-                        "features"
+                        "features",
+                        boxes_states[[paste0("box_", i)]]
                     )
 
-
-                    # Use an observe function to update the reactiveValues object
                     observe({
-                        filtering_conditions[[paste0("condition_", i)]] <- condition()
+                        filtering_conditions[[paste0("condition_", i)]] <- res$condition()
+                        boxes_states[[paste0("box_", i)]] <- list(
+                            annotation_selection = res$annotation_selection(),
+                            filter_operator = res$filter_operator(),
+                            filter_value = res$filter_value()
+                        )
                     })
                 })
             }
+            output$filtering_summary <- renderUI({
+                if (n_boxes() > 0) {
+                    lapply(seq_len(n_boxes()), function(i) {
+                        tags$p(filtering_conditions[[paste0("condition_", i)]])
+                    })
+                }
+            })
         })
         filtering_conditions_list <- reactive({
             reactiveValuesToList(filtering_conditions)
@@ -60,17 +85,21 @@ server_module_features_filtering_tab <- function(id) {
                 return(NULL)
             }
         })
-        processed_assays <- reactive({
-            if (length(filtering_conditions_list() > 0)) {
-                return(error_handler(filterFeatures,
-                    component_name = "Filter features",
-                    object = assays_to_process(),
-                    filter = entire_condition()
-                ))
-            } else {
-                return(assays_to_process())
+
+        processed_assays <- eventReactive(
+            c(input$apply_filters, assays_to_process()),
+            {
+                if (length(filtering_conditions_list() > 0)) {
+                    return(error_handler(filterFeatures,
+                        component_name = "Filter features",
+                        object = assays_to_process(),
+                        filter = entire_condition()
+                    ))
+                } else {
+                    return(assays_to_process())
+                }
             }
-        })
+        )
         server_module_pre_qc_metrics("psm_filtered", processed_assays)
     })
 }
