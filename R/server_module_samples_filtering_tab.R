@@ -139,7 +139,8 @@ server_module_samples_filtering_tab <- function(id) {
                     error_handler(sample_filtering,
                         component_name = "Sample filtering",
                         qfeatures = assays_to_process(),
-                        conditions = entire_condition())
+                        conditions = entire_condition()
+                    )
                 } else {
                     return(assays_to_process())
                 }

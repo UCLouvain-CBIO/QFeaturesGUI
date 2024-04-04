@@ -6,19 +6,26 @@
 #' @keywords internal
 #'
 #' @importFrom shiny icon
-#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem menuSubItem
+#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem menuSubItem menuItemOutput
 #'
 sidebar <- function() {
     dashboardSidebar(
         sidebarMenu(
+            id = "sidebar_menu",
             menuItem(
                 "Import",
                 tabName = "import_tab",
                 icon = shiny::icon("1") # , class = "icon-container")
             ),
             menuItem(
+                "Workflow Configuration",
+                tabName = "workflow_config_tab",
+                icon = shiny::icon("2")
+            ),
+            menuItemOutput("sidebar_workflow"),
+            menuItem(
                 "Quality Control",
-                icon = shiny::icon("2"),
+                icon = shiny::icon("3"),
                 startExpanded = FALSE,
                 menuSubItem(
                     "PSM Filtering",
@@ -31,7 +38,7 @@ sidebar <- function() {
             ),
             menuItem(
                 "NA report",
-                icon = shiny::icon("3"),
+                icon = shiny::icon("4"),
                 startExpanded = FALSE,
                 menuSubItem(
                     "PSM NA report",

@@ -17,28 +17,7 @@ build_ui <- function() {
         body = dashboardBody(
             useShinyFeedback(),
             includeCSS(system.file(package = "scpGUI", "www", "style.css")),
-            tabItems(
-                tabItem(
-                    tabName = "import_tab",
-                    import_tab()
-                ),
-                tabItem(
-                    tabName = "features_filtering_tab",
-                    interface_module_features_filtering_tab("PSM1")
-                ),
-                tabItem(
-                    tabName = "cell_filtering_tab",
-                    interface_module_samples_filtering_tab("PSM2")
-                ),
-                tabItem(
-                    tabName = "psm_na_report_tab",
-                    "WIP"
-                ),
-                tabItem(
-                    tabName = "peptides_na_report_tab",
-                    "WIP"
-                )
-            )
+            uiOutput("all_tabs")
         ),
         title = "scpGUI"
     )

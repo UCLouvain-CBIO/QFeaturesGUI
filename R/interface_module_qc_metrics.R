@@ -16,7 +16,7 @@ interface_module_qc_metrics <- function(id, type) {
             box(
                 title = "PCA",
                 status = "primary",
-                width = if(type == "features") 8 else 12,
+                width = if (type == "features") 8 else 12,
                 solidHeader = FALSE,
                 collapsible = TRUE,
                 fluidRow(
@@ -48,7 +48,7 @@ interface_module_qc_metrics <- function(id, type) {
                     )
                 )
             ),
-            if(type == "features"){
+            if (type == "features") {
                 box(
                     title = "Feature Annotations",
                     status = "primary",
