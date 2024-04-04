@@ -1,7 +1,7 @@
-#' features quality control tab (section) ui builder
+#' sample quality control tab (section) ui builder
 #'
-#' @return A shiny fluidRow object that contains the psm quality control tab UI components
-#' @rdname INTERNAL_interface_psm_filtering_tab
+#' @return A shiny fluidRow object that contains the quality control tab UI components (sample QC)
+#' @rdname INTERNAL_interface_samples_filtering_tab
 #' @keywords internal
 #'
 #' @importFrom shiny fluidRow NS actionButton icon uiOutput
@@ -9,7 +9,7 @@
 #' @importFrom htmltools tagList
 #' @importFrom shinyBS bsTooltip
 #'
-interface_module_features_filtering_tab <- function(id) {
+interface_module_samples_filtering_tab <- function(id) {
     tagList(
         actionButton(
             NS(id, "reload"),
@@ -34,7 +34,7 @@ interface_module_features_filtering_tab <- function(id) {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics(NS(id, "psm_pre"), "features")
+                interface_module_qc_metrics(NS(id, "psm_pre"), "samples")
             )
         ),
         fluidRow(
@@ -78,7 +78,7 @@ interface_module_features_filtering_tab <- function(id) {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics(NS(id, "psm_filtered"), "features")
+                interface_module_qc_metrics(NS(id, "psm_filtered"), "samples")
             )
         )
     )

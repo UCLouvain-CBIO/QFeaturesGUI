@@ -19,7 +19,7 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
         annotations_names <- reactive({
             req(assays_to_process())
             if (type == "samples") {
-                colnames(colData(assays_to_process()[[1]]))
+                colnames(colData(assays_to_process()))
             } else if (type == "features") {
                 colnames(rowData(assays_to_process()[[1]]))
             }
@@ -56,7 +56,7 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(assays_to_process())
             if (type == "samples") {
-                typeof(colData(assays_to_process()[[1]])[[input$annotation_selection]])
+                typeof(colData(assays_to_process())[[input$annotation_selection]])
             } else if (type == "features") {
                 typeof(rowData(assays_to_process()[[1]])[[input$annotation_selection]])
             }

@@ -10,13 +10,13 @@
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom plotly plotlyOutput
 #'
-interface_module_pre_qc_metrics <- function(id) {
+interface_module_qc_metrics <- function(id, type) {
     tagList(
         fluidRow(
             box(
                 title = "PCA",
                 status = "primary",
-                width = 8,
+                width = if(type == "features") 8 else 12,
                 solidHeader = FALSE,
                 collapsible = TRUE,
                 fluidRow(
@@ -48,14 +48,16 @@ interface_module_pre_qc_metrics <- function(id) {
                     )
                 )
             ),
-            box(
-                title = "Feature Annotations",
-                status = "primary",
-                width = 4,
-                solidHeader = FALSE,
-                collapsible = TRUE,
-                "WIP"
-            )
+            if(type == "features"){
+                box(
+                    title = "Feature Annotations",
+                    status = "primary",
+                    width = 4,
+                    solidHeader = FALSE,
+                    collapsible = TRUE,
+                    "WIP"
+                )
+            }
         )
     )
 }

@@ -1,14 +1,14 @@
-#' @title Server logic for the features filtering tab
+#' @title Server logic for the samples filtering tab
 #' @param id The module id
 #'
 #' @return The processed assays
-#' @rdname INTERNAL_server_module_features_filtering_tab
+#' @rdname INTERNAL_server_module_samples_filtering_tab
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_features_filtering_tab <- function(id) {
+server_module_samples_filtering_tab <- function(id) {
     moduleServer(id, function(input, output, session) {
         assays_to_process <- eventReactive(input$reload, {
             error_handler(page_assays_subset,
@@ -50,7 +50,7 @@ server_module_features_filtering_tab <- function(id) {
                     res <- server_module_filtering_box(
                         paste0("filtering_", i),
                         assays_to_process,
-                        "features",
+                        "samples",
                         boxes_states[[paste0("box_", i)]]
                     )
 
@@ -122,11 +122,11 @@ server_module_features_filtering_tab <- function(id) {
         })
         entire_condition <- reactive({
             res <- lapply(filtering_conditions_list(), function(condition) {
-                condition
+                paste0("qfeatures$", condition)
             })
             res <- unlist(res)
             if (length(filtering_conditions_list()) > 0) {
-                return(as.formula(paste0("~", paste(res, collapse = " & "))))
+                return(paste(res, collapse = " & "))
             } else {
                 return(NULL)
             }
@@ -136,11 +136,10 @@ server_module_features_filtering_tab <- function(id) {
             c(input$apply_filters, assays_to_process()),
             {
                 if (length(filtering_conditions_list()) > 0) {
-                    return(error_handler(filterFeatures,
-                        component_name = "Filter features",
-                        object = assays_to_process(),
-                        filter = entire_condition()
-                    ))
+                    error_handler(sample_filtering,
+                        component_name = "Sample filtering",
+                        qfeatures = assays_to_process(),
+                        conditions = entire_condition())
                 } else {
                     return(assays_to_process())
                 }
@@ -148,4 +147,18 @@ server_module_features_filtering_tab <- function(id) {
         )
         server_module_qc_metrics("psm_filtered", processed_assays)
     })
+}
+
+
+#' @title sample filtering
+#'
+#' @param qfeatures A qfeatures object
+#' @param conditions A string with the conditions to filter the samples (chr)
+#'
+#' @return A qfeatures object with the filtered samples
+#' @rdname INTERNAL_sample_filtering
+#' @keywords internal
+#'
+sample_filtering <- function(qfeatures, conditions) {
+    qfeatures[, eval(parse(text = conditions)), ]
 }

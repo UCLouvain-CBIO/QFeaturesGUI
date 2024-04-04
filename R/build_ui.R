@@ -28,7 +28,7 @@ build_ui <- function() {
                 ),
                 tabItem(
                     tabName = "cell_filtering_tab",
-                    "WIP"
+                    interface_module_samples_filtering_tab("PSM2")
                 ),
                 tabItem(
                     tabName = "psm_na_report_tab",

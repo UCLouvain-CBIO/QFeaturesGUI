@@ -9,7 +9,7 @@
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
 #'
-server_module_pre_qc_metrics <- function(id, assays_to_process) {
+server_module_qc_metrics <- function(id, assays_to_process, type) {
     stopifnot(is.reactive(assays_to_process))
     moduleServer(id, function(input, output, session) {
         observe({
