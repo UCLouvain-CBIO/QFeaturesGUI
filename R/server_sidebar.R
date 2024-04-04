@@ -1,3 +1,16 @@
+#' Server sidebar logic
+#'
+#' @param input input from the parent server function
+#' @param output output from the parent server function
+#' @param session session from the parent server function
+#'
+#' @return The server logic for the sidebar
+#' @rdname INTERNAL_server_sidebar
+#' @keywords internal
+#'
+#' @importFrom shinydashboard renderMenu menuItem menuSubItem
+#' @importFrom shiny icon
+#'
 server_sidebar <- function(input, output, session) {
     output$sidebar_workflow <- renderMenu({
         menuItem(

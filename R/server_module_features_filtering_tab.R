@@ -33,6 +33,7 @@ server_module_features_filtering_tab <- function(id) {
             }
         })
 
+        # Could also use insertUI/removeUI
         observeEvent(n_boxes(), {
             output$filtering_boxes <- renderUI({
                 if (n_boxes() > 0) {

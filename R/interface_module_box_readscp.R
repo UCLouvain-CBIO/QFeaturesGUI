@@ -26,6 +26,14 @@ box_readscp_ui <- function(id) {
                 solidHeader = FALSE,
                 collapsible = TRUE,
                 id = NS(id, "parameters"),
+                actionButton(
+                    inputId = NS(id, "reload_button"),
+                    "Reload",
+                    icon = icon("rotate-right"),
+                    width = "100%",
+                    class = "load-button",
+                    style = "font-size: 14px;"
+                ),
                 selectInput(
                     inputId = NS(id, "batch_col"),
                     "Batch column :",

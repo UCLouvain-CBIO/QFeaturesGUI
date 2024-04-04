@@ -58,6 +58,7 @@ box_readscp_server <- function(id, input_table, sample_table) {
         })
 
         observe({
+            input$reload_button
             updateSelectInput(session,
                 "batch_col",
                 choices = colnames(sample_table())

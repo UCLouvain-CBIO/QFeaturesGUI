@@ -10,7 +10,7 @@
 #' @keywords internal
 #'
 #' @importFrom QFeatures QFeatures
-#' @importFrom shiny observeEvent
+#' @importFrom shiny observeEvent invalidateLater
 #' @importFrom shinydashboard updateTabItems
 #'
 build_server <- function(sample_table, input_table) {
@@ -27,7 +27,6 @@ build_server <- function(sample_table, input_table) {
         global_rv$workflow_config <- list()
         server_exception_menu(input, output, session)
         server_sidebar(input, output, session)
-        updateTabItems(session, "sidebar_menu", selected = "import_tab")
         server_import_tab(
             input,
             output,
@@ -37,10 +36,16 @@ build_server <- function(sample_table, input_table) {
         )
         server_module_workflow_config("workflow_config")
         server_dynamic_workflow(input, output, session)
+        # Force the selection of the import_tab at start
+        session$onFlushed(function() {
+            updateTabItems(session, "sidebar_menu", selected = "import_tab")
+        })
+        # Force the selection of the workflow_config_tab when the tabs are updated
         observeEvent(global_rv$workflow_config, {
-            invalidateLater(500, session) 
+            updateTabItems(session, "sidebar_menu", selected = "import_tab")
             updateTabItems(session, "sidebar_menu", selected = "workflow_config_tab")
         })
+
         server_module_features_filtering_tab("PSM1")
         server_module_samples_filtering_tab("PSM2")
     }

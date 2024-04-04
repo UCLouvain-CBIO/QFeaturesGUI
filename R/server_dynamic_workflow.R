@@ -1,3 +1,18 @@
+#' Server logic for the dynamic workflow
+#'
+#' @param input input from the parent server function
+#' @param output output from the parent server function
+#' @param session session from the parent server function
+#'
+#' @return The server logic for the dynamic workflow
+#' @rdname INTERNAL_server_dynamic_workflow
+#' @keywords internal
+#'
+#' @importFrom shiny observeEvent renderUI
+#' @importFrom shinydashboard tabItem tabItems
+#' @importFrom htmltools h2
+#'
+
 server_dynamic_workflow <- function(input, output, session) {
     observeEvent(global_rv$workflow_config, {
         output$all_tabs <- renderUI({
@@ -11,37 +26,35 @@ server_dynamic_workflow <- function(input, output, session) {
                     interface_module_workflow_config_tab("workflow_config")
                 ),
                 tabItem(
-                    tabName = "features_filtering_tab",
-                    interface_module_features_filtering_tab("PSM1")
-                ),
-                tabItem(
-                    tabName = "cell_filtering_tab",
-                    interface_module_samples_filtering_tab("PSM2")
-                ),
-                tabItem(
-                    tabName = "psm_na_report_tab",
-                    "WIP"
-                ),
-                tabItem(
-                    tabName = "peptides_na_report_tab",
-                    "WIP"
+                    tabName = "summary_tab",
+                    h2("WIP")
                 )
             )
 
             dynamic_tabs <- lapply(seq_along(global_rv$workflow_config), function(i) {
                 tabItem(
                     tabName = paste0("step_", i),
-                    fluidRow(
-                        column(
-                            width = 12,
-                            h4("Step Description"),
-                            p("This is a description of the step.")
+                    if (global_rv$workflow_config[[i]] == "Cells Filtering") {
+                        interface_module_samples_filtering_tab(
+                            paste0("filtering_", i)
                         )
-                    )
+                    } else {
+                        interface_module_features_filtering_tab(
+                            paste0("filtering_", i)
+                        )
+                    }
                 )
             })
 
             do.call(tabItems, c(static_tabs, dynamic_tabs))
+        })
+
+        lapply(seq_along(global_rv$workflow_config), function(i) {
+            if (global_rv$workflow_config[[i]] == "Cells Filtering") {
+                server_module_samples_filtering_tab(paste0("filtering_", i))
+            } else {
+                server_module_features_filtering_tab(paste0("filtering_", i))
+            }
         })
     })
 }

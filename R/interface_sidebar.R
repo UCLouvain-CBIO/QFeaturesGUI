@@ -24,30 +24,9 @@ sidebar <- function() {
             ),
             menuItemOutput("sidebar_workflow"),
             menuItem(
-                "Quality Control",
-                icon = shiny::icon("3"),
-                startExpanded = FALSE,
-                menuSubItem(
-                    "PSM Filtering",
-                    tabName = "features_filtering_tab"
-                ),
-                menuSubItem(
-                    "Cells Filtering",
-                    tabName = "cell_filtering_tab"
-                )
-            ),
-            menuItem(
-                "NA report",
-                icon = shiny::icon("4"),
-                startExpanded = FALSE,
-                menuSubItem(
-                    "PSM NA report",
-                    tabName = "psm_na_report_tab"
-                ),
-                menuSubItem(
-                    "Peptides NA report",
-                    tabName = "peptides_na_report_tab"
-                )
+                "Summary",
+                tabName = "summary_tab",
+                icon = shiny::icon("4")
             )
         )
     )
