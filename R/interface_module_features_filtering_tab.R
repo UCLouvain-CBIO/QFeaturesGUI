@@ -80,6 +80,22 @@ interface_module_features_filtering_tab <- function(id) {
                 collapsible = TRUE,
                 interface_module_qc_metrics(NS(id, "psm_filtered"), "features")
             )
+        ),
+        actionButton(
+            NS(id, "export"),
+            "Save the processed assays",
+            icon("hand-pointer", class = "fa-solid"),
+            width = "100%",
+            class = "load-button"
+        ),
+        shinyBS::bsTooltip(
+            id = NS(id, "export"),
+            title = paste("Write the processed assays to the QFeatures object.",
+                "This is needed to proceed to the next steps.",
+                sep = " "
+            ),
+            trigger = "hover",
+            placement = "top"
         )
     )
 }

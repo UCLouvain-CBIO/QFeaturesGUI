@@ -1,5 +1,6 @@
 #' @title Server logic for the samples filtering tab
 #' @param id The module id
+#' @param step_number The step number
 #'
 #' @return The processed assays
 #' @rdname INTERNAL_server_module_samples_filtering_tab
@@ -8,14 +9,17 @@
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_samples_filtering_tab <- function(id) {
+server_module_samples_filtering_tab <- function(id, step_number) {
     moduleServer(id, function(input, output, session) {
         assays_to_process <- eventReactive(input$reload, {
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
                 qfeatures = global_rv$qfeatures,
-                pattern = "_(scpGUI#1)"
+                pattern = paste0("_(scpGUI#", step_number - 1, ")")
             )
+        })
+        observe({
+            print(assays_to_process())
         })
         server_module_qc_metrics("psm_pre", assays_to_process)
 
@@ -147,6 +151,21 @@ server_module_samples_filtering_tab <- function(id) {
             }
         )
         server_module_qc_metrics("psm_filtered", processed_assays)
+
+        observeEvent(input$export, {
+            req(processed_assays())
+            loading(paste("Be aware that this operation",
+                "can be quite time consuming for large data sets",
+                sep = " "
+            ))
+            error_handler(
+                add_assays_to_global_rv,
+                component_name = "Add assays to global_rv",
+                processed_qfeatures = processed_assays(),
+                step_number = step_number
+            )
+            removeModal()
+        })
     })
 }
 

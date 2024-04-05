@@ -200,7 +200,7 @@ page_assays_subset <- function(qfeatures, pattern) {
         names(qfeatures),
         fixed = TRUE
     )
-    qfeatures[to_process]
+    qfeatures[, , to_process]
 }
 
 #' Create a plotly PCA plot
@@ -231,7 +231,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         } else {
             suppressWarnings(RColorBrewer::brewer.pal(
                 length(unique(df[[color_name]])),
-                "Set2"
+                "Set1"
             ))
         },
         hovertemplate = paste(
@@ -277,4 +277,24 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         plotly <- hide_colorbar(plotly)
     }
     return(plotly)
+}
+
+
+#' A function that will add the assays to the global_rv qfeatures object
+#'
+#' @param processed_qfeatures `QFeatures` object to add to the global_rv qfeatures object
+#' @param step_number `int` number of the step
+#' @rdname INTERNAL_add_assays_to_global_rv
+#' @keywords internal
+#'
+add_assays_to_global_rv <- function(processed_qfeatures, step_number) {
+    for (name in names(processed_qfeatures)) {
+        new_name <- gsub(
+            pattern = paste0("_(scpGUI#", step_number - 1, ")"),
+            replacement = paste0("_(scpGUI#", step_number, ")"),
+            x = name,
+            fixed = TRUE
+        )
+        global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+    }
 }

@@ -51,7 +51,7 @@ box_readscp_server <- function(id, input_table, sample_table) {
             for (i in seq_along(global_rv$qfeatures)) {
                 names(global_rv$qfeatures)[i] <- paste0(
                     names(global_rv$qfeatures)[i],
-                    "_(scpGUI#1)"
+                    "_(scpGUI#0)"
                 )
             }
             removeModal()

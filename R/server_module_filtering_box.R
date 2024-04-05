@@ -31,7 +31,6 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             )
         })
         if (!is.null(state)) {
-            print(state)
             updateSelectInput(
                 inputId = "filter_operator",
                 selected = state$filter_operator

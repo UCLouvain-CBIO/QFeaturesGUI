@@ -51,9 +51,13 @@ server_dynamic_workflow <- function(input, output, session) {
 
         lapply(seq_along(global_rv$workflow_config), function(i) {
             if (global_rv$workflow_config[[i]] == "Cells Filtering") {
-                server_module_samples_filtering_tab(paste0("filtering_", i))
+                server_module_samples_filtering_tab(paste0("filtering_", i),
+                    step_number = i
+                )
             } else {
-                server_module_features_filtering_tab(paste0("filtering_", i))
+                server_module_features_filtering_tab(paste0("filtering_", i),
+                    step_number = i
+                )
             }
         })
     })
