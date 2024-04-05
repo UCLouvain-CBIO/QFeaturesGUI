@@ -42,7 +42,10 @@ server_module_workflow_config <- function(id) {
             }
         })
         steps_list <- reactive({
-            reactiveValuesToList(steps)
+            full_list <- reactiveValuesToList(steps)
+            lapply(seq_len(n_steps()), function(i) {
+                full_list[[i]]
+            })
         })
 
         observeEvent(input$apply, {

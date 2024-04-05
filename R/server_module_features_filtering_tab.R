@@ -19,10 +19,6 @@ server_module_features_filtering_tab <- function(id, step_number) {
             )
         })
 
-        observe({
-            print(assays_to_process())
-        })
-
         server_module_qc_metrics("psm_pre", assays_to_process)
 
         n_boxes <- reactiveVal(0)
@@ -128,8 +124,8 @@ server_module_features_filtering_tab <- function(id, step_number) {
             reactiveValuesToList(filtering_conditions)
         })
         entire_condition <- reactive({
-            res <- lapply(filtering_conditions_list(), function(condition) {
-                condition
+            res <- lapply(seq_len(n_boxes()), function(index) {
+                paste0("qfeatures$", filtering_conditions_list()[[index]])
             })
             res <- unlist(res)
             if (length(filtering_conditions_list()) > 0) {

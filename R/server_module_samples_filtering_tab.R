@@ -18,9 +18,6 @@ server_module_samples_filtering_tab <- function(id, step_number) {
                 pattern = paste0("_(scpGUI#", step_number - 1, ")")
             )
         })
-        observe({
-            print(assays_to_process())
-        })
         server_module_qc_metrics("psm_pre", assays_to_process)
 
         n_boxes <- reactiveVal(0)
@@ -125,8 +122,8 @@ server_module_samples_filtering_tab <- function(id, step_number) {
             reactiveValuesToList(filtering_conditions)
         })
         entire_condition <- reactive({
-            res <- lapply(filtering_conditions_list(), function(condition) {
-                paste0("qfeatures$", condition)
+            res <- lapply(seq_len(n_boxes()), function(index) {
+                paste0("qfeatures$", filtering_conditions_list()[[index]])
             })
             res <- unlist(res)
             if (length(filtering_conditions_list()) > 0) {
