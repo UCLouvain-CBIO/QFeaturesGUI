@@ -46,8 +46,7 @@ build_server <- function(sample_table, input_table) {
             updateTabItems(session, "sidebar_menu", selected = "workflow_config_tab")
         })
 
-        server_module_features_filtering_tab("PSM1")
-        server_module_samples_filtering_tab("PSM2")
+        server_module_summary_tab("summary_tab")
     }
 
     server

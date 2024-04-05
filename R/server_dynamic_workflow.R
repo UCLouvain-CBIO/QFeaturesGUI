@@ -27,7 +27,7 @@ server_dynamic_workflow <- function(input, output, session) {
                 ),
                 tabItem(
                     tabName = "summary_tab",
-                    h2("WIP")
+                    interface_module_summary_tab("summary_tab")
                 )
             )
 

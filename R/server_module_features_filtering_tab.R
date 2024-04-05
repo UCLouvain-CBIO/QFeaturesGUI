@@ -125,10 +125,10 @@ server_module_features_filtering_tab <- function(id, step_number) {
         })
         entire_condition <- reactive({
             res <- lapply(seq_len(n_boxes()), function(index) {
-                paste0("qfeatures$", filtering_conditions_list()[[index]])
+                filtering_conditions_list()[[index]]
             })
             res <- unlist(res)
-            if (length(filtering_conditions_list()) > 0) {
+            if (length(n_boxes()) > 0) {
                 return(as.formula(paste0("~", paste(res, collapse = " & "))))
             } else {
                 return(NULL)
@@ -160,7 +160,7 @@ server_module_features_filtering_tab <- function(id, step_number) {
             error_handler(
                 add_assays_to_global_rv,
                 component_name = "Add assays to global_rv",
-                qfeatures = processed_assays(),
+                processed_qfeatures = processed_assays(),
                 step_number = step_number
             )
             removeModal()

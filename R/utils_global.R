@@ -200,7 +200,7 @@ page_assays_subset <- function(qfeatures, pattern) {
         names(qfeatures),
         fixed = TRUE
     )
-    qfeatures[, , to_process]
+    suppressMessages(suppressWarnings(qfeatures[, , to_process]))
 }
 
 #' Create a plotly PCA plot
