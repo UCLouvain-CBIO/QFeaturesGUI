@@ -287,6 +287,8 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
+#' @importFrom QFeatures addAssayLink 
+
 add_assays_to_global_rv <- function(processed_qfeatures, step_number) {
     for (name in names(processed_qfeatures)) {
         new_name <- gsub(
@@ -296,5 +298,11 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number) {
             fixed = TRUE
         )
         global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+
+        global_rv$qfeatures <- addAssayLink(
+            global_rv$qfeatures,
+            from = name,
+            to = new_name
+        )
     }
 }

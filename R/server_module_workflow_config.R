@@ -2,7 +2,7 @@
 #' @title Workflow Configuration Module Server
 #'
 #' @param id The module id
-#' 
+#'
 #' @return A Shiny module UI function
 #' @rdname INTERNAL_server_module_workflow_config
 #' @keywords internal

@@ -1,12 +1,12 @@
 #'
 #' @title Workflow Configuration Module (interface)
-#' 
+#'
 #' @param id The module id
-#' 
+#'
 #' @return A Shiny module UI function
 #' @rdname INTERNAL_interface_module_workflow_config
 #' @keywords internal
-#' 
+#'
 #' @importFrom shiny uiOutput actionButton tagList icon
 #' @importFrom htmltools div
 #'

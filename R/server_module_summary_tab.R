@@ -53,9 +53,20 @@ server_module_summary_tab <- function(id) {
         })
 
         output$qfeatures_plot <- renderPlotly({
-            plot(global_rv$qfeatures,
-                interactive = TRUE
-            )
+            if (length(global_rv$qfeatures) > 0) {
+                plot(global_rv$qfeatures,
+                    interactive = TRUE
+                )
+            }
         })
+
+        output$download_qfeatures <- downloadHandler(
+            filename = function() {
+                "scp_qfeature_object.rds"
+            },
+            content = function(file) {
+                saveRDS(global_rv$qfeatures, file)
+            }
+        )
     })
 }
