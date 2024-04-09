@@ -1,4 +1,3 @@
-
 #' Summary tab for the interface module
 #'
 #' @param id the id of the module
@@ -11,10 +10,11 @@
 #' @importFrom shiny NS
 #' @importFrom plotly plotlyOutput
 interface_module_summary_tab <- function(id) {
-    box(title = "QFeatures Summary",
-     status = "primary",
-      solidHeader = TRUE,
-       collapsible = TRUE,
+    box(
+        title = "QFeatures Summary",
+        status = "primary",
+        solidHeader = TRUE,
+        collapsible = TRUE,
         width = 12,
         DT::dataTableOutput(NS(id, "qfeatures_dt")),
         DT::dataTableOutput(NS(id, "assay_table")),
@@ -25,5 +25,6 @@ interface_module_summary_tab <- function(id) {
             collapsible = TRUE,
             width = 12,
             plotlyOutput(NS(id, "qfeatures_plot"))
-        ))
+        )
+    )
 }

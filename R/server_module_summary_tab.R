@@ -51,10 +51,11 @@ server_module_summary_tab <- function(id) {
                 )
             }
         })
-    
+
         output$qfeatures_plot <- renderPlotly({
             plot(global_rv$qfeatures,
-            interactive = TRUE)
+                interactive = TRUE
+            )
         })
     })
 }

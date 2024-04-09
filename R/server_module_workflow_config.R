@@ -1,3 +1,16 @@
+#'
+#' @title Workflow Configuration Module Server
+#'
+#' @param id The module id
+#' 
+#' @return A Shiny module UI function
+#' @rdname INTERNAL_server_module_workflow_config
+#' @keywords internal
+#'
+#' @importFrom shiny moduleServer observeEvent renderUI selectInput reactiveVal reactiveValues reactiveValuesToList reactive
+#' @importFrom htmltools div
+#'
+
 server_module_workflow_config <- function(id) {
     moduleServer(id, function(input, output, session) {
         n_steps <- reactiveVal(0)
@@ -21,14 +34,19 @@ server_module_workflow_config <- function(id) {
                         if (!is.null(steps[[paste0("step_", i)]])) {
                             selected <- steps[[paste0("step_", i)]]
                         }
-                        selectInput(
-                            inputId = NS(id, paste0("step_", i)),
-                            label = paste0("Step ", i),
-                            choices = c(
-                                "Cells Filtering",
-                                "Features Filtering"
+                        div(
+                            selectInput(
+                                inputId = NS(id, paste0("step_", i)),
+                                label = paste0("Step ", i),
+                                choices = c(
+                                    "Cells Filtering",
+                                    "Features Filtering"
+                                ),
+                                selected = selected,
+                                width = "90%"
                             ),
-                            selected = selected
+                            class = "container widget-box",
+                            style = "width: 80%;"
                         )
                     })
                 }
