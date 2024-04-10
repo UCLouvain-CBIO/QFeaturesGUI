@@ -39,6 +39,8 @@ server_module_qc_metrics <- function(id, assays_to_process, type) {
             method = input$selected_method,
             transpose = TRUE
         )
+
+        server_module_viz_box("viz_box", assays_to_process)
     })
 }
 

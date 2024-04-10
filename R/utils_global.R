@@ -287,7 +287,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
-#' @importFrom QFeatures addAssayLink 
+#' @importFrom QFeatures addAssayLink
 
 add_assays_to_global_rv <- function(processed_qfeatures, step_number) {
     for (name in names(processed_qfeatures)) {

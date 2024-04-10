@@ -27,10 +27,10 @@ interface_module_summary_tab <- function(id) {
             plotlyOutput(NS(id, "qfeatures_plot"))
         ),
         downloadButton(
-                    outputId = NS(id, "download_qfeatures"),
-                    "Download QFeatures",
-                    class = "load-button",
-                    style = "width: 100%;"
-                )
+            outputId = NS(id, "download_qfeatures"),
+            "Download QFeatures",
+            class = "load-button",
+            style = "width: 100%;"
+        )
     )
 }

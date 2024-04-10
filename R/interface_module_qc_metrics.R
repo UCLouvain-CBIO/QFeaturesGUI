@@ -50,12 +50,12 @@ interface_module_qc_metrics <- function(id, type) {
             ),
             if (type == "features") {
                 box(
-                    title = "Feature Annotations",
+                    title = "Single Feature Visualisation",
                     status = "primary",
                     width = 4,
                     solidHeader = FALSE,
                     collapsible = TRUE,
-                    "WIP"
+                    interface_module_viz_box(NS(id, "viz_box"))
                 )
             }
         )
