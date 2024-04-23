@@ -5,16 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A graphical interface for the scp package. • scpGUI</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<title>A suite of shiny apps to use the main functionalies of the QFeatures package • QFeaturesGUI</title>
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="A graphical interface for the scp package.">
-<meta property="og:description" content="scpGUI is a graphical interface for the scp package.
-  Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object.
-  This process is performed with the readSCP function from the scp package.">
+<script src="pkgdown.js"></script><meta property="og:title" content="A suite of shiny apps to use the main functionalies of the QFeatures package">
+<meta property="og:description" content='"QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: QFeaturesImport."'>
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -34,16 +32,13 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">scpGUI</a>
+        <a class="navbar-link" href="index.html">QFeaturesGUI</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="articles/scpGUI.html">Get started</a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -57,12 +52,15 @@
 <li>
       <a href="articles/import_section.html">Import Section</a>
     </li>
+    <li>
+      <a href="articles/scpGUI.html">scpGUI</a>
+    </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/UCLouvain-CBIO/scpGUI/" class="external-link">
+  <a href="https://github.com/UCLouvain-CBIO/QFeaturesGUI/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -82,9 +80,9 @@
 
 
 <div class="section level1">
-<div class="page-header"><h1 id="scpgui">scpGUI<a class="anchor" aria-label="anchor" href="#scpgui"></a>
+<div class="page-header"><h1 id="qfeaturesgui">QFeaturesGUI<a class="anchor" aria-label="anchor" href="#qfeaturesgui"></a>
 </h1></div>
-<p><code>scpGUI</code> is a graphical interface for the scp package. Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object. This process is performed with the readSCP function from the scp package.</p>
+<p><code>QFeaturesGUI</code> is a R package that contains a suite of shiny app to offer a graphical interface for the QFeatures package. Currently the package can be used to convert tables (csv and tsv) into a QFeatures object. This works for both bulk and single-cell data. The user can also apply several pre-processing steps to the imported QFeatures. This process is performed with the readQFeatures function from the QFeatures package.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -95,12 +93,12 @@
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co"># Install the package</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"UCLouvain-CBIO/scpGUI"</span>,</span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"UCLouvain-CBIO/QFeaturesGUI"</span>,</span>
 <span>    build_manual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>    build_vignettes <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Load the package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://uclouvain-cbio.github.io/scpGUI/" class="external-link">scpGUI</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://uclouvain-cbio.github.io/QFeaturesGUI/" class="external-link">QFeaturesGUI</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
@@ -110,8 +108,8 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/UCLouvain-CBIO/scpGUI/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/UCLouvain-CBIO/scpGUI/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/UCLouvain-CBIO/QFeaturesGUI/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/UCLouvain-CBIO/QFeaturesGUI/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -127,7 +125,7 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing scpGUI</a></li>
+<li><a href="authors.html#citation">Citing QFeaturesGUI</a></li>
 </ul>
 </div>
 
@@ -142,7 +140,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://github.com/UCLouvain-CBIO/scpGUI/actions/workflows/check-bioc.yml" class="external-link"><img src="https://github.com/UCLouvain-CBIO/scpGUI/workflows/R-CMD-check-bioc/badge.svg" alt="R-CMD-check-bioc"></a></li>
+<li><a href="https://github.com/UCLouvain-CBIO/QFeaturesGUI/actions/workflows/check-bioc.yml" class="external-link"><img src="https://github.com/UCLouvain-CBIO/QFeaturesGUI/workflows/R-CMD-check-bioc/badge.svg" alt="R-CMD-check-bioc"></a></li>
 <li><a href="https://opensource.org/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
 </ul>
 </div>
@@ -158,7 +156,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

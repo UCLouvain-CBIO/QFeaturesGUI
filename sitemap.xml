@@ -25,9 +25,15 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/QFeaturesImport.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/scpGUI.html</loc>
+    <loc>/reference/inputTable.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sampleTable.html</loc>
   </url>
 </urlset>
