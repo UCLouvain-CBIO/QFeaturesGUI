@@ -11,9 +11,9 @@ output:
         code_folding: show
 bibliography: scpGUI.bib
 date: "`r BiocStyle::doc_date()`"
-package: "`r BiocStyle::pkg_ver('scpGUI')`"
+package: "`r BiocStyle::pkg_ver('QFeaturesGUI')`"
 vignette: >
-  %\VignetteIndexEntry{scpGUI}
+  %\VignetteIndexEntry{QFeaturesGUI}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,6 +25,11 @@ knitr::opts_chunk$set(
     crop = NULL
 )
 ```
+
+
+WIP
+
+
 
 # scpGUI
 
@@ -52,9 +57,9 @@ if (!require("remotes", quietly = TRUE)) {
     install.packages("remotes")
 }
 # Install the package
-remotes::install_github("UCLouvain-CBIO/scpGUI")
+#remotes::install_github("UCLouvain-CBIO/scpGUI")
 # Load the package
-library(scpGUI)
+#library(scpGUI)
 ```
 
 ## Application launch
@@ -72,12 +77,9 @@ if (interactive()) {
 When launching `scpGUI`, the user can see section of the app on the right sidebar. Each section will serve one step of the workflow.
 Each section is documented in its own vignette:
 
-- [Import Section](https://uclouvain-cbio.github.io/scpGUI/articles/import_section.html)
 
 # Citation
 
-```{r citation}
-citation("scpGUI")
-```
+
 
 # References
