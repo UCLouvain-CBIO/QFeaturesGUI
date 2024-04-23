@@ -1,6 +1,6 @@
 #' ui header builder
 #'
-#' @return the dashboardHeader object for the scpGUI app.
+#' @return the dashboardHeader object for the QFeaturesImport app.
 #' @rdname INTERNAL_interface_header
 #' @keywords internal
 #'
@@ -9,7 +9,7 @@
 #'
 header <- function() {
     dashboardHeader(
-        title = "scpGUI",
+        title = "QFeaturesImport",
         dropdownMenuOutput("exception_menu")
     )
 }

@@ -16,10 +16,10 @@ build_ui <- function() {
         sidebar = sidebar(),
         body = dashboardBody(
             useShinyFeedback(),
-            includeCSS(system.file(package = "scpGUI", "www", "style.css")),
+            includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             uiOutput("all_tabs")
         ),
-        title = "scpGUI"
+        title = "QFeaturesImport"
     )
 
     return(ui)

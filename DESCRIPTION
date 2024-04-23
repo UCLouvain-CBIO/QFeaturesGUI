@@ -1,15 +1,13 @@
-Package: scpGUI
-Title: A graphical interface for the scp package
+Package: QFeaturesGUI
+Title: A suite of shiny apps to use the main functionalies of the QFeatures package
 Version: 0.1.1
-Date: 2024-02-23
+Date: 2024-04-23
 Authors@R: 
     person(given = "Léopold", family = "Guyot", email = "leopold.guyot@ulb.be", role = c("aut", "cre"))
-Description: scpGUI is a graphical interface for the scp package.
-  Currently the app can be used to convert two separate tables (Input and Sample) into a QFeatures object.
-  This process is performed with the readSCP function from the scp package.
-biocViews: Software, ShinyApps, GUI, SingleCell, Proteomics
-URL: https://uclouvain-cbio.github.io/scpGUI/, https://github.com/UCLouvain-CBIO/scpGUI
-BugReports: https://github.com/UCLouvain-CBIO/scpGUI/issues
+Description: "QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: 'QFeaturesImport'."
+biocViews: Software, ShinyApps, GUI, Proteomics
+URL: https://uclouvain-cbio.github.io/QFeaturesGUI/, https://github.com/UCLouvain-CBIO/QFeaturesGUI
+BugReports: https://github.com/UCLouvain-CBIO/QFeaturesGUI/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
