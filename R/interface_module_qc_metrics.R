@@ -92,6 +92,16 @@ interface_module_pca_box <- function(id, title) {
                 choices = NULL
             ),
             checkboxInput(
+                inputId = NS(id, "scale"),
+                label = "Scale data",
+                value = TRUE
+            ),
+            checkboxInput(
+                inputId = NS(id, "center"),
+                label = "Center data",
+                value = TRUE
+            ),
+            checkboxInput(
                 inputId = NS(id, "show_legend"),
                 label = "Show Legend",
                 value = FALSE

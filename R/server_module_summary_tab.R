@@ -62,7 +62,7 @@ server_module_summary_tab <- function(id) {
 
         output$download_qfeatures <- downloadHandler(
             filename = function() {
-                "scp_qfeature_object.rds"
+                "qfeatures_object.rds"
             },
             content = function(file) {
                 saveRDS(global_rv$qfeatures, file)

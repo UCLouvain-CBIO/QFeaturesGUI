@@ -166,6 +166,8 @@ remove_scpGUI <- function(string) {
 #'
 #' @param sce A SingleCellExperiment object. The PCA is performed on the assay of this object.
 #' @param method A character string specifying the PCA method to use. This should be one of the methods supported by the pcaMethods package.
+#' @param center A logical indicating whether the variables should be centered before PCA.
+#' @param scale A logical indicating whether the variables should be scaled before PCA.
 #'
 #' @return A pcaRes object resulting from the PCA.
 #' @rdname INTERNAL_pcaMethods_wrapper
@@ -174,15 +176,19 @@ remove_scpGUI <- function(string) {
 #' @importFrom pcaMethods pca
 #' @importFrom SummarizedExperiment assay
 #'
-pcaMethods_wrapper <- function(sce, method, transpose = FALSE) {
+pcaMethods_wrapper <- function(sce, method, center, scale, transpose = FALSE) {
     mat <- assay(sce)
     mat <- mat[rowSums(is.na(mat)) != ncol(mat), ]
     mat <- mat[, colSums(is.na(mat)) < nrow(mat)]
+    if (scale) {
+        mat <- scale(mat)
+    }
     if (transpose) {
         mat <- t(mat)
     }
     pca <- pcaMethods::pca(mat,
-        method = method
+        method = method,
+        center = center
     )
     pca
 }

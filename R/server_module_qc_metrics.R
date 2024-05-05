@@ -62,7 +62,7 @@ server_module_qc_metrics <- function(id, assays_to_process, type) {
 #' @importFrom pcaMethods pca scores
 #' @importFrom methods is
 #'
-server_module_pca_box <- function(id, single_assay, method, transpose) {
+server_module_pca_box <- function(id, single_assay,  method, transpose) {
     moduleServer(id, function(input, output, session) {
         annotation_names <- reactive({
             req(single_assay())
@@ -104,12 +104,15 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             return(df)
         })
 
+
         pca_result <- reactive({
             req(single_assay())
             pcaMethods_wrapper(
                 single_assay(),
                 method = method,
-                transpose = transpose
+                transpose = transpose,
+                scale = input$scale,
+                center = input$center
             )
         })
         dataframe <- reactive({

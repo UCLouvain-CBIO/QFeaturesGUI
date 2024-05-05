@@ -54,6 +54,11 @@ box_readscp_ui <- function(id) {
                     label = "Convert zeros to NA",
                     value = TRUE
                 ),
+                checkboxInput(
+                    inputId = NS(id, "singlecell"),
+                    label = "Single cell data",
+                    value = FALSE
+                ),
                 actionButton(
                     inputId = NS(id, "convert"),
                     "Convert to a QFeatures object"
