@@ -49,10 +49,14 @@ server_module_viz_box <- function(id, assays_to_process) {
             for (i in names(assays_to_process())) {
                 tryCatch(
                     {
-                        sub_assay <- getWithColData(assays_to_process(), i)[input$feature, ]
+                        sub_assay <- getWithColData(assays_to_process(), i)
+                        sub_assay_data <- assay(sub_assay)
+                        if (input$scale) {
+                            sub_assay_data <- scale(sub_assay_data)
+                        }
                         sub_assay_df <- data.frame(
                             "sample_type" = colData(sub_assay)[, input$sample_type_column],
-                            "intensity" = assay(sub_assay)[1, ]
+                            "intensity" = sub_assay_data[input$feature, ]
                         )
                         res_df <- rbind(res_df, sub_assay_df)
                     },

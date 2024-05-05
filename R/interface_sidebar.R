@@ -18,7 +18,7 @@ sidebar <- function() {
                 icon = shiny::icon("1") # , class = "icon-container")
             ),
             menuItem(
-                "Workflow Configuration",
+                "Pre-processing Configuration",
                 tabName = "workflow_config_tab",
                 icon = shiny::icon("2")
             ),

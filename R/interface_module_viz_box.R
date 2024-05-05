@@ -19,6 +19,10 @@ interface_module_viz_box <- function(id) {
             "Sample Type Column",
             choices = NULL
         ),
+        checkboxInput(NS(id, "scale"),
+            "Scale Data",
+            value = TRUE
+        ),
         box(
             title = "Box Plot",
             status = "primary",

@@ -15,7 +15,7 @@ server_sidebar <- function(input, output, session) {
     output$sidebar_workflow <- renderMenu({
         menuItem(
             paste0(
-                "Workflow",
+                "Pre-processing",
                 " (",
                 length(global_rv$workflow_config), " Steps)"
             ),
