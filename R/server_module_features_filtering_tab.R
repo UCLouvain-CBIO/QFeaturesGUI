@@ -15,7 +15,7 @@ server_module_features_filtering_tab <- function(id, step_number) {
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
                 qfeatures = global_rv$qfeatures,
-                pattern = paste0("_(scpGUI#", step_number - 1, ")")
+                pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
             )
         })
 

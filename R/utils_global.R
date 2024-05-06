@@ -149,7 +149,7 @@ loading <- function(msg) {
     ))
 }
 
-#' A function that remove the "(scpGUI#x)" suffix from a string
+#' A function that remove the "(QFeaturesGUI#x)" suffix from a string
 #' @param string `str` string to remove the suffix from
 #' @return `str` the string without the suffix
 #' @rdname INTERNAL_remove_scpGUI
@@ -157,7 +157,7 @@ loading <- function(msg) {
 #'
 #'
 remove_scpGUI <- function(string) {
-    return(gsub("\\_(scpGUI#[0-9]+\\)", "", string))
+    return(gsub("\\_(QFeaturesGUI#[0-9]+\\)", "", string))
 }
 
 #' PCA Methods Wrapper
@@ -298,8 +298,8 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 add_assays_to_global_rv <- function(processed_qfeatures, step_number) {
     for (name in names(processed_qfeatures)) {
         new_name <- gsub(
-            pattern = paste0("_(scpGUI#", step_number - 1, ")"),
-            replacement = paste0("_(scpGUI#", step_number, ")"),
+            pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")"),
+            replacement = paste0("_(QFeaturesGUI#", step_number, ")"),
             x = name,
             fixed = TRUE
         )
