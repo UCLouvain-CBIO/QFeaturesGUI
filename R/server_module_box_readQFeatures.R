@@ -24,8 +24,8 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 "can be quite time consuming for large data sets",
                 sep = " "
             ))
-            print(typeof(unique(sample_table()[[input$quant_cols]])))
-            global_rv$qfeatures <- error_handler(
+            if(is.data.frame(sample_table())){
+                global_rv$qfeatures <- error_handler(
                 QFeatures::readQFeatures,
                 component_name = "QFeatures converting (readQFeatures)",
                 assayData = input_table(),
@@ -34,6 +34,17 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 removeEmptyCols = input$removeEmptyCols,
                 verbose = FALSE
             )
+            }
+            else{
+                global_rv$qfeatures <- error_handler(
+                QFeatures::readQFeatures,
+                component_name = "QFeatures converting (readQFeatures)",
+                assayData = input_table(),
+                runCol = input$run_col,
+                quantCols = input$quant_cols,
+                removeEmptyCols = input$removeEmptyCols,
+                verbose = FALSE
+            )}
             if (input$zero_as_NA && length(global_rv$qfeatures) > 0) {
                 global_rv$qfeatures <- error_handler(
                     QFeatures::zeroIsNA,
@@ -61,11 +72,11 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             input$reload_button
             updateSelectInput(session,
                 "run_col",
-                choices = colnames(sample_table())
+                choices = colnames(input_table())
             )
             updateSelectInput(session,
                 "quant_cols",
-                choices = colnames(sample_table())
+                choices = colnames(input_table())
             )
         })
 

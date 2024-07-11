@@ -41,8 +41,9 @@ box_readqfeatures_ui <- function(id) {
                 ),
                 selectInput(
                     inputId = NS(id, "quant_cols"),
-                    "Quantitative column :",
-                    choices = NULL
+                    "Quantitative column : (Only relevant without sample table)",
+                    choices = NULL,
+                    multiple = TRUE
                 ),
                 checkboxInput(
                     inputId = NS(id, "removeEmptyCols"),
