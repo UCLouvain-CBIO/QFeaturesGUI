@@ -4,14 +4,14 @@
 #' @param id module id
 #'
 #' @return A shinydashboardPlus box object that contains the UI components to create an preview a QFeatures object
-#' @rdname INTERNAL_box_readscp_ui
+#' @rdname INTERNAL_box_readqfeatures_ui
 #' @keywords internal
 #'
 #' @importFrom shiny tagList selectInput checkboxInput actionButton downloadButton NS
 #' @importFrom shinydashboardPlus box
 #' @importFrom DT dataTableOutput
 #'
-box_readscp_ui <- function(id) {
+box_readqfeatures_ui <- function(id) {
     tagList(
         box(
             title = "QFeatures Converter",
@@ -35,13 +35,13 @@ box_readscp_ui <- function(id) {
                     style = "font-size: 14px;"
                 ),
                 selectInput(
-                    inputId = NS(id, "batch_col"),
-                    "Batch column :",
+                    inputId = NS(id, "run_col"),
+                    "Run/Batch column :",
                     choices = NULL
                 ),
                 selectInput(
-                    inputId = NS(id, "channel_col"),
-                    "Channel column :",
+                    inputId = NS(id, "quant_cols"),
+                    "Quantitative column :",
                     choices = NULL
                 ),
                 checkboxInput(
@@ -56,7 +56,7 @@ box_readscp_ui <- function(id) {
                 ),
                 checkboxInput(
                     inputId = NS(id, "singlecell"),
-                    label = "Single cell data",
+                    label = "Single cell data (WIP)",
                     value = FALSE
                 ),
                 actionButton(

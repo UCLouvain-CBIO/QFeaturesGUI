@@ -27,8 +27,8 @@ server_import_tab <- function(
         id = "sample",
         given_table = sample_table
     )
-    box_readscp_server(
-        "readscp",
+    box_readqfeatures_server(
+        "readqfeatures",
         imported_input,
         imported_sample
     )

@@ -1,20 +1,20 @@
-#' A server module that contains the server logic to the readscp box module
+#' A server module that contains the server logic to the readQFeatures box module
 #'
 #' @param id module id
 #' @param input_table a reactiveVal containing the input table
 #' @param sample_table a reactiveVal containing the sample table
 #'
 #' @return A QFeatures object
-#' @rdname INTERNAL_box_readscp_server
+#' @rdname INTERNAL_box_readqfeatures_server
 #' @keywords internal
 #'
 #' @importFrom shiny is.reactive reactive moduleServer observe eventReactive updateSelectInput removeModal downloadHandler
 #' @importFrom DT renderDataTable datatable
-#' @importFrom scp readSCP
+#' @importFrom QFeatures readQFeatures
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom SummarizedExperiment assay
 #'
-box_readscp_server <- function(id, input_table, sample_table) {
+box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
     stopifnot(is.reactive(sample_table))
 
@@ -24,13 +24,13 @@ box_readscp_server <- function(id, input_table, sample_table) {
                 "can be quite time consuming for large data sets",
                 sep = " "
             ))
+            print(typeof(unique(sample_table()[[input$quant_cols]])))
             global_rv$qfeatures <- error_handler(
-                scp::readSCP,
-                component_name = "QFeatures converting (readSCP)",
-                featureData = input_table(),
+                QFeatures::readQFeatures,
+                component_name = "QFeatures converting (readQFeatures)",
+                assayData = input_table(),
                 colData = sample_table(),
-                batchCol = input$batch_col,
-                channelCol = input$channel_col,
+                runCol = input$run_col,
                 removeEmptyCols = input$removeEmptyCols,
                 verbose = FALSE
             )
@@ -60,11 +60,11 @@ box_readscp_server <- function(id, input_table, sample_table) {
         observe({
             input$reload_button
             updateSelectInput(session,
-                "batch_col",
+                "run_col",
                 choices = colnames(sample_table())
             )
             updateSelectInput(session,
-                "channel_col",
+                "quant_cols",
                 choices = colnames(sample_table())
             )
         })

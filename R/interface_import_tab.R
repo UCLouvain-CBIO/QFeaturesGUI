@@ -14,7 +14,7 @@ import_tab <- function() {
         ),
         column(
             width = 6,
-            box_readscp_ui("readscp")
+            box_readqfeatures_ui("readqfeatures")
         )
     )
 }
