@@ -293,6 +293,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
+#' @return (NULL) does not return anything but will add the assays to the global_rv qfeatures object
 #' @importFrom QFeatures addAssayLink
 
 add_assays_to_global_rv <- function(processed_qfeatures, step_number) {

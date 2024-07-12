@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 64 rows and 6 columns.
 }
 \usage{
-data("sampleAnnotation")
+data("sampleTable")
 }
 \description{
 A data frame with 48 observations on the following 6 variables.

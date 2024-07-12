@@ -148,7 +148,7 @@
 ##' - participated: a logical vector
 ##' - peptide: a character vector
 ##'
-##' @usage data("mqScpData")
+##' @usage data("inputTable")
 ##' 
 ##' @details 
 ##' 
@@ -180,7 +180,7 @@
 ##' - sortday: a character vector
 ##' - digest: a character vector
 ##'
-##' @usage data("sampleAnnotation")
+##' @usage data("sampleTable")
 ##' 
 ##' @details 
 ##' 

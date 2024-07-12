@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 1361 rows and 149 columns.
 }
 \usage{
-data("mqScpData")
+data("inputTable")
 }
 \description{
 A \code{data.frame} with 1088 observations and 139 variables, as
