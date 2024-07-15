@@ -67,7 +67,9 @@ server_module_summary_tab <- function(id) {
                 "qfeatures_object.rds"
             },
             content = function(file) {
-                saveRDS(global_rv$qfeatures, file)
+                final_qfeatures <- global_rv$qfeatures
+                names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
+                saveRDS(final_qfeatures, file)
             }
         )
     })
