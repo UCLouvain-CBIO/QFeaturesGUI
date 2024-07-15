@@ -62,7 +62,7 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             for (i in seq_along(global_rv$qfeatures)) {
                 names(global_rv$qfeatures)[i] <- paste0(
                     names(global_rv$qfeatures)[i],
-                    "_(QFeaturesGUI#0)"
+                    "_(QFeaturesGUI#0)_initial_import"
                 )
             }
             removeModal()

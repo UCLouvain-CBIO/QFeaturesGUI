@@ -12,10 +12,17 @@
 server_module_qc_metrics <- function(id, assays_to_process, type) {
     stopifnot(is.reactive(assays_to_process))
     moduleServer(id, function(input, output, session) {
+        assays_choices_vector <- reactive({
+            original_names <- names(assays_to_process())
+            modified_names <- remove_QFeaturesGUI(original_names)
+            choices_vector <- setNames(original_names, modified_names)
+            return(choices_vector)
+        })
         observe({
+            req(assays_choices_vector)
             updateSelectInput(session,
                 "selected_assay",
-                choices = names(assays_to_process())
+                choices = names(assays_choices_vector())
             )
         })
         single_assay <- reactive({
@@ -24,7 +31,8 @@ server_module_qc_metrics <- function(id, assays_to_process, type) {
             # Warning appears here
             # Warning message: 'experiments' dropped; see 'drops()'
             # see with Chris
-            getWithColData(assays_to_process(), input$selected_assay)
+            getWithColData(assays_to_process(),
+                 assays_choices_vector()[input$selected_assay])
         })
 
         server_module_pca_box(

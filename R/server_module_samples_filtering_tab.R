@@ -159,7 +159,8 @@ server_module_samples_filtering_tab <- function(id, step_number) {
                 add_assays_to_global_rv,
                 component_name = "Add assays to global_rv",
                 processed_qfeatures = processed_assays(),
-                step_number = step_number
+                step_number = step_number,
+                type = "samples_filtering"
             )
             removeModal()
         })

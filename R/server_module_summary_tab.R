@@ -54,7 +54,9 @@ server_module_summary_tab <- function(id) {
 
         output$qfeatures_plot <- renderPlotly({
             if (length(global_rv$qfeatures) > 0) {
-                plot(global_rv$qfeatures,
+                empty_qfeatures <- global_rv$qfeatures[1,]
+                names(empty_qfeatures) <- remove_QFeaturesGUI(names(empty_qfeatures))
+                plot(empty_qfeatures,
                     interactive = TRUE
                 )
             }

@@ -152,14 +152,13 @@ loading <- function(msg) {
 #' A function that remove the "(QFeaturesGUI#x)" suffix from a string
 #' @param string `str` string to remove the suffix from
 #' @return `str` the string without the suffix
-#' @rdname INTERNAL_remove_scpGUI
+#' @rdname INTERNAL_remove_QFeaturesGUI
 #' @keywords internal
 #'
 #'
-remove_scpGUI <- function(string) {
-    return(gsub("\\_(QFeaturesGUI#[0-9]+\\)", "", string))
+remove_QFeaturesGUI <- function(string) {
+    return(gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", string))
 }
-
 #' PCA Methods Wrapper
 #'
 #' This function performs Principal Component Analysis (PCA) on a SingleCellExperiment object using the specified method.
@@ -296,14 +295,14 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @return (NULL) does not return anything but will add the assays to the global_rv qfeatures object
 #' @importFrom QFeatures addAssayLink
 
-add_assays_to_global_rv <- function(processed_qfeatures, step_number) {
+add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
+    print(names(processed_qfeatures))
     for (name in names(processed_qfeatures)) {
-        new_name <- gsub(
-            pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")"),
-            replacement = paste0("_(QFeaturesGUI#", step_number, ")"),
-            x = name,
-            fixed = TRUE
-        )
+        new_name <- paste0(
+            strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
+            "_(QFeaturesGUI#", step_number, ")",
+            "_", type, "_", step_number)
+        
         global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
 
         global_rv$qfeatures <- addAssayLink(
