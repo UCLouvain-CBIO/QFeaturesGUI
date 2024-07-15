@@ -1,6 +1,6 @@
 #' @title A shiny app to import QFeatures objects, some optional pre-processing steps.
 #'
-#' @description QFeaturesImport is a simple graphical interface to import bulk and single-cell proteomic data. 
+#' @description importQFeatures is a simple graphical interface to import bulk and single-cell proteomic data. 
 #' The app use the \code{\link[QFeatures]{readQFeatures}} function from the QFeatures package to convert simple table (single or multiple, csv or tsv) to a QFeatures object.
 #' The app is divided into mutliple sections:
 #' \itemize{
@@ -10,7 +10,7 @@
 #' @param sample_table A dataframe that contains the sample table.
 #' @param input_table A dataframe that contains the input table.
 #'
-#' @return Return the "QFeaturesImport" shiny app object.
+#' @return Return the "importQFeatures" shiny app object.
 #' @export
 #' @importFrom shiny shinyApp runApp
 #'
@@ -19,13 +19,13 @@
 #'
 #' data("sampleTable")
 #' data("inputTable")
-#' app <- QFeaturesImport(sample_table = sampleTable, input_table = inputTable)
+#' app <- importQFeatures(sample_table = sampleTable, input_table = inputTable)
 #'
 #' if (interactive()) {
 #'     shiny::runApp(app)
 #' }
 #'
-QFeaturesImport <- function(sample_table = NULL, input_table = NULL) {
+importQFeatures <- function(sample_table = NULL, input_table = NULL) {
     ui <- build_ui()
     server <- build_server(sample_table, input_table)
     shinyApp(ui = ui, server = server)

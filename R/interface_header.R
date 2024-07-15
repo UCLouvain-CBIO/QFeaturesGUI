@@ -1,6 +1,6 @@
 #' ui header builder
 #'
-#' @return the dashboardHeader object for the QFeaturesImport app.
+#' @return the dashboardHeader object for the importQFeatures app.
 #' @rdname INTERNAL_interface_header
 #' @keywords internal
 #'
@@ -9,7 +9,7 @@
 #'
 header <- function() {
     dashboardHeader(
-        title = "QFeaturesImport",
+        title = "importQFeatures",
         dropdownMenuOutput("exception_menu")
     )
 }

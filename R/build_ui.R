@@ -19,7 +19,7 @@ build_ui <- function() {
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             uiOutput("all_tabs")
         ),
-        title = "QFeaturesImport"
+        title = "importQFeatures"
     )
 
     return(ui)
