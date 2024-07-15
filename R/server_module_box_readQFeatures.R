@@ -12,7 +12,10 @@
 #' @importFrom DT renderDataTable datatable
 #' @importFrom QFeatures readQFeatures
 #' @importFrom QFeatures zeroIsNA
-#' @importFrom SummarizedExperiment assay
+#' @importFrom methods as
+#' @import SingleCellExperiment
+#' @import SummarizedExperiment
+#' @importFrom MultiAssayExperiment ExperimentList experiments
 #'
 box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
@@ -53,12 +56,16 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     i = seq_along(global_rv$qfeatures)
                 )
             }
+            if (input$singlecell) {
+                el <- ExperimentList(lapply(experiments(global_rv$qfeatures),
+                                as, "SingleCellExperiment"))
+                experiments(global_rv$qfeatures) <- el
+            }
             # The following code is a workaround
             # to fix keep track of the steps in the QFeatures object
             # The idea is that each page will be assigned a number,
             # and will use the assays that have the number - 1 in the name.
             # And then add assays with the number of the page in the QFeatures
-            global_rv$initial_PSM_names <- names(global_rv$qfeatures)
             for (i in seq_along(global_rv$qfeatures)) {
                 names(global_rv$qfeatures)[i] <- paste0(
                     names(global_rv$qfeatures)[i],

@@ -62,7 +62,10 @@ box_readqfeatures_ui <- function(id) {
                 ),
                 actionButton(
                     inputId = NS(id, "convert"),
-                    "Convert to a QFeatures object"
+                    "Convert to a QFeatures object",
+                    class = "add-button no-bottom-margin",
+                    width = "100%",
+                    style = "font-size: 14px;"
                 )
             ),
             box(
