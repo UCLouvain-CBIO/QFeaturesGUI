@@ -29,7 +29,8 @@ Imports:
     shinycssloaders,
     shinyFeedback,
     viridisLite,
-    stats
+    stats,
+    SingleCellExperiment
 Depends:
     shinyBS,
     R (>= 4.3.0)

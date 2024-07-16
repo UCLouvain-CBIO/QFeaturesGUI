@@ -15,7 +15,7 @@
 #' @importFrom methods as
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
-#' @importFrom MultiAssayExperiment ExperimentList experiments
+#' @import MultiAssayExperiment
 #'
 box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
