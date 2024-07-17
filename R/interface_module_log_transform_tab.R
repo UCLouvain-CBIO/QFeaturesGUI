@@ -27,28 +27,7 @@ interface_module_log_transform_tab <- function(id) {
             ),
             trigger = "hover"
         ),
-        interface_box_distribution("box_distribution"),
-        actionButton(
-            NS(id, "export"),
-            "Save the processed assays",
-            icon("hand-pointer", class = "fa-solid"),
-            width = "100%",
-            class = "load-button"
-        ),
-        shinyBS::bsTooltip(
-            id = NS(id, "export"),
-            title = paste("Write the processed assays to the QFeatures object.",
-                "This is needed to proceed to the next steps.",
-                sep = " "
-            ),
-            trigger = "hover",
-            placement = "top"
-        )
-    )
-}
-
-interface_box_distribution <- function(id) {
-    box(
+        box(
         title = "Log Transformation",
         status = "primary",
         width = 12,
@@ -87,8 +66,31 @@ interface_box_distribution <- function(id) {
                     label = "Log Base",
                     choices = c(2, 10),
                     selected = 2
+                ),
+                numericInput(inputId = NS(id, "pseudocount"),
+                    label = "Pseudocount",
+                    value = 0,
+                    min = 0,
+                    step = 1
                 )
             )
+        )
+    ),
+        actionButton(
+            NS(id, "export"),
+            "Save the processed assays",
+            icon("hand-pointer", class = "fa-solid"),
+            width = "100%",
+            class = "load-button"
+        ),
+        shinyBS::bsTooltip(
+            id = NS(id, "export"),
+            title = paste("Write the processed assays to the QFeatures object.",
+                "This is needed to proceed to the next steps.",
+                sep = " "
+            ),
+            trigger = "hover",
+            placement = "top"
         )
     )
 }

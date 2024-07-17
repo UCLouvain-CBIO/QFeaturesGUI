@@ -339,3 +339,24 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
         )
     }
 }
+
+
+#' A function that will logTransform all the assays of a qfeatures
+#' @param qfeatures `QFeatures` object to logTransform
+#' @param base `numeric` base of the log transformation
+#' @param pseudocount `numeric` pseudocount to add to the data
+#' @return `QFeatures` object with the log transformed assays
+#' @rdname INTERNAL_log_transform_qfeatures
+#' @keywords internal
+#' @importFrom QFeatures logTransform QFeatures colData
+#' 
+
+log_transform_qfeatures <- function(qfeatures, base, pseudocount) {
+    el <- lapply(names(qfeatures), function(name) {
+        QFeatures::logTransform(object = qfeatures[[name]],
+            base = base,
+            pc = pseudocount)
+    })
+    names(el) <- names(qfeatures)
+    QFeatures(el, colData = colData(qfeatures))
+    }
