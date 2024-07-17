@@ -34,13 +34,17 @@ server_dynamic_workflow <- function(input, output, session) {
             dynamic_tabs <- lapply(seq_along(global_rv$workflow_config), function(i) {
                 tabItem(
                     tabName = paste0("step_", i),
-                    if (global_rv$workflow_config[[i]] == "Cells Filtering") {
+                    if (global_rv$workflow_config[[i]] == "Samples Filtering") {
                         interface_module_samples_filtering_tab(
-                            paste0("filtering_", i)
+                            paste0("samples_filtering_", i)
                         )
-                    } else {
+                    } else if(global_rv$workflow_config[[i]] == "Features Filtering") {
                         interface_module_features_filtering_tab(
-                            paste0("filtering_", i)
+                            paste0("features_filtering_", i)
+                        )
+                    } else if(global_rv$workflow_config[[i]] == "Log Transformation") {
+                        interface_module_log_transform_tab(
+                            paste0("log_transform_", i)
                         )
                     }
                 )
@@ -50,12 +54,16 @@ server_dynamic_workflow <- function(input, output, session) {
         })
 
         lapply(seq_along(global_rv$workflow_config), function(i) {
-            if (global_rv$workflow_config[[i]] == "Cells Filtering") {
-                server_module_samples_filtering_tab(paste0("filtering_", i),
+            if (global_rv$workflow_config[[i]] == "Samples Filtering") {
+                server_module_samples_filtering_tab(paste0("samples_filtering_", i),
                     step_number = i
                 )
-            } else {
-                server_module_features_filtering_tab(paste0("filtering_", i),
+            } else if(global_rv$workflow_config[[i]] == "Features Filtering") {
+                server_module_features_filtering_tab(paste0("features_filtering_", i),
+                    step_number = i
+                )
+            } else if(global_rv$workflow_config[[i]] == "Log Transformation") {
+                server_module_log_transform_tab(paste0("log_transform_", i),
                     step_number = i
                 )
             }

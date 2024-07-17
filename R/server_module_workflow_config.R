@@ -30,7 +30,7 @@ server_module_workflow_config <- function(id) {
             output$tabs <- renderUI({
                 if (n_steps() > 0) {
                     lapply(seq_len(n_steps()), function(i) {
-                        selected <- "Cells Filtering"
+                        selected <- "Samples Filtering"
                         if (!is.null(steps[[paste0("step_", i)]])) {
                             selected <- steps[[paste0("step_", i)]]
                         }
@@ -39,8 +39,9 @@ server_module_workflow_config <- function(id) {
                                 inputId = NS(id, paste0("step_", i)),
                                 label = paste0("Step ", i),
                                 choices = c(
-                                    "Cells Filtering",
-                                    "Features Filtering"
+                                    "Samples Filtering",
+                                    "Features Filtering",
+                                    "Log Transformation"
                                 ),
                                 selected = selected,
                                 width = "90%"

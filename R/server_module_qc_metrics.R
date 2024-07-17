@@ -1,4 +1,4 @@
-#' Title
+#' Server module for qc metrics box
 #'
 #' @param id module id
 #' @param assays_to_process a reactiveVal that contains the different assays that will be used in the module
