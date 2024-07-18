@@ -57,7 +57,7 @@ box_readqfeatures_ui <- function(id) {
                 ),
                 checkboxInput(
                     inputId = NS(id, "singlecell"),
-                    label = "Single cell data (WIP)",
+                    label = "Single cell data",
                     value = FALSE
                 ),
                 actionButton(

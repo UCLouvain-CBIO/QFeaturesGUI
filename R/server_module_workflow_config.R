@@ -41,7 +41,8 @@ server_module_workflow_config <- function(id) {
                                 choices = c(
                                     "Samples Filtering",
                                     "Features Filtering",
-                                    "Log Transformation"
+                                    "Log Transformation",
+                                    "Normalisation"
                                 ),
                                 selected = selected,
                                 width = "90%"

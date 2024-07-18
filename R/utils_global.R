@@ -348,7 +348,8 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
 #' @return `QFeatures` object with the log transformed assays
 #' @rdname INTERNAL_log_transform_qfeatures
 #' @keywords internal
-#' @importFrom QFeatures logTransform QFeatures colData
+#' @importFrom QFeatures logTransform QFeatures
+#' @importFrom SummarizedExperiment colData
 #' 
 
 log_transform_qfeatures <- function(qfeatures, base, pseudocount) {
