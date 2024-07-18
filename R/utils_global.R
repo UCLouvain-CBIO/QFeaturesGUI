@@ -361,3 +361,22 @@ log_transform_qfeatures <- function(qfeatures, base, pseudocount) {
     names(el) <- names(qfeatures)
     QFeatures(el, colData = colData(qfeatures))
     }
+
+#' A function that will normalise all the assays of a qfeatures
+#' 
+#' @param qfeatures `QFeatures` object to normalise
+#' @param method `str` method to use for the normalisation (see `QFeatures::normalise`)
+#' @return `QFeatures` object with the normalised assays
+#' @rdname INTERNAL_normalisation_qfeatures
+#' @keywords internal
+#' @importFrom QFeatures normalize QFeatures
+#' @importFrom SummarizedExperiment colData
+
+normalisation_qfeatures <- function(qfeatures, method) {
+    el <- lapply(names(qfeatures), function(name) {
+        QFeatures::normalize(object = qfeatures[[name]],
+            method = method)
+    })
+    names(el) <- names(qfeatures)
+    QFeatures(el, colData = colData(qfeatures))
+    }

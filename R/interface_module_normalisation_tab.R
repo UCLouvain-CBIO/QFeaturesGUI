@@ -64,14 +64,17 @@ interface_module_normalisation_tab <- function(id) {
                 collapsible = TRUE,
                 selectInput(inputId = NS(id, "method"),
                     label = "method",
-                    choices = c(2, 10),
-                    selected = 2
-                ),
-                numericInput(inputId = NS(id, "pseudocount"),
-                    label = "Pseudocount",
-                    value = 0,
-                    min = 0,
-                    step = 1
+                    choices = c("sum",
+                    "max",
+                    "center.mean",
+                    "center.median",
+                    "div.mean",
+                    "div.median",
+                    "diff.meda",
+                    "quantiles",
+                    "quantiles.robust",
+                    "vsn"),
+                    selected = "center.median"
                 )
             )
         )

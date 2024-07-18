@@ -19,7 +19,13 @@ server_module_normalisation_tab <- function(id, step_number) {
         })
 
         processed_assays <- reactive({
-            return(assays_to_process())
+            req(assays_to_process())
+            error_handler(
+                normalisation_qfeatures,
+                component_name = "Normalisation",
+                qfeatures = assays_to_process(),
+                method = input$method
+            )
         })
 
         observeEvent(input$export, {
