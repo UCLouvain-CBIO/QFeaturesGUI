@@ -28,50 +28,55 @@ interface_module_normalisation_tab <- function(id) {
             trigger = "hover"
         ),
         box(
-        title = "Normalisation",
-        status = "primary",
-        width = 12,
-        solidHeader = TRUE,
-        collapsible = FALSE,
-        fluidRow(
-            box(
-                title = "Post Distribution",
-                status = "primary",
-                width = 9,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                withSpinner(plotlyOutput(outputId = NS(id, "density_plot")),
-                    type = 6,
-                    color = "#3c8dbc"
-                )
-            ),
-            box(
-                title = "Normalisation Settings",
-                status = "primary",
-                width = 3,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                selectInput(inputId = NS(id, "method"),
-                    label = "method",
-                    choices = c("sum",
-                    "max",
-                    "center.mean",
-                    "center.median",
-                    "div.mean",
-                    "div.median",
-                    "diff.meda",
-                    "quantiles",
-                    "quantiles.robust",
-                    "vsn"),
-                    selected = "center.median"
+            title = "Normalisation",
+            status = "primary",
+            width = 12,
+            solidHeader = TRUE,
+            collapsible = FALSE,
+            fluidRow(
+                box(
+                    title = "Post Distribution",
+                    status = "primary",
+                    width = 9,
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    withSpinner(plotlyOutput(outputId = NS(id, "density_plot")),
+                        type = 6,
+                        color = "#3c8dbc"
+                    )
                 ),
-                h2("Plot options"),
-                selectInput(inputId = NS(id, "color"),
-                    label = "Color by",
-                    choices = NULL)
+                box(
+                    title = "Normalisation Settings",
+                    status = "primary",
+                    width = 3,
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    selectInput(
+                        inputId = NS(id, "method"),
+                        label = "method",
+                        choices = c(
+                            "sum",
+                            "max",
+                            "center.mean",
+                            "center.median",
+                            "div.mean",
+                            "div.median",
+                            "diff.meda",
+                            "quantiles",
+                            "quantiles.robust",
+                            "vsn"
+                        ),
+                        selected = "center.median"
+                    ),
+                    h2("Plot options"),
+                    selectInput(
+                        inputId = NS(id, "color"),
+                        label = "Color by",
+                        choices = NULL
+                    )
+                )
             )
-        )
-    ),
+        ),
         actionButton(
             NS(id, "export"),
             "Save the processed assays",

@@ -64,6 +64,5 @@ server_module_normalisation_tab <- function(id, step_number) {
             )
             removeModal()
         })
-    
     })
 }

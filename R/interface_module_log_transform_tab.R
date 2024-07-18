@@ -28,52 +28,51 @@ interface_module_log_transform_tab <- function(id) {
             trigger = "hover"
         ),
         box(
-        title = "Log Transformation",
-        status = "primary",
-        width = 12,
-        solidHeader = TRUE,
-        collapsible = FALSE,
-        fluidRow(
-            box(
-                title = "Summary Plot",
-                status = "primary",
-                width = 10,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                withSpinner(plotlyOutput(outputId = NS(id, "boxplot")),
-                    type = 6,
-                    color = "#3c8dbc"
+            title = "Log Transformation",
+            status = "primary",
+            width = 12,
+            solidHeader = TRUE,
+            collapsible = FALSE,
+            fluidRow(
+                box(
+                    title = "Summary Plot",
+                    status = "primary",
+                    width = 10,
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    withSpinner(plotlyOutput(outputId = NS(id, "boxplot")),
+                        type = 6,
+                        color = "#3c8dbc"
+                    )
+                ),
+                box(
+                    title = "Settings",
+                    status = "primary",
+                    width = 2,
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    selectInput(
+                        inputId = NS(id, "log_base"),
+                        label = "Log Base",
+                        choices = c(2, 10),
+                        selected = 2
+                    ),
+                    numericInput(
+                        inputId = NS(id, "pseudocount"),
+                        label = "Pseudocount",
+                        value = 0,
+                        min = 0,
+                        step = 1
+                    ),
+                    h4("Plot Settings"),
+                    selectInput(
+                        inputId = NS(id, "sample_col"),
+                        label = "Sample Annotation",
+                        choices = NULL
+                    )
                 )
-            ),
-            box(
-                title = "Settings",
-                status = "primary",
-                width = 2,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                selectInput(inputId = NS(id, "log_base"),
-                    label = "Log Base",
-                    choices = c(2, 10),
-                    selected = 2
-                ),
-                numericInput(inputId = NS(id, "pseudocount"),
-                    label = "Pseudocount",
-                    value = 0,
-                    min = 0,
-                    step = 1
-                ),
-                h2("Plot Settings"),
-                selectInput(inputId = NS(id, "sample_type"),
-                    label = "Sample Annotation",
-                    choices = NULL
-                ),
-                selectInput(inputId = NS(id, "feature_type"),
-                    label = "Feature Annotation",
-                    choices = NULL
-                )
-        )
-        )
-    ),
+            )
+        ),
         actionButton(
             NS(id, "export"),
             "Save the processed assays",

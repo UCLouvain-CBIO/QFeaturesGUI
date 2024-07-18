@@ -328,8 +328,9 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
         new_name <- paste0(
             strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
             "_(QFeaturesGUI#", step_number, ")",
-            "_", type, "_", step_number)
-        
+            "_", type, "_", step_number
+        )
+
         global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
 
         global_rv$qfeatures <- addAssayLink(
@@ -350,20 +351,22 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
 #' @keywords internal
 #' @importFrom QFeatures logTransform QFeatures
 #' @importFrom SummarizedExperiment colData
-#' 
+#'
 
 log_transform_qfeatures <- function(qfeatures, base, pseudocount) {
     el <- lapply(names(qfeatures), function(name) {
-        QFeatures::logTransform(object = qfeatures[[name]],
+        QFeatures::logTransform(
+            object = qfeatures[[name]],
             base = base,
-            pc = pseudocount)
+            pc = pseudocount
+        )
     })
     names(el) <- names(qfeatures)
     QFeatures(el, colData = colData(qfeatures))
-    }
+}
 
 #' A function that will normalise all the assays of a qfeatures
-#' 
+#'
 #' @param qfeatures `QFeatures` object to normalise
 #' @param method `str` method to use for the normalisation (see `QFeatures::normalise`)
 #' @return `QFeatures` object with the normalised assays
@@ -374,35 +377,36 @@ log_transform_qfeatures <- function(qfeatures, base, pseudocount) {
 
 normalisation_qfeatures <- function(qfeatures, method) {
     el <- lapply(names(qfeatures), function(name) {
-        QFeatures::normalize(object = qfeatures[[name]],
-            method = method)
+        QFeatures::normalize(
+            object = qfeatures[[name]],
+            method = method
+        )
     })
     names(el) <- names(qfeatures)
     QFeatures(el, colData = colData(qfeatures))
-    }
+}
 
 
-#'A function that return a plot of the densities of intensities by sample
-#' 
+#' A function that return a plot of the densities of intensities by sample
+#'
 #' @param qfeatures `QFeatures` object
 #' @param color `str` colname of the column of colData to use as color
 #' @return a plotly object
-#' 
+#'
 #' @rdname INTERNAL_density_by_sample_plotly
 #' @keywords internal
 #' @importFrom SummarizedExperiment assay colData
 
 density_by_sample_plotly <- function(qfeatures, color) {
-
     combined_df <- data.frame(intensity = numeric(), sample = character())
     for (assayName in names(qfeatures)) {
         assayData <- assay(qfeatures[[assayName]])
-    
+
         intensities <- as.vector(assayData)
         sampleNames <- rep(colnames(assayData), each = nrow(assayData))
-        
+
         assay_df <- data.frame(intensity = intensities, sample = sampleNames)
-        
+
         combined_df <- rbind(combined_df, assay_df)
     }
 
@@ -411,10 +415,11 @@ density_by_sample_plotly <- function(qfeatures, color) {
     plotlyridges(
         data = combined_df,
         vardens = "intensity",
-        varcat = "sample")
+        varcat = "sample"
+    )
 }
 
-# This function comes from the github repo rushkin/bitsandends 
+# This function comes from the github repo rushkin/bitsandends
 # Thanks to iliarushkin for this function
 
 #' Mimicks \code{ggridges} but using \code{plotly} so that the output is interactive
@@ -439,136 +444,129 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @param height passed as \code{height} to the plotly object
 #' @param width passed as \code{width} to the plotly object
 #' @return a plotly object
-#' 
+#'
 #' @rdname INTERNAL_plotlyridges
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
-#' 
-plotlyridges=function(data,vardens,varcat,linecolor='darkblue',fillcolor='steelblue',fillopacity=0.6,linewidth=0.5,scale=0.9,logspaced=FALSE,cut.from=0, cut.to=3,n=512,bw=NULL,bw.separate=FALSE,height.norm='integral',round.digits=2,x.min=0
-                      ,height=NULL
-                      ,width=NULL
-){
+#'
+plotlyridges <- function(
+        data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+        height = NULL,
+        width = NULL) {
+    data <- subset(data, !is.na(data[, vardens]))
 
-  data=subset(data,!is.na(data[,vardens]))
+    r <- range(data[, vardens])
 
-  r=range(data[,vardens])
-
-  if(is.null(bw)){
-    if(!bw.separate){
-      if(logspaced){
-        x=log(data[,vardens])
-      }else{
-        x=data[,vardens]
-      }
-      if(length(x)>1){
-        bw=density(x)$bw
-      }else{
-        bw=1
-      }
-    }
-  }
-
-  df=aggregate(data[,vardens],by=list(varcat=data[,varcat]),FUN=function(x){
-
-    if(length(x)==0) return(NULL)
-    if(bw.separate){
-      if(length(x)==1){
-        bw=1
-      }else{
-        bw='nrd0'
-      }
-    }
-    if(logspaced){
-      x=log(x)
-    }
-    from=min(x,na.rm=TRUE)-cut.from*bw
-    to=max(x,na.rm=TRUE)+cut.to*bw
-    d=density(x,bw=bw,n=n,from=from,to=to)[1:2]
-    #Normalize height
-    if(height.norm=='1'){
-      d$y=d$y/max(d$y)
-    }
-    if(height.norm=='integral'){
-      d$y=d$y/(sum(d$y)*(d$x[2]-d$x[1]))
+    if (is.null(bw)) {
+        if (!bw.separate) {
+            if (logspaced) {
+                x <- log(data[, vardens])
+            } else {
+                x <- data[, vardens]
+            }
+            if (length(x) > 1) {
+                bw <- density(x)$bw
+            } else {
+                bw <- 1
+            }
+        }
     }
 
-    if(logspaced){
-      d$x=exp(d$x)
-      d$y=d$y/d$x
+    df <- aggregate(data[, vardens], by = list(varcat = data[, varcat]), FUN = function(x) {
+        if (length(x) == 0) {
+            return(NULL)
+        }
+        if (bw.separate) {
+            if (length(x) == 1) {
+                bw <- 1
+            } else {
+                bw <- "nrd0"
+            }
+        }
+        if (logspaced) {
+            x <- log(x)
+        }
+        from <- min(x, na.rm = TRUE) - cut.from * bw
+        to <- max(x, na.rm = TRUE) + cut.to * bw
+        d <- density(x, bw = bw, n = n, from = from, to = to)[1:2]
+        # Normalize height
+        if (height.norm == "1") {
+            d$y <- d$y / max(d$y)
+        }
+        if (height.norm == "integral") {
+            d$y <- d$y / (sum(d$y) * (d$x[2] - d$x[1]))
+        }
+
+        if (logspaced) {
+            d$x <- exp(d$x)
+            d$y <- d$y / d$x
+        }
+
+
+        return(d)
+    })
+
+    text <- aggregate(data[, vardens], by = list(varcat = data[, varcat]), FUN = function(x) {
+        x <- x[!is.na(x)]
+        q <- quantile(x)
+        text <- paste0("Observations: ", prettyNum(length(x), big.mark = ","), "<br>Median: ", round(q[3], round.digits), "<br>Range: [", round(q[1], round.digits), ", ", round(q[5], round.digits), "]", "<br>Interquartile Range: [", round(q[2], round.digits), ", ", round(q[4], round.digits), "]")
+        return(text)
+    })$x
+
+
+
+
+    catnames <- df[[1]]
+    x <- df[[2]][1:(length(df[[1]]))]
+    y <- df[[2]][-(1:(length(df[[1]])))]
+
+
+
+    ymax <- max(unlist(y), na.rm = TRUE)
+    y <- lapply(y, function(yy) {
+        yy <- scale * yy / ymax
+        return(yy)
+    })
+    p <- plotly::plot_ly(type = "scatter", mode = "lines", height = height, width = width)
+
+    fillcolor <- as.vector(col2rgb(fillcolor)) / 255
+    fillcolor <- rgb(fillcolor[1], fillcolor[2], fillcolor[3], alpha = fillopacity)
+
+
+    if (is.null(x.min)) {
+        xaxis <- list(range = r)
+    } else {
+        xaxis <- list(range = c(x.min, r[2]))
     }
 
+    for (i in rev(1:length(catnames))) {
+        p <- plotly::add_trace(p, x = x[[i]], y = i, line = list(color = linecolor, width = linewidth), showlegend = FALSE, hoverinfo = "none")
+        p <- plotly::add_trace(p,
+            x = x[[i]], y = y[[i]] + i, fill = "tonexty", fillcolor = fillcolor, line = list(color = linecolor, width = linewidth), showlegend = FALSE, name = catnames[i], hoverinfo = "text", text = text[i]
+        )
 
-    return(d)
-  })
-
-  text=aggregate(data[,vardens],by=list(varcat=data[,varcat]),FUN=function(x){
-
-    x=x[!is.na(x)]
-    q=quantile(x)
-    text=paste0('Observations: ',prettyNum(length(x),big.mark=','),'<br>Median: ',round(q[3],round.digits),'<br>Range: [',round(q[1],round.digits),', ',round(q[5],round.digits),']','<br>Interquartile Range: [',round(q[2],round.digits),', ',round(q[4],round.digits),']')
-    return(text)
-  })$x
-
-
-
-
-  catnames=df[[1]]
-  x=df[[2]][1:(length(df[[1]]))]
-  y=df[[2]][-(1:(length(df[[1]])))]
-
-
-
-  ymax=max(unlist(y),na.rm=TRUE)
-  y=lapply(y,function(yy){
-    yy=scale*yy/ymax
-    return(yy)
-  })
-  p=plotly::plot_ly(type='scatter',mode='lines',height=height,width=width)
-
-  fillcolor=as.vector(col2rgb(fillcolor))/255
-  fillcolor=rgb(fillcolor[1],fillcolor[2],fillcolor[3],alpha=fillopacity)
-
-
-  if(is.null(x.min)){
-    xaxis=list(range=r)
-  }else{
-    xaxis=list(range=c(x.min,r[2]))
-  }
-
-  for(i in rev(1:length(catnames))){
-
-    p=plotly::add_trace(p,x=x[[i]],y=i, line=list(color=linecolor,width=linewidth),showlegend=FALSE,hoverinfo='none')
-    p=plotly::add_trace(p,
-      x=x[[i]],y=y[[i]]+i,fill='tonexty', fillcolor=fillcolor, line=list(color=linecolor,width=linewidth),showlegend=FALSE, name=catnames[i],hoverinfo='text',text=text[i]
-    )
-
-    p=plotly::layout(p,
-      yaxis=list(tickmode='array',tickvals=(1:length(catnames)),ticktext=catnames,showline=TRUE)
-      ,xaxis=xaxis
-    )
-
-  }
-  p
-  return(p)
+        p <- plotly::layout(p,
+            yaxis = list(tickmode = "array", tickvals = (1:length(catnames)), ticktext = catnames, showline = TRUE),
+            xaxis = xaxis
+        )
+    }
+    p
+    return(p)
 }
 
-
-#' A function that plot the boxplot of the intensities of a features by an sample annotation
-#' 
+#' A function that create a data frame that contains the intensities, the sample names (+ one col of colData and one col of rowData)
+#'
 #' @param qfeatures `QFeatures` object
-#' @param feature_type `str` feature class to plot (rowdata)
-#' @param sample_type `str` sample annotation to compare (coldata)
-#' 
-#' @return a plot
-#' 
-#' @rdname INTERNAL_feature_boxplot
+#' @param sample_column `str` column of colData to use as sample names
+#' @param feature_column `str` column of rowData to use as feature names
+#' @return a data.frame
+#'
+#' @rdname INTERNAL_summarize_assays_to_df
 #' @keywords internal
-#' @importFrom plotly ggplotly
-#' @importFrom SummarizedExperiment assay colData
-#' @importFrom ggplot2 ggplot aes geom_boxplot
+#' @importFrom SummarizedExperiment assay colData rowData
 #'
 
-features_boxplot <- function(qfeatures, feature_type, sample_type){
+summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NULL) {
     combined_df <- data.frame(PSM = character(), intensity = numeric(), sample = character())
     for (assayName in names(qfeatures)) {
         assayData <- assay(qfeatures[[assayName]])
@@ -576,16 +574,59 @@ features_boxplot <- function(qfeatures, feature_type, sample_type){
         PSM <- rownames(assayData)
         intensities <- as.vector(assayData)
         sampleNames <- rep(colnames(assayData), each = nrow(assayData))
-        
+
         assay_df <- data.frame(PSM = PSM, intensity = intensities, sample = sampleNames)
-        assay_df$sample_type <- colData(qfeatures)[assay_df$sample, sample_type]
-        assay_df$feature_type <- rowData(qfeatures[[assayName]])[assay_df$PSM, feature_type]
-        
+        assay_df$sample_type <- colData(qfeatures)[assay_df$sample, sample_column] # Here I subset with a long vector that is compose of multiple time each sample
+        print(feature_column)
+        if (!is.null(feature_column)) {
+            assay_df$feature_type <- rowData(qfeatures[[assayName]])[assay_df$PSM, feature_column]
+        }
         combined_df <- rbind(combined_df, assay_df)
+        print(head(combined_df))
     }
-    
-    plot <- ggplot(combined_df, aes(x = sample_type, y = intensity, fill = sample_type)) +
-        geom_boxplot()
-    
+    combined_df
+}
+
+#' A function that return the boxplot of the intensities of all features by an sample annotation
+#'
+#' @param assays_df a data.frame that contains the intensities, the sample names (+ one col of colData and one col of rowData)
+#'
+#' @return a plot
+#'
+#' @rdname INTERNAL_feature_boxplot
+#' @keywords internal
+#' @importFrom plotly ggplotly
+#' @importFrom ggplot2 ggplot aes geom_violin
+#'
+
+features_boxplot <- function(assays_df) {
+    plot <- ggplot(assays_df, aes(
+        x = sample_type,
+        y = intensity,
+        colour = sample_type,
+        fill = sample_type
+    )) +
+        geom_violin(aes(alpha = 0.5))
+
+    suppressWarnings(ggplotly(plot))
+}
+
+#' A function that will return the boxplot of the intensities of an individual feature by a sample annotation
+#'
+#' @param assays_df a data.frame that contains the intensities, the sample names (+ one col of colData and one col of rowData)
+#' @param feature `str` feature to plot
+#'
+#' @return a plot
+#'
+#' @rdname INTERNAL_feature_boxplot
+#' @keywords internal
+#' @importFrom plotly ggplotly
+#' @importFrom ggplot2 ggplot aes geom_violin
+#'
+
+feature_boxplot <- function(assays_df, feature) {
+    plot <- ggplot(assays_df[assays_df$PSM == feature, ], aes(x = sample_type, y = intensity, colour = sample_type)) +
+        geom_violin()
+
     ggplotly(plot)
 }

@@ -29,20 +29,30 @@ server_module_log_transform_tab <- function(id, step_number) {
             )
         })
 
-         output$boxplot <- renderPlotly({
+        assays_df <- reactive({
             req(processed_assays())
+            error_handler(
+                summarize_assays_to_df,
+                component_name = "Summarize assays to data frame",
+                qfeatures = processed_assays(),
+                sample_column = input$sample_col
+            )
+        })
+
+
+        output$boxplot <- renderPlotly({
+            req(assays_df())
             error_handler(
                 features_boxplot,
                 component_name = "Feature Boxplot (Log transform)",
-                qfeatures = processed_assays(),
-                feature_type = "Sequence",
-                sample_type = input$sample_type)
+                assays_df = assays_df()
+            )
         })
 
         observe({
             req(processed_assays())
             updateSelectInput(session,
-                "sample_type",
+                "sample_col",
                 choices = colnames(colData(processed_assays()))
             )
         })
@@ -63,4 +73,4 @@ server_module_log_transform_tab <- function(id, step_number) {
             removeModal()
         })
     })
-    }
+}

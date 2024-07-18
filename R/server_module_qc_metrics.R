@@ -31,8 +31,10 @@ server_module_qc_metrics <- function(id, assays_to_process, type) {
             # Warning appears here
             # Warning message: 'experiments' dropped; see 'drops()'
             # see with Chris
-            getWithColData(assays_to_process(),
-                 assays_choices_vector()[input$selected_assay])
+            getWithColData(
+                assays_to_process(),
+                assays_choices_vector()[input$selected_assay]
+            )
         })
 
         server_module_pca_box(
@@ -70,7 +72,7 @@ server_module_qc_metrics <- function(id, assays_to_process, type) {
 #' @importFrom pcaMethods pca scores
 #' @importFrom methods is
 #'
-server_module_pca_box <- function(id, single_assay,  method, transpose) {
+server_module_pca_box <- function(id, single_assay, method, transpose) {
     moduleServer(id, function(input, output, session) {
         annotation_names <- reactive({
             req(single_assay())

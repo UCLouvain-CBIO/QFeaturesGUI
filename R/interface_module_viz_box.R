@@ -16,12 +16,12 @@ interface_module_viz_box <- function(id) {
             choices = NULL
         ),
         selectInput(NS(id, "sample_type_column"),
-            "Sample Type Column",
+            "Sample Annotation Column",
             choices = NULL
         ),
-        checkboxInput(NS(id, "scale"),
-            "Scale Data",
-            value = TRUE
+        selectInput(NS(id, "feature_type_column"),
+            "Feature Annotation Column",
+            choices = NULL
         ),
         box(
             title = "Box Plot",

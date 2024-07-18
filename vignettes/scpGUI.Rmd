@@ -57,9 +57,9 @@ if (!require("remotes", quietly = TRUE)) {
     install.packages("remotes")
 }
 # Install the package
-#remotes::install_github("UCLouvain-CBIO/scpGUI")
+# remotes::install_github("UCLouvain-CBIO/scpGUI")
 # Load the package
-#library(scpGUI)
+# library(scpGUI)
 ```
 
 ## Application launch

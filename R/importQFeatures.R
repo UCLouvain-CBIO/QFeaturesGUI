@@ -1,6 +1,6 @@
 #' @title A shiny app to import QFeatures objects, some optional pre-processing steps.
 #'
-#' @description importQFeatures is a simple graphical interface to import bulk and single-cell proteomic data. 
+#' @description importQFeatures is a simple graphical interface to import bulk and single-cell proteomic data.
 #' The app use the \code{\link[QFeatures]{readQFeatures}} function from the QFeatures package to convert simple table (single or multiple, csv or tsv) to a QFeatures object.
 #' The app is divided into mutliple sections:
 #' \itemize{

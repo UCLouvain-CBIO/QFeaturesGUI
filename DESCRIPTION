@@ -30,7 +30,8 @@ Imports:
     shinyFeedback,
     viridisLite,
     stats,
-    SingleCellExperiment
+    SingleCellExperiment,
+    ggplot2
 Depends:
     shinyBS,
     R (>= 4.3.0)

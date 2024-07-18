@@ -5,7 +5,7 @@
 ##' @description
 ##'
 ##' A `data.frame` with 1088 observations and 139 variables, as
-##' produced by reading a MaxQuant output file with 
+##' produced by reading a MaxQuant output file with
 ##' [read.delim()].
 ##'
 ##' - Sequence: a character vector
@@ -149,22 +149,22 @@
 ##' - peptide: a character vector
 ##'
 ##' @usage data("inputTable")
-##' 
-##' @details 
-##' 
-##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht 
-##' et al. 2019, 
-##' [BioRXiv](https://www.biorxiv.org/content/10.1101/665307v3)). The 
-##' input file `evidence_unfiltered.csv` was downloaded from a 
+##'
+##' @details
+##'
+##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht
+##' et al. 2019,
+##' [BioRXiv](https://www.biorxiv.org/content/10.1101/665307v3)). The
+##' input file `evidence_unfiltered.csv` was downloaded from a
 ##' [Google Drive repository](https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx).
-##' The MaxQuant evidence file was loaded and the data was cleaned 
-##' (renaming columns, removing duplicate fields,...).  MS runs that 
-##' were selected in the `scp1` dataset (see `?scp1`) were kept along 
+##' The MaxQuant evidence file was loaded and the data was cleaned
+##' (renaming columns, removing duplicate fields,...).  MS runs that
+##' were selected in the `scp1` dataset (see `?scp1`) were kept along
 ##' with a blank run. The data is stored as a `data.frame`.
-##' 
-##' @seealso [readSCP()] for an example on how `mqScpData` is 
+##'
+##' @seealso [readSCP()] for an example on how `mqScpData` is
 ##'     parsed into a [QFeatures] object.
-##' 
+##'
 ##' @md
 "inputTable"
 
@@ -181,22 +181,22 @@
 ##' - digest: a character vector
 ##'
 ##' @usage data("sampleTable")
-##' 
-##' @details 
-##' 
-##' ##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht 
-##' et al. 2019, 
-##' [BioRXiv](https://www.biorxiv.org/content/10.1101/665307v3)). The 
-##' input files `batch.csv` and `annotation.csv` were downloaded from a 
+##'
+##' @details
+##'
+##' ##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht
+##' et al. 2019,
+##' [BioRXiv](https://www.biorxiv.org/content/10.1101/665307v3)). The
+##' input files `batch.csv` and `annotation.csv` were downloaded from a
 ##' [Google Drive repository](https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx).
-##' The two files were loaded and the columns names were adapted for 
-##' consistency with `mqScpData` table (see `?mqScpData`). The two 
+##' The two files were loaded and the columns names were adapted for
+##' consistency with `mqScpData` table (see `?mqScpData`). The two
 ##' tables were filtered to contain only sets present in ``mqScpData`.
 ##' The tables were then merged based on the run ID, hence merging the
-##' sample annotation and the batch annotation. Finally, annotation 
-##' for the blank run was added manually. The data is stored as a 
+##' sample annotation and the batch annotation. Finally, annotation
+##' for the blank run was added manually. The data is stored as a
 ##' `data.frame`.
-##' 
+##'
 ##' @seealso [readSCP()] to see how this file is used.
 ##'
 ##' @md

@@ -38,15 +38,15 @@ server_dynamic_workflow <- function(input, output, session) {
                         interface_module_samples_filtering_tab(
                             paste0("samples_filtering_", i)
                         )
-                    } else if(global_rv$workflow_config[[i]] == "Features Filtering") {
+                    } else if (global_rv$workflow_config[[i]] == "Features Filtering") {
                         interface_module_features_filtering_tab(
                             paste0("features_filtering_", i)
                         )
-                    } else if(global_rv$workflow_config[[i]] == "Log Transformation") {
+                    } else if (global_rv$workflow_config[[i]] == "Log Transformation") {
                         interface_module_log_transform_tab(
                             paste0("log_transform_", i)
                         )
-                    } else if(global_rv$workflow_config[[i]] == "Normalisation") {
+                    } else if (global_rv$workflow_config[[i]] == "Normalisation") {
                         interface_module_normalisation_tab(
                             paste0("normalisation_", i)
                         )
@@ -62,15 +62,15 @@ server_dynamic_workflow <- function(input, output, session) {
                 server_module_samples_filtering_tab(paste0("samples_filtering_", i),
                     step_number = i
                 )
-            } else if(global_rv$workflow_config[[i]] == "Features Filtering") {
+            } else if (global_rv$workflow_config[[i]] == "Features Filtering") {
                 server_module_features_filtering_tab(paste0("features_filtering_", i),
                     step_number = i
                 )
-            } else if(global_rv$workflow_config[[i]] == "Log Transformation") {
+            } else if (global_rv$workflow_config[[i]] == "Log Transformation") {
                 server_module_log_transform_tab(paste0("log_transform_", i),
                     step_number = i
                 )
-            } else if(global_rv$workflow_config[[i]] == "Normalisation") {
+            } else if (global_rv$workflow_config[[i]] == "Normalisation") {
                 server_module_normalisation_tab(paste0("normalisation_", i),
                     step_number = i
                 )
