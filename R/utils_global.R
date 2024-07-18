@@ -405,7 +405,7 @@ density_by_sample_plotly <- function(qfeatures, color) {
         
         combined_df <- rbind(combined_df, assay_df)
     }
-    
+
     combined_df$color <- colData(qfeatures)[combined_df$sample, color]
 
     plotlyridges(
@@ -550,4 +550,42 @@ plotlyridges=function(data,vardens,varcat,linecolor='darkblue',fillcolor='steelb
   }
   p
   return(p)
+}
+
+
+#' A function that plot the boxplot of the intensities of a features by an sample annotation
+#' 
+#' @param qfeatures `QFeatures` object
+#' @param feature_type `str` feature class to plot (rowdata)
+#' @param sample_type `str` sample annotation to compare (coldata)
+#' 
+#' @return a plot
+#' 
+#' @rdname INTERNAL_feature_boxplot
+#' @keywords internal
+#' @importFrom plotly ggplotly
+#' @importFrom SummarizedExperiment assay colData
+#' @importFrom ggplot2 ggplot aes geom_boxplot
+#'
+
+features_boxplot <- function(qfeatures, feature_type, sample_type){
+    combined_df <- data.frame(PSM = character(), intensity = numeric(), sample = character())
+    for (assayName in names(qfeatures)) {
+        assayData <- assay(qfeatures[[assayName]])
+
+        PSM <- rownames(assayData)
+        intensities <- as.vector(assayData)
+        sampleNames <- rep(colnames(assayData), each = nrow(assayData))
+        
+        assay_df <- data.frame(PSM = PSM, intensity = intensities, sample = sampleNames)
+        assay_df$sample_type <- colData(qfeatures)[assay_df$sample, sample_type]
+        assay_df$feature_type <- rowData(qfeatures[[assayName]])[assay_df$PSM, feature_type]
+        
+        combined_df <- rbind(combined_df, assay_df)
+    }
+    
+    plot <- ggplot(combined_df, aes(x = sample_type, y = intensity, fill = sample_type)) +
+        geom_boxplot()
+    
+    ggplotly(plot)
 }

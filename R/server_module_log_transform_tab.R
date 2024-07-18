@@ -29,6 +29,24 @@ server_module_log_transform_tab <- function(id, step_number) {
             )
         })
 
+         output$boxplot <- renderPlotly({
+            req(processed_assays())
+            error_handler(
+                features_boxplot,
+                component_name = "Feature Boxplot (Log transform)",
+                qfeatures = processed_assays(),
+                feature_type = "Sequence",
+                sample_type = input$sample_type)
+        })
+
+        observe({
+            req(processed_assays())
+            updateSelectInput(session,
+                "sample_type",
+                choices = colnames(colData(processed_assays()))
+            )
+        })
+
         observeEvent(input$export, {
             req(processed_assays())
             loading(paste("Be aware that this operation",

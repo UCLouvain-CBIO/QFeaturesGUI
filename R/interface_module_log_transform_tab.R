@@ -35,29 +35,18 @@ interface_module_log_transform_tab <- function(id) {
         collapsible = FALSE,
         fluidRow(
             box(
-                title = "Prior Distribution",
+                title = "Summary Plot",
                 status = "primary",
-                width = 5,
+                width = 10,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                withSpinner(plotlyOutput(outputId = NS(id, "prior_dist")),
+                withSpinner(plotlyOutput(outputId = NS(id, "boxplot")),
                     type = 6,
                     color = "#3c8dbc"
                 )
             ),
             box(
-                title = "Post Distribution",
-                status = "primary",
-                width = 5,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                withSpinner(plotlyOutput(outputId = NS(id, "post_dist")),
-                    type = 6,
-                    color = "#3c8dbc"
-                )
-            ),
-            box(
-                title = "Transformation Settings",
+                title = "Settings",
                 status = "primary",
                 width = 2,
                 solidHeader = TRUE,
@@ -72,8 +61,17 @@ interface_module_log_transform_tab <- function(id) {
                     value = 0,
                     min = 0,
                     step = 1
+                ),
+                h2("Plot Settings"),
+                selectInput(inputId = NS(id, "sample_type"),
+                    label = "Sample Annotation",
+                    choices = NULL
+                ),
+                selectInput(inputId = NS(id, "feature_type"),
+                    label = "Feature Annotation",
+                    choices = NULL
                 )
-            )
+        )
         )
     ),
         actionButton(
