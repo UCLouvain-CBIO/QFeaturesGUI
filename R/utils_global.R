@@ -380,3 +380,38 @@ normalisation_qfeatures <- function(qfeatures, method) {
     names(el) <- names(qfeatures)
     QFeatures(el, colData = colData(qfeatures))
     }
+
+
+#'A function that return a plot of the densities of intensities by sample
+#' 
+#' @param qfeatures `QFeatures` object
+#' @param color `str` colname of the column of colData to use as color
+#' @return a plotly object
+#' 
+#' @rdname INTERNAL_density_by_sample_plotly
+#' @keywords internal
+#' @importFrom plotly ggplotly
+#' @importFrom ggplot2 ggplot aes
+#' @importFrom ggridges geom_density_ridges
+
+density_by_sample_plotly <- function(qfeatures, color) {
+
+    combined_df <- data.frame(intensity = numeric(), sample = character())
+    for (assayName in names(qfeatures)) {
+        assayData <- assay(qfeatures[[assayName]])
+    
+        intensities <- as.vector(assayData)
+        sampleNames <- rep(colnames(assayData), each = nrow(assayData))
+        
+        assay_df <- data.frame(intensity = intensities, sample = sampleNames)
+        
+        combined_df <- rbind(combined_df, assay_df)
+    }
+    print(colData(qfeatures)[combined_df$sample, color])
+    combined_df$color <- colData(qfeatures)[combined_df$sample, color]
+
+    plot <- ggplot(combined_df, aes(x = intensity, y = sample, fill = color)) +
+        geom_density_ridges()
+        
+    ggplotly(plot)
+}

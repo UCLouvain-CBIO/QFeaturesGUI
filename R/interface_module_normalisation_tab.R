@@ -6,7 +6,7 @@
 #'
 #' @importFrom shiny fluidRow NS actionButton icon uiOutput
 #' @importFrom shinydashboardPlus box
-#' @importFrom htmltools tagList
+#' @importFrom htmltools tagList h2
 #' @importFrom shinyBS bsTooltip
 #'
 interface_module_normalisation_tab <- function(id) {
@@ -35,23 +35,12 @@ interface_module_normalisation_tab <- function(id) {
         collapsible = FALSE,
         fluidRow(
             box(
-                title = "Prior Distribution",
-                status = "primary",
-                width = 5,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                withSpinner(plotlyOutput(outputId = NS(id, "prior_dist")),
-                    type = 6,
-                    color = "#3c8dbc"
-                )
-            ),
-            box(
                 title = "Post Distribution",
                 status = "primary",
-                width = 5,
+                width = 9,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                withSpinner(plotlyOutput(outputId = NS(id, "post_dist")),
+                withSpinner(plotlyOutput(outputId = NS(id, "density_plot")),
                     type = 6,
                     color = "#3c8dbc"
                 )
@@ -59,7 +48,7 @@ interface_module_normalisation_tab <- function(id) {
             box(
                 title = "Normalisation Settings",
                 status = "primary",
-                width = 2,
+                width = 3,
                 solidHeader = TRUE,
                 collapsible = TRUE,
                 selectInput(inputId = NS(id, "method"),
@@ -75,7 +64,11 @@ interface_module_normalisation_tab <- function(id) {
                     "quantiles.robust",
                     "vsn"),
                     selected = "center.median"
-                )
+                ),
+                h2("Plot options"),
+                selectInput(inputId = NS(id, "color"),
+                    label = "Color by",
+                    choices = NULL)
             )
         )
     ),
