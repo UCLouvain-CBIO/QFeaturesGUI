@@ -251,6 +251,7 @@ page_assays_subset <- function(qfeatures, pattern) {
 #' @importFrom viridisLite viridis
 #'
 pca_plotly <- function(df, pca_result, color_name, show_legend) {
+    stopifnot(is.data.frame(df))
     plotly <- plot_ly(df,
         x = ~PC1,
         y = ~PC2,
@@ -323,7 +324,6 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @importFrom QFeatures addAssayLink
 
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
-    print(names(processed_qfeatures))
     for (name in names(processed_qfeatures)) {
         new_name <- paste0(
             strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],

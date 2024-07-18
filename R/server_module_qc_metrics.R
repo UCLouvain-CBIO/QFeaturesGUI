@@ -126,18 +126,18 @@ server_module_pca_box <- function(id, single_assay,  method, transpose) {
         dataframe <- reactive({
             req(pca_result())
             req(color_data())
-            merge(
+            as.data.frame(merge(
                 data.frame(scores(pca_result())),
                 color_data(),
                 by = "row.names"
-            )
+            ))
         })
 
         output$pca <- renderPlotly({
             req(dataframe())
             req(pca_result())
             # TODO: Add a table with the selected points.
-            error_handler( # ERROR make infinite loops
+            error_handler(
                 pca_plotly,
                 component_name = "PCA quality control plot",
                 df = dataframe(),
