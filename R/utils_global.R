@@ -575,17 +575,14 @@ summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NU
 
         assayData <- pivot_longer(assayData, everything(), names_to = "sample", values_to = "intensity")
         assayData$PSM <- rownames(assayData)
-        print(head(assayData))
 
         matched_indices <- match(assayData$sample, rownames(colData(qfeatures)))
         length(matched_indices)
         assayData$sample_type <- colData(qfeatures)[matched_indices, sample_column]
 
-        # assay_df$sample_type <- lapply(assay_df$sample, function(x) {
-        #     colData(qfeatures)[x, sample_column]
-        # })
         if (!is.null(feature_column)) {
-            assayData$feature_type <- rowData(qfeatures[[assayName]])[assayData$PSM, feature_column]
+            matched_indices <- match(assayData$PSM, rownames(rowData(qfeatures[[assayName]])))
+            assayData$feature_type <- rowData(qfeatures[[assayName]])[matched_indices, feature_column]
         }
         combined_df <- rbind(combined_df, assayData)
     }
@@ -623,15 +620,17 @@ features_boxplot <- function(assays_df) {
 #'
 #' @return a plot
 #'
-#' @rdname INTERNAL_feature_boxplot
+#' @rdname INTERNAL_unique_feature_boxplot
 #' @keywords internal
 #' @importFrom plotly ggplotly
-#' @importFrom ggplot2 ggplot aes geom_violin
+#' @importFrom ggplot2 ggplot aes geom_boxplot
 #'
 
-feature_boxplot <- function(assays_df, feature) {
-    plot <- ggplot(assays_df[assays_df$PSM == feature, ], aes(x = sample_type, y = intensity, colour = sample_type)) +
-        geom_violin()
+unique_feature_boxplot <- function(assays_df, feature) {
+    print(head(assays_df))
+    print(feature)
+    plot <- ggplot(assays_df[assays_df$feature_type == feature, , drop = FALSE], aes(x = sample_type, y = intensity, colour = sample_type)) +
+        geom_boxplot()
 
-    ggplotly(plot)
+    suppressWarnings(ggplotly(plot))
 }

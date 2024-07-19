@@ -14,9 +14,10 @@
 server_module_viz_box <- function(id, assays_to_process) {
     moduleServer(id, function(input, output, session) {
         unique_features <- reactive({
-            assays_to_process()
+            req(assays_to_process())
+            req(input$feature_type_column)
             features_list <- lapply(seq_along(assays_to_process()), function(i) {
-                rownames(assay(assays_to_process()[[i]]))
+                rowData(assays_to_process()[[i]])[, input$feature_type_column]
             })
             features_vector <- unlist(features_list)
             unique(features_vector)
@@ -39,51 +40,30 @@ server_module_viz_box <- function(id, assays_to_process) {
             )
         })
 
+        observe({
+            req(assays_to_process())
+            updateSelectInput(session,
+                "feature_type_column",
+                choices = colnames(rowData(assays_to_process()[[1]]))
+            )
+        })
+
         feature_summary_df <- reactive({
             req(assays_to_process())
             req(input$feature)
-            res_df <- data.frame(
-                "sample_type" = character(),
-                "intensity" = numeric()
+            req(input$sample_type_column)
+            req(input$feature_type_column)
+
+            summarize_assays_to_df(
+            qfeatures = assays_to_process(),
+            sample_column = input$sample_type_column,
+            feature_column = input$feature_type_column
             )
-            for (i in names(assays_to_process())) {
-                tryCatch(
-                    {
-                        sub_assay <- getWithColData(assays_to_process(), i)
-                        sub_assay_data <- assay(sub_assay)
-                        if (input$scale) {
-                            sub_assay_data <- scale(sub_assay_data)
-                        }
-                        sub_assay_df <- data.frame(
-                            "sample_type" = colData(sub_assay)[, input$sample_type_column],
-                            "intensity" = sub_assay_data[input$feature, ]
-                        )
-                        res_df <- rbind(res_df, sub_assay_df)
-                    },
-                    error = function(e) {
-                        NULL
-                    }
-                )
-            }
-            res_df
         })
 
-        output$plot <- renderPlotly({
+        output$plot <- renderPlotly({ # Maybe a problem since a lot of line are NAs
             req(feature_summary_df())
-            plot_ly(feature_summary_df(),
-                y = ~intensity,
-                x = ~sample_type,
-                type = "box",
-                boxpoints = "all",
-                color = ~sample_type
-            ) %>%
-                layout(
-                    xaxis = list(
-                        title = "Sample Type",
-                        showticklabels = FALSE
-                    ),
-                    yaxis = list(title = "Intensity")
-                )
+            unique_feature_boxplot(feature_summary_df(), input$feature)
         })
     })
 }

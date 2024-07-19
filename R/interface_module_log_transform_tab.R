@@ -35,10 +35,10 @@ interface_module_log_transform_tab <- function(id) {
             collapsible = FALSE,
             fluidRow(
                 box(
-                    title = "Summary Plot",
+                    title = "",
                     status = "primary",
-                    width = 10,
-                    solidHeader = TRUE,
+                    width = 9,
+                    solidHeader = FALSE,
                     collapsible = TRUE,
                     withSpinner(plotlyOutput(outputId = NS(id, "boxplot")),
                         type = 6,
@@ -48,7 +48,7 @@ interface_module_log_transform_tab <- function(id) {
                 box(
                     title = "Settings",
                     status = "primary",
-                    width = 2,
+                    width = 3,
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     selectInput(
@@ -64,6 +64,7 @@ interface_module_log_transform_tab <- function(id) {
                         min = 0,
                         step = 1
                     ),
+                    br(),
                     h4("Plot Settings"),
                     selectInput(
                         inputId = NS(id, "sample_col"),

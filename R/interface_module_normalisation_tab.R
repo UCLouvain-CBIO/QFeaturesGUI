@@ -35,10 +35,10 @@ interface_module_normalisation_tab <- function(id) {
             collapsible = FALSE,
             fluidRow(
                 box(
-                    title = "Post Distribution",
+                    title = "",
                     status = "primary",
                     width = 9,
-                    solidHeader = TRUE,
+                    solidHeader = FALSE,
                     collapsible = TRUE,
                     withSpinner(plotlyOutput(outputId = NS(id, "density_plot")),
                         type = 6,
@@ -46,7 +46,7 @@ interface_module_normalisation_tab <- function(id) {
                     )
                 ),
                 box(
-                    title = "Normalisation Settings",
+                    title = "Settings",
                     status = "primary",
                     width = 3,
                     solidHeader = TRUE,
@@ -68,7 +68,8 @@ interface_module_normalisation_tab <- function(id) {
                         ),
                         selected = "center.median"
                     ),
-                    h2("Plot options"),
+                    br(),
+                    h4("Plot options"),
                     selectInput(
                         inputId = NS(id, "color"),
                         label = "Color by",
