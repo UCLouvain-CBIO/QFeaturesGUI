@@ -564,25 +564,30 @@ plotlyridges <- function(
 #' @rdname INTERNAL_summarize_assays_to_df
 #' @keywords internal
 #' @importFrom SummarizedExperiment assay colData rowData
+#' @importFrom tidyr pivot_longer
 #'
 
 summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NULL) {
+
     combined_df <- data.frame(PSM = character(), intensity = numeric(), sample = character())
     for (assayName in names(qfeatures)) {
-        assayData <- assay(qfeatures[[assayName]])
+        assayData <- as.data.frame(assay(qfeatures[[assayName]]))
 
-        PSM <- rownames(assayData)
-        intensities <- as.vector(assayData)
-        sampleNames <- rep(colnames(assayData), each = nrow(assayData))
+        assayData <- pivot_longer(assayData, everything(), names_to = "sample", values_to = "intensity")
+        assayData$PSM <- rownames(assayData)
+        print(head(assayData))
 
-        assay_df <- data.frame(PSM = PSM, intensity = intensities, sample = sampleNames)
-        assay_df$sample_type <- colData(qfeatures)[assay_df$sample, sample_column] # Here I subset with a long vector that is compose of multiple time each sample
-        print(feature_column)
+        matched_indices <- match(assayData$sample, rownames(colData(qfeatures)))
+        length(matched_indices)
+        assayData$sample_type <- colData(qfeatures)[matched_indices, sample_column]
+
+        # assay_df$sample_type <- lapply(assay_df$sample, function(x) {
+        #     colData(qfeatures)[x, sample_column]
+        # })
         if (!is.null(feature_column)) {
-            assay_df$feature_type <- rowData(qfeatures[[assayName]])[assay_df$PSM, feature_column]
+            assayData$feature_type <- rowData(qfeatures[[assayName]])[assayData$PSM, feature_column]
         }
-        combined_df <- rbind(combined_df, assay_df)
-        print(head(combined_df))
+        combined_df <- rbind(combined_df, assayData)
     }
     combined_df
 }
