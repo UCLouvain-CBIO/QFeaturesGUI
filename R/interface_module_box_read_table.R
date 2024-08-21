@@ -13,11 +13,7 @@
 box_read_table_ui <- function(id) {
     tagList(
         box(
-            title = paste(
-                upper_first(id),
-                "Table",
-                sep = " "
-            ),
+            title = if (id == "input") "assayData" else "colData",
             status = "primary",
             width = 12,
             solidHeader = TRUE,

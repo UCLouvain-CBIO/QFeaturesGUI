@@ -4,12 +4,12 @@
 \alias{importQFeatures}
 \title{A shiny app to import QFeatures objects, some optional pre-processing steps.}
 \usage{
-importQFeatures(sample_table = NULL, input_table = NULL)
+importQFeatures(colData = NULL, assayData = NULL)
 }
 \arguments{
-\item{sample_table}{A dataframe that contains the sample table.}
+\item{colData}{A dataframe that contains the sample table.}
 
-\item{input_table}{A dataframe that contains the input table.}
+\item{assayData}{A dataframe that contains the input table.}
 }
 \value{
 Return the "importQFeatures" shiny app object.
@@ -28,7 +28,7 @@ library(QFeaturesGUI)
 
 data("sampleTable")
 data("inputTable")
-app <- importQFeatures(sample_table = sampleTable, input_table = inputTable)
+app <- importQFeatures(colData = sampleTable, assayData = inputTable)
 
 if (interactive()) {
     shiny::runApp(app)

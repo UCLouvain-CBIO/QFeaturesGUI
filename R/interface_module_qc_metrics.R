@@ -16,7 +16,7 @@ interface_module_qc_metrics <- function(id, type) {
             box(
                 title = "PCA",
                 status = "primary",
-                width = if (type == "features") 8 else 12,
+                width = 8,
                 solidHeader = FALSE,
                 collapsible = TRUE,
                 fluidRow(
@@ -48,16 +48,15 @@ interface_module_qc_metrics <- function(id, type) {
                     )
                 )
             ),
-            if (type == "features") {
-                box(
-                    title = "Single Feature Visualisation",
-                    status = "primary",
-                    width = 4,
-                    solidHeader = FALSE,
-                    collapsible = TRUE,
-                    interface_module_viz_box(NS(id, "viz_box"))
-                )
-            }
+            
+            box(
+                title = "Single Feature Visualisation",
+                status = "primary",
+                width = 4,
+                solidHeader = FALSE,
+                collapsible = TRUE,
+                interface_module_viz_box(NS(id, "viz_box"))
+            )
         )
     )
 }

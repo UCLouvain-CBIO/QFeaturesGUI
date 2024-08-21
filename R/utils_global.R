@@ -627,8 +627,6 @@ features_boxplot <- function(assays_df) {
 #'
 
 unique_feature_boxplot <- function(assays_df, feature) {
-    print(head(assays_df))
-    print(feature)
     plot <- ggplot(assays_df[assays_df$feature_type == feature, , drop = FALSE], aes(x = sample_type, y = intensity, colour = sample_type)) +
         geom_boxplot()
 

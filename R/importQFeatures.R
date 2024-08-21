@@ -7,8 +7,8 @@
 #' \item The first section (Import) of the app allow to convert tables to a QFeatures object.
 #' \item The second section (Pre-processing) of the app allow to perform some optional pre-processing steps.
 #' }
-#' @param sample_table A dataframe that contains the sample table.
-#' @param input_table A dataframe that contains the input table.
+#' @param colData A dataframe that contains the sample table.
+#' @param assayData A dataframe that contains the input table.
 #'
 #' @return Return the "importQFeatures" shiny app object.
 #' @export
@@ -19,14 +19,14 @@
 #'
 #' data("sampleTable")
 #' data("inputTable")
-#' app <- importQFeatures(sample_table = sampleTable, input_table = inputTable)
+#' app <- importQFeatures(colData = sampleTable, assayData = inputTable)
 #'
 #' if (interactive()) {
 #'     shiny::runApp(app)
 #' }
 #'
-importQFeatures <- function(sample_table = NULL, input_table = NULL) {
+importQFeatures <- function(colData = NULL, assayData = NULL) {
     ui <- build_ui()
-    server <- build_server(sample_table, input_table)
+    server <- build_server(colData, assayData)
     shinyApp(ui = ui, server = server)
 }
