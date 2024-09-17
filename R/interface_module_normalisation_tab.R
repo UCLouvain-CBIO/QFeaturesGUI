@@ -55,16 +55,16 @@ interface_module_normalisation_tab <- function(id) {
                         inputId = NS(id, "method"),
                         label = "method",
                         choices = c(
-                            "sum",
-                            "max",
+                            "sum", 
+                            "max",           
                             "center.mean",
                             "center.median",
                             "div.mean",
                             "div.median",
-                            "diff.meda",
+                            "diff.median",
                             "quantiles",
                             "quantiles.robust",
-                            "vsn"
+                            "vsn"     
                         ),
                         selected = "center.median"
                     ),
