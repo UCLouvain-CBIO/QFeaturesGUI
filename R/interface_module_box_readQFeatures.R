@@ -56,6 +56,11 @@ box_readqfeatures_ui <- function(id) {
                     value = TRUE
                 ),
                 checkboxInput(
+                    inputId = NS(id, "log_transform"),
+                    label = "Log 2 transformation",
+                    value = TRUE
+                ),
+                checkboxInput(
                     inputId = NS(id, "singlecell"),
                     label = "Single cell data",
                     value = FALSE

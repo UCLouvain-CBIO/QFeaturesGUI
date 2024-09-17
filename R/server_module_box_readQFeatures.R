@@ -10,8 +10,7 @@
 #'
 #' @importFrom shiny is.reactive reactive moduleServer observe eventReactive updateSelectInput removeModal downloadHandler
 #' @importFrom DT renderDataTable datatable
-#' @importFrom QFeatures readQFeatures
-#' @importFrom QFeatures zeroIsNA
+#' @importFrom QFeatures readQFeatures zeroIsNA logTransform
 #' @importFrom methods as
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
@@ -48,12 +47,23 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     verbose = FALSE
                 )
             }
+            n_base_assays <- length(global_rv$qfeatures)
             if (input$zero_as_NA && length(global_rv$qfeatures) > 0) {
                 global_rv$qfeatures <- error_handler(
                     QFeatures::zeroIsNA,
                     component_name = "QFeatures converting (zero_as_NA)",
                     object = global_rv$qfeatures,
                     i = seq_along(global_rv$qfeatures)
+                )
+            }
+            if (input$log_transform) {
+                global_rv$qfeatures <- error_handler(
+                    QFeatures::logTransform,
+                    component_name = "Log transforming QFeatures",
+                    object = global_rv$qfeatures,
+                    i = seq_along(global_rv$qfeatures),
+                    base = 2,
+                    name = paste0(names(global_rv$qfeatures), "_logTransformed")
                 )
             }
             if (input$singlecell) {
@@ -68,7 +78,8 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             # The idea is that each page will be assigned a number,
             # and will use the assays that have the number - 1 in the name.
             # And then add assays with the number of the page in the QFeatures
-            for (i in seq_along(global_rv$qfeatures)) {
+            start_index <- max(1, length(global_rv$qfeatures) - n_base_assays + 1)
+            for (i in start_index:length(global_rv$qfeatures)) {
                 names(global_rv$qfeatures)[i] <- paste0(
                     names(global_rv$qfeatures)[i],
                     "_(QFeaturesGUI#0)_initial_import"

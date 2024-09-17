@@ -342,7 +342,8 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
 }
 
 
-#' A function that will logTransform all the assays of a qfeatures
+#' A function that will logTransform all the assays of a qfeatures 
+#' (replacing the initial assays)
 #' @param qfeatures `QFeatures` object to logTransform
 #' @param base `numeric` base of the log transformation
 #' @param pseudocount `numeric` pseudocount to add to the data
