@@ -633,3 +633,17 @@ unique_feature_boxplot <- function(assays_df, feature) {
 
     suppressWarnings(ggplotly(plot))
 }
+
+
+#' @title sample filtering
+#'
+#' @param qfeatures A qfeatures object
+#' @param conditions A string with the conditions to filter the samples (chr)
+#'
+#' @return A qfeatures object with the filtered samples
+#' @rdname INTERNAL_sample_filtering
+#' @keywords internal
+#'
+sample_filtering <- function(qfeatures, conditions) {
+    qfeatures[, eval(parse(text = conditions)), ]
+}

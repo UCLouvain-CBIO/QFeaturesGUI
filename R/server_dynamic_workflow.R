@@ -35,46 +35,39 @@ server_dynamic_workflow <- function(input, output, session) {
                 tabItem(
                     tabName = paste0("step_", i),
                     if (global_rv$workflow_config[[i]] == "Samples Filtering") {
-                        interface_module_samples_filtering_tab(
-                            paste0("samples_filtering_", i)
+                        interface_module_filtering_tab(
+                            paste0("samples_filtering_", i),
+                            type = "samples_filtering"
                         )
                     } else if (global_rv$workflow_config[[i]] == "Features Filtering") {
-                        interface_module_features_filtering_tab(
-                            paste0("features_filtering_", i)
+                        interface_module_filtering_tab(
+                            paste0("features_filtering_", i),
+                            type = "features_filtering"
                         )
                     } else if (global_rv$workflow_config[[i]] == "Normalisation") {
                         interface_module_normalisation_tab(
                             paste0("normalisation_", i)
                         )
-                    } else if (global_rv$workflow_config[[i]] == "test") {
-                        interface_module_filtering_tab(
-                            paste0("test_", i),
-                            "features_filtering"
-                        )
                     }
                 )
             })
-
             do.call(tabItems, c(static_tabs, dynamic_tabs))
         })
 
         lapply(seq_along(global_rv$workflow_config), function(i) {
             if (global_rv$workflow_config[[i]] == "Samples Filtering") {
-                server_module_samples_filtering_tab(paste0("samples_filtering_", i),
-                    step_number = i
+                server_module_filtering_tab(paste0("samples_filtering_", i),
+                    step_number = i,
+                    type = "samples_filtering"
                 )
             } else if (global_rv$workflow_config[[i]] == "Features Filtering") {
-                server_module_features_filtering_tab(paste0("features_filtering_", i),
-                    step_number = i
+                server_module_filtering_tab(paste0("features_filtering_", i),
+                    step_number = i,
+                    type = "features_filtering"
                 )
             } else if (global_rv$workflow_config[[i]] == "Normalisation") {
                 server_module_normalisation_tab(paste0("normalisation_", i),
                     step_number = i
-                )
-            } else if (global_rv$workflow_config[[i]] == "test") {
-                server_module_filtering_tab(paste0("test_", i),
-                    step_number = i,
-                    type = "features_filtering"
                 )
             }
         })
