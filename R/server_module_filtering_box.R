@@ -2,7 +2,7 @@
 #'
 #' @param id The module id
 #' @param assays_to_process A reactiveVal that contains the different assays that will be used in the module
-#' @param type A character string specifying the type of the filtering (sample or feature based)
+#' @param type A character string specifying the type of the filtering (samples_filtering or features_filtering)
 #' @param state A list that contains the state of the module (input states)
 #' @return The updated assays
 #' @rdname INTERNAL_server_module_filtering_box
@@ -18,9 +18,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
     moduleServer(id, function(input, output, session) {
         annotations_names <- reactive({
             req(assays_to_process())
-            if (type == "samples") {
+            if (type == "samples_filtering") {
                 colnames(colData(assays_to_process()))
-            } else if (type == "features") {
+            } else if (type == "features_filtering") {
                 colnames(rowData(assays_to_process()[[1]]))
             }
         })
@@ -54,9 +54,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
         annotations_type <- reactive({
             req(input$annotation_selection)
             req(assays_to_process())
-            if (type == "samples") {
+            if (type == "samples_filtering") {
                 typeof(colData(assays_to_process())[[input$annotation_selection]])
-            } else if (type == "features") {
+            } else if (type == "features_filtering") {
                 typeof(rowData(assays_to_process()[[1]])[[input$annotation_selection]])
             }
         })
@@ -121,7 +121,7 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
 #'
 #' @param id The module id
 #' @param assays_to_process A reactiveVal that contains the different assays that will be used in the module
-#' @param type A character string specifying the type of the filtering (sample or feature based)
+#' @param type A character string specifying the type of the filtering (samples_filtering or features_filtering)
 #' @param filter_value The value that will be used in combinaison with the filter operator
 #' @param annotation The annotation that will be used to filter the data
 #' @param filter_operator The operator that will be used to filter the data
@@ -159,9 +159,9 @@ server_module_annotation_plot <- function(
         })
         annotation_values <- reactive({
             req(single_assay())
-            if (type == "samples") {
+            if (type == "samples_filtering") {
                 as.data.frame(colData(single_assay()))[[selected_annotation()]]
-            } else if (type == "features") {
+            } else if (type == "features_filtering") {
                 as.data.frame(rowData(single_assay()))[[selected_annotation()]]
             }
         })

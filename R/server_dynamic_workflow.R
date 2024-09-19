@@ -46,6 +46,11 @@ server_dynamic_workflow <- function(input, output, session) {
                         interface_module_normalisation_tab(
                             paste0("normalisation_", i)
                         )
+                    } else if (global_rv$workflow_config[[i]] == "test") {
+                        interface_module_filtering_tab(
+                            paste0("test_", i),
+                            "features_filtering"
+                        )
                     }
                 )
             })
@@ -65,6 +70,11 @@ server_dynamic_workflow <- function(input, output, session) {
             } else if (global_rv$workflow_config[[i]] == "Normalisation") {
                 server_module_normalisation_tab(paste0("normalisation_", i),
                     step_number = i
+                )
+            } else if (global_rv$workflow_config[[i]] == "test") {
+                server_module_filtering_tab(paste0("test_", i),
+                    step_number = i,
+                    type = "features_filtering"
                 )
             }
         })
