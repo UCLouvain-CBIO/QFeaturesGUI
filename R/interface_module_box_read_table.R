@@ -39,10 +39,11 @@ box_read_table_ui <- function(id) {
                     solidHeader = FALSE,
                     collapsible = TRUE,
                     id = NS(id, "parameters"),
-                    textInput(
+                    selectInput(
                         inputId = NS(id, "sep"),
                         label = "Separator character",
-                        value = ","
+                        choices = c(";",",","Tab" = "\t","Space" = " "),
+                        selected = ","
                     ),
                     textInput(
                         inputId = NS(id, "dec"),
