@@ -1,7 +1,7 @@
 #' UI builder
 #'
-#' @return A shiny dashboard UI
-#' @rdname INTERNAL_build_ui
+#' @return A shiny dashboard UI for importQFeatures function
+#' @rdname INTERNAL_build_import_ui
 #' @keywords internal
 #'
 #' @importFrom shinydashboard dashboardBody tabItem tabItems
@@ -12,15 +12,11 @@
 build_import_ui <- function() {
   ui <- dashboardPage(
     skin = "blue",
-    header = header(),
-    sidebar = sidebar(),
-    body = dashboardBody(
-      useShinyFeedback(),
-      includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
-      uiOutput("all_tabs")
-    ),
-    title = "importQFeatures"
+    header = header("importQFeatures"),
+    dashboardSidebar(disable = TRUE),
+    dashboardBody(
+      import_tab()
+    )
   )
-  
   return(ui)
 }
