@@ -25,9 +25,9 @@
 #'     shiny::runApp(app)
 #' }
 #'
-importQFeatures <- function(colData = NULL, assayData = NULL) {
-    options(shiny.maxRequestSize = 100*1024^2)
-    ui <- build_ui()
-    server <- build_server(colData, assayData)
-    shinyApp(ui = ui, server = server)
+testImportQFeatures <- function(colData = NULL, assayData = NULL) {
+  options(shiny.maxRequestSize = 100*1024^2)
+  ui <- build_import_ui()
+  server <- build_import_server(colData, assayData)
+  shinyApp(ui = ui, server = server)
 }
