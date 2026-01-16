@@ -51,6 +51,11 @@ box_readqfeatures_ui <- function(id) {
                     value = FALSE
                 ),
                 checkboxInput(
+                    inputId = NS(id,"logTransform"),
+                    label = "Log transform data",
+                    value = TRUE
+                ),
+                checkboxInput(
                     inputId = NS(id, "zero_as_NA"),
                     label = "Convert zeros to NA",
                     value = TRUE

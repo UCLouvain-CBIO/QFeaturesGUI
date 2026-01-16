@@ -56,6 +56,16 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     i = seq_along(global_rv$qfeatures)
                 )
             }
+            if (input$logTransform) {
+              global_rv$qfeatures <- error_handler(
+                QFeatures::logTransform,
+                component_name = "Log transforming QFeatures",
+                object = global_rv$qfeatures,
+                i = seq_along(global_rv$qfeatures),
+                base = 2,
+                name = paste0(names(global_rv$qfeatures),'_logTransformed')
+              )
+            }
             if (input$singlecell) {
                 el <- ExperimentList(lapply(
                     experiments(global_rv$qfeatures),
