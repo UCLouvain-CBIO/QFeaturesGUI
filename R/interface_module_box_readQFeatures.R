@@ -37,7 +37,8 @@ box_readqfeatures_ui <- function(id) {
                 selectInput(
                     inputId = NS(id, "run_col"),
                     "Run/Batch column :",
-                    choices = NULL
+                    choices = NULL,
+                    selected = "NULL"
                 ),
                 selectInput(
                     inputId = NS(id, "quant_cols"),
@@ -90,6 +91,13 @@ box_readqfeatures_ui <- function(id) {
                 collapsible = TRUE,
                 id = NS(id, "assay_preview"),
                 DT::dataTableOutput(NS(id, "assay_table"))
+            ),
+            downloadButton(
+              outputId = NS(id, "downloadQFeatures"),
+              "Download QFeatures object",
+              class = "add-button no-bottom-margin",
+              width = "100%",
+              style = "font-size: 14px;"
             )
         )
     )
