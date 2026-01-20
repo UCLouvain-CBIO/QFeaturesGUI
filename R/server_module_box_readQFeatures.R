@@ -91,7 +91,8 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             input$reload_button
             updateSelectInput(session,
                 "run_col",
-                choices = colnames(input_table())
+                choices = c("NULL", colnames(input_table())),
+                selected = "NULL"
             )
             updateSelectInput(session,
                 "quant_cols",
