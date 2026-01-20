@@ -162,14 +162,18 @@ qfeatures_to_df <- function(qfeatures) {
     df <- data.frame(
         "Name" = rep.int(0, length(qfeatures)),
         "Class" = rep.int(0, length(qfeatures)),
-        "nrows" = rep.int(0, length(qfeatures)),
-        "ncols" = rep.int(0, length(qfeatures))
+        "nFeatures" = rep.int(0, length(qfeatures)),
+        "nSamples" = rep.int(0, length(qfeatures)),
+        "nFeaturesMetadata" = rep.int(0,length(qfeatures)),
+        "nSamplesMetadata" = rep.int(0,length(qfeatures))
     )
     for (i in seq_along(qfeatures)) {
         df[i, "Name"] <- remove_QFeaturesGUI(names(qfeatures)[[i]])
         df[i, "Class"] <- class(qfeatures[[i]])[[1]]
-        df[i, "nrows"] <- nrow(qfeatures[[i]])[[1]]
-        df[i, "ncols"] <- ncol(qfeatures[[i]])[[1]]
+        df[i, "nFeatures"] <- nrow(qfeatures[[i]])[[1]]
+        df[i, "nSamples"] <- ncol(qfeatures[[i]])[[1]]
+        df[i, "nFeaturesMetadata"] <- ncol(rowData(qfeatures[[i]]))[[1]]
+        df[i, "nSamplesMetadata"] <- suppressWarnings(ncol(colData(getWithColData(qfeatures, i))))
     }
 
     df
