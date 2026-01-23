@@ -26,14 +26,6 @@ box_readqfeatures_ui <- function(id) {
                 solidHeader = FALSE,
                 collapsible = TRUE,
                 id = NS(id, "parameters"),
-                actionButton(
-                    inputId = NS(id, "reload_button"),
-                    "Reload",
-                    icon = icon("rotate-right"),
-                    width = "100%",
-                    class = "load-button",
-                    style = "font-size: 14px;"
-                ),
                 selectInput(
                     inputId = NS(id, "run_col"),
                     "Run/Batch column :",
@@ -95,9 +87,8 @@ box_readqfeatures_ui <- function(id) {
             downloadButton(
               outputId = NS(id, "downloadQFeatures"),
               "Download QFeatures object",
-              class = "add-button no-bottom-margin",
-              width = "100%",
-              style = "font-size: 14px;"
+              class = "load-button",
+              style = "width: 100%;"
             )
         )
     )
