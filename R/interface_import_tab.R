@@ -16,6 +16,6 @@ import_tab <- function() {
             width = 6,
             box_read_table_ui("sample")
         ),
-        box_readqfeatures_ui("readqfeatures")
+        box_readqfeatures_ui(id = "readqfeatures")
     )
 }

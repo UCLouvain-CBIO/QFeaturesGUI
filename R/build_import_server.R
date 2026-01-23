@@ -23,8 +23,6 @@ build_import_server <- function(sample_table, input_table) {
       full_message = character(),
       time = as.POSIXct(character())
     )
-    global_rv$qfeatures <- QFeatures()
-    global_rv$workflow_config <- list()
     server_exception_menu(input, output, session)
     server_import_tab(
       input,
