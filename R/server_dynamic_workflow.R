@@ -79,16 +79,3 @@ server_dynamic_workflow <- function(input, output, session) {
     })
 }
 
-
-server_dynamic_import_workflow <- function(input, output, session) {
-  observeEvent(global_rv$workflow_config, {
-    output$all_tabs <- renderUI({
-      static_tabs <- list(tabItem(
-        tabName = "import_tab",
-        import_tab()
-      ))
-      do.call(tabItems, c(static_tabs))
-    })
-  })
-}
-

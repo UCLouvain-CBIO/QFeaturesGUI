@@ -31,16 +31,3 @@ sidebar <- function() {
         )
     )
 }
-
-sidebar_import <- function() {
-  dashboardSidebar(
-    sidebarMenu(
-      id = "sidebar_menu",
-      menuItem(
-        "Import",
-        tabName = "import_tab",
-        icon = shiny::icon("1") # , class = "icon-container")
-      )
-    )
-  )
-}
