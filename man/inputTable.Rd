@@ -168,7 +168,7 @@ were selected in the \code{scp1} dataset (see \code{?scp1}) were kept along
 with a blank run. The data is stored as a \code{data.frame}.
 }
 \seealso{
-\code{\link[=readSCP]{readSCP()}} for an example on how \code{mqScpData} is
-parsed into a \link{QFeatures} object.
+\code{\link[scp:readSCP]{scp::readSCP()}} for an example on how \code{mqScpData} is
+parsed into a \link[QFeatures:QFeatures-class]{QFeatures::QFeatures} object.
 }
 \keyword{datasets}

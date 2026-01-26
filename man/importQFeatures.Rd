@@ -2,14 +2,16 @@
 % Please edit documentation in R/importQFeatures.R
 \name{importQFeatures}
 \alias{importQFeatures}
-\title{A shiny app to import QFeatures objects, some optional pre-processing steps.}
+\title{A shiny app to import QFeatures objects.}
 \usage{
-importQFeatures(colData = NULL, assayData = NULL)
+importQFeatures(colData = NULL, assayData = NULL, maxSize = 1000)
 }
 \arguments{
 \item{colData}{A dataframe that contains the sample table.}
 
 \item{assayData}{A dataframe that contains the input table.}
+
+\item{maxSize}{An integer that change shiny.maxRequestSize value.}
 }
 \value{
 Return the "importQFeatures" shiny app object.
@@ -17,18 +19,14 @@ Return the "importQFeatures" shiny app object.
 \description{
 importQFeatures is a simple graphical interface to import bulk and single-cell proteomic data.
 The app use the \code{\link[QFeatures]{readQFeatures}} function from the QFeatures package to convert simple table (single or multiple, csv or tsv) to a QFeatures object.
-The app is divided into mutliple sections:
-\itemize{
-\item The first section (Import) of the app allow to convert tables to a QFeatures object.
-\item The second section (Pre-processing) of the app allow to perform some optional pre-processing steps.
-}
+The app allow to convert tables to a QFeatures object.
 }
 \examples{
 library(QFeaturesGUI)
 
 data("sampleTable")
 data("inputTable")
-app <- importQFeatures(colData = sampleTable, assayData = inputTable)
+app <- importQFeatures(colData = sampleTable, assayData = inputTable, maxSize = 100)
 
 if (interactive()) {
     shiny::runApp(app)
