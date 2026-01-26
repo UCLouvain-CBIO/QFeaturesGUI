@@ -1,8 +1,8 @@
 #' ui header builder
 #'
-#' @param title a string that refers to the title of the app 
+#' @param title a string that refers to the title of the app
 #'
-#' @return the dashboardHeader object for the importQFeatures app
+#' @return the dashboardHeader object for the different apps
 #' @rdname INTERNAL_interface_header
 #' @keywords internal
 #'

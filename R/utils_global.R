@@ -164,8 +164,8 @@ qfeatures_to_df <- function(qfeatures) {
         "Class" = rep.int(0, length(qfeatures)),
         "nFeatures" = rep.int(0, length(qfeatures)),
         "nSamples" = rep.int(0, length(qfeatures)),
-        "nFeaturesMetadata" = rep.int(0,length(qfeatures)),
-        "nSamplesMetadata" = rep.int(0,length(qfeatures))
+        "nFeaturesMetadata" = rep.int(0, length(qfeatures)),
+        "nSamplesMetadata" = rep.int(0, length(qfeatures))
     )
     for (i in seq_along(qfeatures)) {
         df[i, "Name"] <- remove_QFeaturesGUI(names(qfeatures)[[i]])
@@ -453,10 +453,9 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
 #'
-plotlyridges <- function(
-        data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
-        height = NULL,
-        width = NULL) {
+plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+    height = NULL,
+    width = NULL) {
     data <- subset(data, !is.na(data[, vardens]))
 
     r <- range(data[, vardens])
@@ -518,12 +517,9 @@ plotlyridges <- function(
     })$x
 
 
-
-
     catnames <- df[[1]]
     x <- df[[2]][1:(length(df[[1]]))]
     y <- df[[2]][-(1:(length(df[[1]])))]
-
 
 
     ymax <- max(unlist(y), na.rm = TRUE)
@@ -572,7 +568,6 @@ plotlyridges <- function(
 #'
 
 summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NULL) {
-
     combined_df <- data.frame(PSM = character(), intensity = numeric(), sample = character())
     for (assayName in names(qfeatures)) {
         assayData <- as.data.frame(assay(qfeatures[[assayName]]))

@@ -17,7 +17,6 @@ server_module_summary_tab <- function(id) {
             error_handler(
                 qfeatures_to_df,
                 component_name = "qfeatures_to_df",
-                #global_rv$qfeatures
                 qfeatures
             )
         })

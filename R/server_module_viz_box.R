@@ -55,9 +55,9 @@ server_module_viz_box <- function(id, assays_to_process) {
             req(input$feature_type_column)
 
             summarize_assays_to_df(
-            qfeatures = assays_to_process(),
-            sample_column = input$sample_type_column,
-            feature_column = input$feature_type_column
+                qfeatures = assays_to_process(),
+                sample_column = input$sample_type_column,
+                feature_column = input$feature_type_column
             )
         })
 

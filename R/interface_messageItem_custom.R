@@ -22,8 +22,10 @@
 #' @importFrom shiny icon
 #' @importFrom htmltools a h4 p tags
 #'
-messageItem <- function(from, message, icon = shiny::icon("user"), time = NULL,
-    href = NULL, inputId = NULL, class = NULL) {
+messageItem <- function(
+      from, message, icon = shiny::icon("user"), time = NULL,
+      href = NULL, inputId = NULL, class = NULL
+) {
     if (is.null(href)) href <- "#"
     htmltools::tags$li(
         a(

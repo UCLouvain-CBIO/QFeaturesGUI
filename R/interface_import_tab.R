@@ -9,8 +9,7 @@ import_tab <- function() {
     fluidRow(
         column(
             width = 6,
-            box_read_table_ui("input"),
-            
+            box_read_table_ui("input")
         ),
         column(
             width = 6,

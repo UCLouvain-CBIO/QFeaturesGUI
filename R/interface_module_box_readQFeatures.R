@@ -44,7 +44,7 @@ box_readqfeatures_ui <- function(id) {
                     value = FALSE
                 ),
                 checkboxInput(
-                    inputId = NS(id,"logTransform"),
+                    inputId = NS(id, "logTransform"),
                     label = "Log transform data",
                     value = TRUE
                 ),
@@ -85,10 +85,10 @@ box_readqfeatures_ui <- function(id) {
                 DT::dataTableOutput(NS(id, "assay_table"))
             ),
             downloadButton(
-              outputId = NS(id, "downloadQFeatures"),
-              "Download QFeatures object",
-              class = "load-button",
-              style = "width: 100%;"
+                outputId = NS(id, "downloadQFeatures"),
+                "Download QFeatures object",
+                class = "load-button",
+                style = "width: 100%;"
             )
         )
     )

@@ -78,4 +78,3 @@ server_dynamic_workflow <- function(input, output, session) {
         })
     })
 }
-
