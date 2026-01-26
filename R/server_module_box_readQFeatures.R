@@ -50,7 +50,8 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     )
                 }
             } else {
-                qfeatures <- error_handler(
+                if (input$run_col != "NULL"){
+                  qfeatures <- error_handler(
                     QFeatures::readQFeatures,
                     component_name = "QFeatures converting (readQFeatures)",
                     assayData = input_table(),
@@ -58,7 +59,18 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     quantCols = input$quant_cols,
                     removeEmptyCols = input$removeEmptyCols,
                     verbose = FALSE
-                )
+                  )
+                } else {
+                  qfeatures <- error_handler(
+                    QFeatures::readQFeatures,
+                    component_name = "QFeatures converting (readQFeatures)",
+                    assayData = input_table(),
+                    runCol = NULL,
+                    quantCols = input$quant_cols,
+                    removeEmptyCols = input$removeEmptyCols,
+                    verbose = FALSE
+                  )
+                }
             }
             if (input$zero_as_NA && length(qfeatures) > 0) {
                 qfeatures <- error_handler(

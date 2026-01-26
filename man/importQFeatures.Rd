@@ -11,7 +11,7 @@ importQFeatures(colData = NULL, assayData = NULL, maxSize = 1000)
 
 \item{assayData}{A dataframe that contains the input table.}
 
-\item{maxSize}{An integer that change shiny.maxRequestSize value.}
+\item{maxSize}{An integer that change shiny.maxRequestSize value, this value has to be in Mb.}
 }
 \value{
 Return the "importQFeatures" shiny app object.

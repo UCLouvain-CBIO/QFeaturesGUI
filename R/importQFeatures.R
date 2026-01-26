@@ -6,7 +6,7 @@
 #'
 #' @param colData A dataframe that contains the sample table.
 #' @param assayData A dataframe that contains the input table.
-#' @param maxSize An integer that change shiny.maxRequestSize value.
+#' @param maxSize An integer that change shiny.maxRequestSize value, this value has to be in Mb.
 #'
 #' @return Return the "importQFeatures" shiny app object.
 #' @export
