@@ -48,7 +48,6 @@ interface_module_qc_metrics <- function(id, type) {
                     )
                 )
             ),
-            
             box(
                 title = "Single Feature Visualisation",
                 status = "primary",

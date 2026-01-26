@@ -41,5 +41,5 @@ Suggests:
     rmarkdown,
     BiocStyle
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr

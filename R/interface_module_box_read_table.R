@@ -42,7 +42,7 @@ box_read_table_ui <- function(id) {
                     selectInput(
                         inputId = NS(id, "sep"),
                         label = "Separator character",
-                        choices = c(";",",","Tab" = "\t","Space" = " "),
+                        choices = c(";", ",", "Tab" = "\t", "Space" = " "),
                         selected = ","
                     ),
                     textInput(

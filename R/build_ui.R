@@ -12,7 +12,7 @@
 build_ui <- function() {
     ui <- dashboardPage(
         skin = "blue",
-        header = header(),
+        header = header("Process QFeatures"),
         sidebar = sidebar(),
         body = dashboardBody(
             useShinyFeedback(),

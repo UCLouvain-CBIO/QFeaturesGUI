@@ -1,15 +1,17 @@
 #' ui header builder
 #'
-#' @return the dashboardHeader object for the importQFeatures app.
+#' @param title a string that refers to the title of the app
+#'
+#' @return the dashboardHeader object for the different apps
 #' @rdname INTERNAL_interface_header
 #' @keywords internal
 #'
 #' @importFrom shinydashboard dropdownMenuOutput
 #' @importFrom shinydashboardPlus dashboardHeader
 #'
-header <- function() {
+header <- function(title) {
     dashboardHeader(
-        title = "importQFeatures",
+        title = title,
         dropdownMenuOutput("exception_menu")
     )
 }

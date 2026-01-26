@@ -26,18 +26,11 @@ box_readqfeatures_ui <- function(id) {
                 solidHeader = FALSE,
                 collapsible = TRUE,
                 id = NS(id, "parameters"),
-                actionButton(
-                    inputId = NS(id, "reload_button"),
-                    "Reload",
-                    icon = icon("rotate-right"),
-                    width = "100%",
-                    class = "load-button",
-                    style = "font-size: 14px;"
-                ),
                 selectInput(
                     inputId = NS(id, "run_col"),
                     "Run/Batch column :",
-                    choices = NULL
+                    choices = NULL,
+                    selected = "NULL"
                 ),
                 selectInput(
                     inputId = NS(id, "quant_cols"),
@@ -49,6 +42,11 @@ box_readqfeatures_ui <- function(id) {
                     inputId = NS(id, "removeEmptyCols"),
                     label = "Remove columns that contain only missing values",
                     value = FALSE
+                ),
+                checkboxInput(
+                    inputId = NS(id, "logTransform"),
+                    label = "Log transform data",
+                    value = TRUE
                 ),
                 checkboxInput(
                     inputId = NS(id, "zero_as_NA"),
@@ -85,6 +83,12 @@ box_readqfeatures_ui <- function(id) {
                 collapsible = TRUE,
                 id = NS(id, "assay_preview"),
                 DT::dataTableOutput(NS(id, "assay_table"))
+            ),
+            downloadButton(
+                outputId = NS(id, "downloadQFeatures"),
+                "Download QFeatures object",
+                class = "load-button",
+                style = "width: 100%;"
             )
         )
     )
