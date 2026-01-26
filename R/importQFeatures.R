@@ -17,7 +17,7 @@
 #'
 #' data("sampleTable")
 #' data("inputTable")
-#' app <- importQFeatures(colData = sampleTable, assayData = inputTable)
+#' app <- importQFeatures(colData = sampleTable, assayData = inputTable, maxSize = 100)
 #'
 #' if (interactive()) {
 #'     shiny::runApp(app)
