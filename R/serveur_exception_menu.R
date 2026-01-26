@@ -15,42 +15,47 @@
 #' @importFrom shinydashboard dropdownMenu renderMenu
 #' @importFrom htmltools div h3 HTML span br
 server_exception_menu <- function(input, output, session) {
-  
-  output$exception_menu <- renderMenu({
-    dropdownMenu(
-      type = "messages",
-      icon = icon("warning"),
-      badgeStatus = "danger",
-      .list = lapply(seq_len(nrow(global_rv$exception_data)), function(i) {
-        row <- global_rv$exception_data[i, ]
-        clickableMessageItem(row$id, row$title, row$time)
-      })
-    )
-  })
-  
-  observeEvent(input$exception_clicked, {
-    req(input$exception_clicked)
-    
-    row <- global_rv$exception_data[
-      global_rv$exception_data$id == input$exception_clicked, ]
-    
-    req(nrow(row) == 1)
-    
-    showModal(modalDialog(
-      title = row$title,
-      tags$div(
-        class = "italic-text",
-        "Occurred at ", format(row$time, "%H:%M:%S")
-      ),
-      h4("Function call"),
-      verbatimTextOutput("func_call"),
-      h4("Full message"),
-      verbatimTextOutput("full_message"),
-      easyClose = TRUE,
-      size = "l"
-    ))
-    
-    output$func_call <- renderText(row$func_call)
-    output$full_message <- renderText(row$full_message)
-  })}
+    output$exception_menu <- renderMenu({
+        dropdownMenu(
+            type = "messages",
+            icon = icon("warning"),
+            badgeStatus = "danger",
+            .list = lapply(seq_len(nrow(global_rv$exception_data)), function(i) {
+                row <- global_rv$exception_data[i, ]
+                clickableMessageItem(
+                    id = row$id,
+                    title = row$title,
+                    time = row$time,
+                    type = row$type
+                )
+            })
+        )
+    })
 
+    observeEvent(input$exception_clicked, {
+        req(input$exception_clicked)
+
+        row <- global_rv$exception_data[
+            global_rv$exception_data$id == input$exception_clicked,
+        ]
+
+        req(nrow(row) == 1)
+
+        showModal(modalDialog(
+            title = row$title,
+            tags$div(
+                class = "italic-text",
+                "Occurred at ", format(row$time, "%H:%M:%S")
+            ),
+            tags$h4("Function call"),
+            verbatimTextOutput("func_call"),
+            tags$h4("Full message"),
+            verbatimTextOutput("full_message"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+
+        output$func_call <- renderText(row$func_call)
+        output$full_message <- renderText(row$full_message)
+    })
+}

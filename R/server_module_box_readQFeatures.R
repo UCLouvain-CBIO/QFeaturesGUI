@@ -50,26 +50,26 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     )
                 }
             } else {
-                if (input$run_col != "NULL"){
-                  qfeatures <- error_handler(
-                    QFeatures::readQFeatures,
-                    component_name = "QFeatures converting (readQFeatures)",
-                    assayData = input_table(),
-                    runCol = input$run_col,
-                    quantCols = input$quant_cols,
-                    removeEmptyCols = input$removeEmptyCols,
-                    verbose = FALSE
-                  )
+                if (input$run_col != "NULL") {
+                    qfeatures <- error_handler(
+                        QFeatures::readQFeatures,
+                        component_name = "QFeatures converting (readQFeatures)",
+                        assayData = input_table(),
+                        runCol = input$run_col,
+                        quantCols = input$quant_cols,
+                        removeEmptyCols = input$removeEmptyCols,
+                        verbose = FALSE
+                    )
                 } else {
-                  qfeatures <- error_handler(
-                    QFeatures::readQFeatures,
-                    component_name = "QFeatures converting (readQFeatures)",
-                    assayData = input_table(),
-                    runCol = NULL,
-                    quantCols = input$quant_cols,
-                    removeEmptyCols = input$removeEmptyCols,
-                    verbose = FALSE
-                  )
+                    qfeatures <- error_handler(
+                        QFeatures::readQFeatures,
+                        component_name = "QFeatures converting (readQFeatures)",
+                        assayData = input_table(),
+                        runCol = NULL,
+                        quantCols = input$quant_cols,
+                        removeEmptyCols = input$removeEmptyCols,
+                        verbose = FALSE
+                    )
                 }
             }
             if (input$zero_as_NA && length(qfeatures) > 0) {
