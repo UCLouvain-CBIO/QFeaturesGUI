@@ -60,6 +60,17 @@ server_module_workflow_config <- function(id) {
                     })
                 })
             }
+
+            # Loop through all 20 steps
+            for (i in 1:20) {
+                tab_name <- paste0("step_", i)
+                selector <- paste0("li[data-value='", tab_name, "']")
+                if (i <= n_steps()) {
+                    shinyjs::runjs(paste0("document.querySelector('", selector, "').style.display = 'block';"))
+                } else {
+                    shinyjs::runjs(paste0("document.querySelector('", selector, "').style.display = 'none';"))
+                }
+            }
         })
         steps_list <- reactive({
             full_list <- reactiveValuesToList(steps)

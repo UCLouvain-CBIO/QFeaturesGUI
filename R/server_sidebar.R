@@ -12,21 +12,25 @@
 #' @importFrom shiny icon
 #'
 server_sidebar <- function(input, output, session) {
-    output$sidebar_workflow <- renderMenu({
-        menuItem(
-            paste0(
-                "Pre-processing",
-                " (",
-                length(global_rv$workflow_config), " Steps)"
-            ),
-            tabName = "workflow_tab",
-            icon = shiny::icon("3"),
-            lapply(seq_along(global_rv$workflow_config), function(index) {
+    output$dynamic_sidebar <- renderMenu({
+        n_steps <- length(global_rv$workflow_config)
+
+        menu_list <- list()
+        if (n_steps > 0) {
+            step_items <- lapply(seq_len(n_steps), function(i) {
                 menuSubItem(
-                    text = global_rv$workflow_config[[index]],
-                    tabName = paste0("step_", index)
+                    text = global_rv$workflow_config[[i]],
+                    tabName = paste0("step_", i)
                 )
             })
+        } else {
+            step_items <- 0
+        }
+
+        menuItem(
+            paste0("Pre-processing (", n_steps, " steps)"),
+            icon = icon("3"),
+            step_items
         )
     })
 }
