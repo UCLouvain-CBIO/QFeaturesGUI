@@ -13,7 +13,7 @@ build_import_ui <- function() {
     ui <- dashboardPage(
         skin = "blue",
         header = header("import QFeatures App"),
-        dashboardSidebar(disable = TRUE),
+        dashboardSidebar(collapsed = TRUE, disable = TRUE, width = 0),
         dashboardBody(
             import_tab()
         )
