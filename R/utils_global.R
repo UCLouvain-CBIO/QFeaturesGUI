@@ -21,23 +21,9 @@ error_handler <- function(func, component_name, ...) {
         },
         warning = function(w) {
             time <- Sys.time()
-            showNotification(
-                HTML(
-                    paste0(
-                        div(HTML(
-                            paste0(
-                                "<b> Warning in ",
-                                component_name,
-                                " </b> at ", format(time, "%H:%M:%S")
-                            )
-                        )),
-                        div(HTML(
-                            "<i>Check the top right exception dropdown menu for more details</i>" # nolint
-                        ))
-                    )
-                ),
-                duration = 30,
-                type = "warning"
+            show_exception_notification(component_name,
+                type = "warning",
+                time = time
             )
             add_exception(
                 title = paste0("Warning in ", component_name),
@@ -51,23 +37,9 @@ error_handler <- function(func, component_name, ...) {
         },
         error = function(e) {
             time <- Sys.time()
-            showNotification(
-                HTML(
-                    paste0(
-                        div(HTML(
-                            paste0(
-                                "<b> Error in ",
-                                component_name,
-                                " </b> at ", format(time, "%H:%M:%S")
-                            )
-                        )),
-                        div(HTML(
-                            "<i>Check the top right exception dropdown menu for more details</i>" # nolint
-                        ))
-                    )
-                ),
-                duration = 30,
-                type = "error"
+            show_exception_notification(component_name,
+                type = "error",
+                time = time
             )
             add_exception(
                 title = paste0("Error in ", component_name),
@@ -80,6 +52,141 @@ error_handler <- function(func, component_name, ...) {
             return(NULL)
         }
     )
+}
+
+# This function is inspired by the messageItem function from the shinydashboardPlus package
+# This custom version serve 3 goals:
+# 1. It change the icon used in for the clock that was no more available from font-awesome
+# 2. It remove the icon from the messageItem (and margin removed)
+# 3. It return the clicked the clicked exception box to the `input$exception_clicked` variable
+#
+#' Create a clickable message item for exception notifications.
+#'
+#' This helper builds an HTML list item that behaves like a clickable exception
+#' entry in a dropdown menu. When clicked, it sets the Shiny input
+#' \code{input$exception_clicked} to the provided \code{id}.
+#'
+#' @param id Character identifier of the exception; this value is sent back via
+#'   \code{input$exception_clicked} when the item is clicked.
+#' @param title Character string used as the main label or summary for the
+#'   exception.
+#' @param time An object representing the time of the exception (typically
+#'   \code{POSIXct}); it will be formatted as \code{"\%H:\%M:\%S"} for display.
+#' @param type Type of message; one of \code{"error"} or \code{"warning"}.
+#'   This controls the icon and color used for the item.
+#'
+#' @return A \code{tags$li} HTML element representing the clickable message item,
+#'   suitable for use in a dropdown menu or message container.
+#' @rdname INTERNAL_interface_clickableMessageItem_custom
+#' @keywords internal
+clickableMessageItem <- function(id, title, time, type = c("error", "warning")) {
+    type <- match.arg(type)
+
+    icon_class <- switch(type,
+        error   = "fa fa-times-circle text-red",
+        warning = "fa fa-exclamation-triangle text-yellow"
+    )
+
+    tags$li(
+        tags$a(
+            href = "#",
+            onclick = sprintf(
+                "Shiny.setInputValue('exception_clicked', '%s', {priority: 'event'});",
+                id
+            ),
+            style = "overflow:hidden;",
+            tags$div(
+                class = "pull-left",
+                tags$i(class = icon_class)
+            ),
+            tags$div(
+                style = paste(
+                    "margin-left:30px;",
+                    "display:flex;",
+                    "justify-content:space-between;",
+                    "align-items:center;"
+                ),
+                tags$span(
+                    title,
+                    style = paste(
+                        "font-weight:600;",
+                        "color:#444;",
+                        "white-space:nowrap;",
+                        "overflow:hidden;",
+                        "text-overflow:ellipsis;",
+                        "max-width:70%;",
+                        "display:inline-block;"
+                    )
+                ),
+                tags$span(
+                    format(time, "%H:%M:%S"),
+                    style = paste(
+                        "font-size:85%;",
+                        "color:#555;",
+                        "white-space:nowrap;",
+                        "margin-left:8px;"
+                    )
+                )
+            ),
+            tags$p(
+                "Click for more details",
+                style = "margin:2px 0 0 30px; font-size:85%; color:#777;"
+            )
+        )
+    )
+}
+
+#' Show a standardized exception notification
+#'
+#' Internal helper to display a formatted Shiny notification for warnings
+#' and errors. The notification includes the component name, timestamp,
+#' and a hint directing the user to the exception dropdown menu.
+#'
+#' @param component_name `character(1)` Name of the component where the
+#'   exception occurred.
+#' @param type `character(1)` Notification type. One of `"error"` or
+#'   `"warning"`.
+#' @param time `POSIXct` Time at which the exception occurred.
+#' @param duration `numeric(1)` Duration (in seconds) the notification
+#'   should be displayed.
+#'
+#' @return Invisibly returns `NULL`. Called for its side effect.
+#'
+#' @keywords internal
+#'
+#' @importFrom shiny showNotification
+#' @importFrom htmltools HTML div
+#'
+#' @rdname INTERNAL_show_exception_notification
+show_exception_notification <- function(component_name,
+    type = c("error", "warning"),
+    time,
+    duration = 30) {
+    type <- match.arg(type)
+
+    title <- paste0(
+        "<b> ",
+        tools::toTitleCase(type),
+        " in ",
+        component_name,
+        " </b> at ",
+        format(time, "%H:%M:%S")
+    )
+
+    showNotification(
+        HTML(
+            paste0(
+                div(HTML(title)),
+                div(HTML(
+                    "<i>Check the top right exception dropdown menu for more details</i>"
+                ))
+            )
+        ),
+        type = type,
+        duration = duration
+    )
+
+    invisible(NULL)
 }
 
 #' A function that will add an exception entry to the global exception data
@@ -97,17 +204,24 @@ error_handler <- function(func, component_name, ...) {
 #'
 #' @importFrom shiny isolate
 add_exception <- function(title, type, func_call, message, full_message, time) {
-    new_data <- data.frame(
-        title = as.character(title),
-        type = as.character(type),
-        func_call = as.character(func_call),
-        message = as.character(message),
+    old_data <- isolate(global_rv$exception_data)
+    id <- paste0(
+        "exception_",
+        format(time, "%Y%m%d%H%M%OS6"),
+        "_",
+        nrow(old_data) + 1L
+    )
+    new_row <- data.frame(
+        id = id,
+        title = title,
+        type = type,
+        func_call = func_call,
+        message = message,
         full_message = as.character(full_message),
-        time = as.POSIXct(time),
+        time = time,
         stringsAsFactors = FALSE
     )
-    old_data <- isolate(global_rv$exception_data)
-    global_rv$exception_data <- rbind(new_data, old_data)
+    global_rv$exception_data <- rbind(new_row, old_data)
 }
 
 #' A little function that will capitalize the first letter of a string
@@ -453,9 +567,11 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
 #'
-plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
-    height = NULL,
-    width = NULL) {
+plotlyridges <- function(
+      data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+      height = NULL,
+      width = NULL
+) {
     data <- subset(data, !is.na(data[, vardens]))
 
     r <- range(data[, vardens])

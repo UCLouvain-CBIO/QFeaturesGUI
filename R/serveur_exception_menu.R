@@ -15,96 +15,47 @@
 #' @importFrom shinydashboard dropdownMenu renderMenu
 #' @importFrom htmltools div h3 HTML span br
 server_exception_menu <- function(input, output, session) {
-    msgs <- reactive({
-        if (nrow(global_rv$exception_data) == 0) {
-            return(list())
-        }
-        lapply(seq_len(nrow(global_rv$exception_data)), function(i) {
-            row <- global_rv$exception_data[i, ]
-            id <- paste0("exception_", as.character(i))
-            messageItem(
-                from = HTML("<br>"),
-                message = HTML(paste0(
-                    "<b>", row[["title"]], "</b>", br(),
-                    span(HTML("<i>click for more details</i>"),
-                        class = "right-align"
-                    )
-                )),
-                icon = icon("exclamation"),
-                time = format(
-                    row[["time"]],
-                    "%H:%M:%S"
-                ),
-                inputId = id
-            )
-        })
-    })
     output$exception_menu <- renderMenu({
         dropdownMenu(
             type = "messages",
             icon = icon("warning"),
             badgeStatus = "danger",
-            .list = msgs()
+            .list = lapply(seq_len(nrow(global_rv$exception_data)), function(i) {
+                row <- global_rv$exception_data[i, ]
+                clickableMessageItem(
+                    id = row$id,
+                    title = row$title,
+                    time = row$time,
+                    type = row$type
+                )
+            })
         )
     })
-    # In certain case, the modal does not show up when the user clicks on the message
-    # This do not happen for the oldest exception message and the x new messages
-    # With x being the number of messages that were already present in the dropdown menu
-    # Maybe the observeEvents increment indefinitely
-    observeEvent(global_rv$exception_data, {
-        for (i in seq_len(nrow(global_rv$exception_data))) {
-            id <- paste0("exception_", i)
-            observeEvent(input[[id]],
-                {
-                    showModal(modalDialog(
-                        title = global_rv$exception_data[i, "title"],
-                        div(
-                            class = "italic-text",
-                            "This error occurred at ",
-                            format(
-                                global_rv$exception_data[i, "time"],
-                                "%H:%M:%S"
-                            )
-                        ),
-                        h3("Function call:"),
-                        div(
-                            class = "normal-text",
-                            verbatimTextOutput(paste0("func_call_", i))
-                        ),
-                        h3(paste0(
-                            "Full ",
-                            global_rv$exception_data[i, "type"],
-                            " message:"
-                        )),
-                        div(
-                            class = "error-text",
-                            verbatimTextOutput(paste0("message_", i))
-                        ),
-                        div(
-                            class = "italic-text right-align",
-                            HTML(paste0(
-                                "Note that this error message comes from a function that is not part of this shiny package.",
-                                br(),
-                                "Please refer to the adequate documentation for more information about the cause of the error."
-                            ))
-                        ),
-                        easyClose = TRUE,
-                        size = "l",
-                        footer = modalButton("Close")
-                    ))
-                    output[[paste0("func_call_", i)]] <- renderText({
-                        gsub(
-                            ",",
-                            ",\n    ",
-                            global_rv$exception_data[i, "func_call"]
-                        )
-                    })
-                    output[[paste0("message_", i)]] <- renderText({
-                        global_rv$exception_data[i, "full_message"]
-                    })
-                },
-                ignoreNULL = TRUE
-            )
-        }
+
+    observeEvent(input$exception_clicked, {
+        req(input$exception_clicked)
+
+        row <- global_rv$exception_data[
+            global_rv$exception_data$id == input$exception_clicked,
+        ]
+
+        req(nrow(row) == 1)
+
+        showModal(modalDialog(
+            title = row$title,
+            tags$div(
+                class = "italic-text",
+                "Occurred at ", format(row$time, "%H:%M:%S")
+            ),
+            tags$h4("Function call"),
+            verbatimTextOutput("func_call"),
+            tags$h4("Full message"),
+            verbatimTextOutput("full_message"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+
+        output$func_call <- renderText(row$func_call)
+        output$full_message <- renderText(row$full_message)
     })
 }

@@ -16,12 +16,14 @@
 build_server <- function(sample_table, input_table) {
     server <- function(input, output, session) {
         global_rv$exception_data <- data.frame(
+            id = character(),
             title = character(),
             type = character(),
             func_call = character(),
             message = character(),
             full_message = character(),
-            time = as.POSIXct(character())
+            time = as.POSIXct(character()),
+            stringsAsFactors = FALSE
         )
         global_rv$qfeatures <- QFeatures()
         global_rv$workflow_config <- list()
