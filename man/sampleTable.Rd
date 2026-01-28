@@ -32,6 +32,6 @@ consistency with \code{mqScpData} table (see \code{?mqScpData}). The two
 tables were filtered to contain only sets present in ``mqScpData\verb{. The tables were then merged based on the run ID, hence merging the sample annotation and the batch annotation. Finally, annotation for the blank run was added manually. The data is stored as a }data.frame`.
 }
 \seealso{
-\code{\link[scp:readSCP]{scp::readSCP()}} to see how this file is used.
+\code{readSCP()} from the \code{scp} package to see how this file is used.
 }
 \keyword{datasets}

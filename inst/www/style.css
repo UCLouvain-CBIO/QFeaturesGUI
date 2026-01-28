@@ -132,3 +132,42 @@
   margin-top: 10px;
   padding: 10px;
 }
+
+.panel {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.step {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: grab;
+  font-weight: 500;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.workflow-drop {
+  min-height: 200px;
+  border: 2px dashed #c9cbe3;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fafbff;
+}
+
+.delete-btn {
+  cursor: pointer;
+  color: red;
+  font-weight: bold;
+}
+
+.sortable-ghost {
+  opacity: 0.4;
+}
+

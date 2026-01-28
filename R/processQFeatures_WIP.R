@@ -11,7 +11,7 @@
 #'
 #' @return Return the "importQFeatures" shiny app object.
 #' @export
-#' @importFrom shiny shinyApp runApp
+#' @importFrom shiny shinyApp runApp addResourcePath
 #'
 #' @examples
 #' library(QFeaturesGUI)
@@ -26,6 +26,10 @@
 #'
 processQFeatures_WIP <- function(colData = NULL, assayData = NULL) {
     options(shiny.maxRequestSize = 100 * 1024^2)
+    addResourcePath(
+        "app-assets",
+        system.file("www", package = "QFeaturesGUI")
+    )
     ui <- build_ui()
     server <- build_server(colData, assayData)
     shinyApp(ui = ui, server = server)
