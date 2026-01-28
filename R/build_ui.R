@@ -22,7 +22,6 @@ build_ui <- function() {
             )
         ),
         body = dashboardBody(
-            useShinyjs(),
             useShinyFeedback(),
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             tabItems(
