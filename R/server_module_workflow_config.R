@@ -13,20 +13,18 @@
 #' @param id module id
 #' @keywords internal
 server_module_workflow_config <- function(id) {
-  moduleServer(id, function(input, output, session) {
+    moduleServer(id, function(input, output, session) {
+        session$sendCustomMessage(
+            "initWorkflowSortable",
+            list(
+                palette  = session$ns("palette"),
+                workflow = session$ns("workflow"),
+                input    = session$ns("workflow_list")
+            )
+        )
 
-    session$sendCustomMessage(
-      "initWorkflowSortable",
-      list(
-        palette  = session$ns("palette"),
-        workflow = session$ns("workflow"),
-        input    = session$ns("workflow_list")
-      )
-    )
-
-    observeEvent(input$apply, {
-      global_rv$workflow_config <- input$workflow_list
+        observeEvent(input$apply, {
+            global_rv$workflow_config <- input$workflow_list
+        })
     })
-  })
 }
-

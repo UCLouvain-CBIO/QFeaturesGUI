@@ -158,10 +158,12 @@ clickableMessageItem <- function(id, title, time, type = c("error", "warning")) 
 #' @importFrom htmltools HTML div
 #'
 #' @rdname INTERNAL_show_exception_notification
-show_exception_notification <- function(component_name,
-    type = c("error", "warning"),
-    time,
-    duration = 30) {
+show_exception_notification <- function(
+      component_name,
+      type = c("error", "warning"),
+      time,
+      duration = 30
+) {
     type <- match.arg(type)
 
     title <- paste0(
@@ -567,11 +569,9 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
 #'
-plotlyridges <- function(
-      data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
-      height = NULL,
-      width = NULL
-) {
+plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+    height = NULL,
+    width = NULL) {
     data <- subset(data, !is.na(data[, vardens]))
 
     r <- range(data[, vardens])
