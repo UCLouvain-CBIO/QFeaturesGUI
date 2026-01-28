@@ -43,6 +43,7 @@ interface_module_workflow_config_tab <- function(id) {
                                     tags$h4("Available steps"),
                                     div(
                                         id = NS(id, "palette"),
+                                        class = "palette-container",
                                         lapply(
                                             c(
                                                 "Samples Filtering",
@@ -62,7 +63,7 @@ interface_module_workflow_config_tab <- function(id) {
                                     tags$h4("Workflow"),
                                     div(
                                         id = NS(id, "workflow"),
-                                        class = "workflow-drop",
+                                        class = "workflow-drop workflow-container",
                                         lapply(
                                             c("Samples Filtering", "Log Transformation"),
                                             function(s) {

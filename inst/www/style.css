@@ -1,3 +1,7 @@
+body {
+  background-color: #eef1f5;
+}
+
 .error-text .shiny-text-output {
   max-height: 400px;
   overflow-y: auto;
@@ -134,14 +138,16 @@
 }
 
 .panel {
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border-top: 5px solid #3c8dbc;
 }
 
 .step {
-  background: #fff;
+  background: linear-gradient(115deg, #ffffff, #f1f7fd);
+  border-left: 5px solid #3c8dbc;
   border-radius: 10px;
   padding: 12px;
   margin-bottom: 8px;
@@ -159,6 +165,53 @@
   border-radius: 12px;
   padding: 12px;
   background: #fafbff;
+}
+
+.palette-container .step {
+  background: linear-gradient(135deg, #ffffff, #f1f7fd);
+  border-left: 5px solid #3c8dbc;
+}
+
+.workflow-container .step {
+  background: linear-gradient(135deg, #ffffff, #f8fff5);
+  border-left: 5px solid #28a745;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+
+.workflow-container {
+  counter-reset: step-counter;
+  overflow: visible;
+}
+
+.workflow-container .step::before {
+  counter-increment: step-counter;
+  content: counter(step-counter);
+  font-weight: bold;
+  background: #28a745;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.workflow-container .step:not(:last-child)::after {
+  content: "↓";
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: bold;
+  color: #28a745;
+  z-index: 10;
 }
 
 .delete-btn {
