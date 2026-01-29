@@ -3,6 +3,8 @@
 #' @description processQFeatures is a simple graphical interface to process QFeatures object.
 #'
 #' @param qfeatures a `QFeatures` object that will be process by the application
+#' @param initialSets numeric() specifying which sets to use as starting point
+#'   for the processing
 #'
 #' @return Return the "processQFeatures" shiny app object.
 #' @export

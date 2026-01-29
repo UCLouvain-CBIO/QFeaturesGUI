@@ -8,6 +8,9 @@ processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
 }
 \arguments{
 \item{qfeatures}{a \code{QFeatures} object that will be process by the application}
+
+\item{initialSets}{numeric() specifying which sets to use as starting point
+for the processing}
 }
 \value{
 Return the "processQFeatures" shiny app object.
