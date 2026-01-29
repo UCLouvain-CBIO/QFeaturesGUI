@@ -15,7 +15,6 @@ server_sidebar <- function(input, output, session) {
     output$dynamic_sidebar <- renderMenu({
         n_steps <- length(global_rv$workflow_config)
 
-        menu_list <- list()
         if (n_steps > 0) {
             step_items <- lapply(seq_len(n_steps), function(i) {
                 menuSubItem(
@@ -25,7 +24,7 @@ server_sidebar <- function(input, output, session) {
                 )
             })
         } else {
-            step_items <- 0
+            step_items <- NULL
         }
 
         menuItem(

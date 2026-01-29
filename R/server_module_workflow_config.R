@@ -9,8 +9,6 @@
 #'
 #' @importFrom shiny moduleServer observeEvent
 #'
-#' @title Workflow Configuration Module Server
-#' @param id module id
 #' @keywords internal
 server_module_workflow_config <- function(id) {
     moduleServer(id, function(input, output, session) {

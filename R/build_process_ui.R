@@ -1,19 +1,21 @@
 #' UI builder for the processQFeatures app
 #'
+#' @param initial_steps prefilled workflow steps
 #' @return A shiny dashboard UI
 #' @rdname INTERNAL_build_process_ui
 #' @keywords internal
 #'
 #' @importFrom shinydashboard dashboardBody tabItem tabItems
+#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem menuItemOutput
 #' @importFrom shinydashboardPlus dashboardPage
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
-#'
-build_process_ui <- function() {
+#' @importFrom shiny icon
+build_process_ui <- function(initial_steps) {
     ui <- dashboardPage(
         skin = "blue",
         header = header("Process QFeatures"),
-        sidebar = sidebar <- dashboardSidebar(
+        sidebar = dashboardSidebar(
             sidebarMenu(
                 menuItem("Workflow Config",
                     icon = icon("screwdriver-wrench"),
@@ -32,7 +34,8 @@ build_process_ui <- function() {
             tabItems(
                 tabItem(
                     tabName = "workflow_config_tab",
-                    interface_module_workflow_config_tab("workflow_config")
+                    interface_module_workflow_config_tab("workflow_config",
+                        initial_steps)
                 ),
                 tabItem(
                     tabName = "summary_tab",

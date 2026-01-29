@@ -2,6 +2,7 @@
 #' @title Workflow Configuration Module (interface)
 #'
 #' @param id The module id
+#' @param initial_steps prefilled workflow steps
 #'
 #' @return A Shiny module UI function
 #' @rdname INTERNAL_interface_module_workflow_config
@@ -10,10 +11,8 @@
 #' @importFrom shiny uiOutput actionButton tagList icon
 #' @importFrom htmltools div tags
 #'
-#' @title Workflow Configuration Module (interface)
-#' @param id module id
 #' @keywords internal
-interface_module_workflow_config_tab <- function(id) {
+interface_module_workflow_config_tab <- function(id, initial_steps) {
     tagList(
         fluidRow(
             column(
@@ -46,8 +45,8 @@ interface_module_workflow_config_tab <- function(id) {
                                         class = "palette-container",
                                         lapply(
                                             c(
-                                                "Samples Filtering",
-                                                "Features Filtering",
+                                                "Sample Filtering",
+                                                "Feature Filtering",
                                                 "Log Transformation",
                                                 "Normalisation"
                                             ),
@@ -65,7 +64,7 @@ interface_module_workflow_config_tab <- function(id) {
                                         id = NS(id, "workflow"),
                                         class = "workflow-drop workflow-container",
                                         lapply(
-                                            c("Samples Filtering", "Log Transformation"),
+                                            initial_steps,
                                             function(s) {
                                                 div(class = "step", `data-step` = s, s)
                                             }

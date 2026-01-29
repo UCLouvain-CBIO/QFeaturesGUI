@@ -2,38 +2,60 @@
 % Please edit documentation in R/processQFeatures.R
 \name{processQFeatures}
 \alias{processQFeatures}
-\title{A shiny app to process QFeatures objects.}
+\title{Launch a Shiny application to process QFeatures objects}
 \usage{
-processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
+processQFeatures(
+  qfeatures,
+  initialSets = seq_along(qfeatures),
+  prefilledSteps = c("sample_filtering", "feature_filtering")
+)
 }
 \arguments{
-\item{qfeatures}{a \code{QFeatures} object that will be process by the application
-it can also be the path to a .rds file that contains a \code{QFeatures}}
+\item{qfeatures}{A \linkS4class{QFeatures} object to be processed,
+or a character string specifying the path to a \code{.rds} file
+containing a \linkS4class{QFeatures} object.}
 
-\item{initialSets}{numeric() specifying which sets to use as starting point
-for the processing}
+\item{initialSets}{An integer, logical, or character vector specifying
+which assays (feature sets) should be used as the starting point for
+processing. Defaults to all assays in \code{qfeatures}.}
 }
 \value{
-Return the "processQFeatures" shiny app object.
+The processQFeatures shiny application.
 }
 \description{
-processQFeatures is a simple graphical interface to process QFeatures object.
+\code{processQFeatures()} launches an interactive Shiny application
+that allows users to visually configure and apply pre-processing
+workflows to a \linkS4class{QFeatures} object.
+
+The input \code{qfeatures} can be provided either as an in-memory
+\linkS4class{QFeatures} object or as a path to an \code{.rds} file
+containing one.
+}
+\details{
+The application provides a drag-and-drop workflow builder that allows
+users to select, order, and configure processing steps such as filtering,
+normalization, and transformation. The configured workflow can then be
+applied to the selected assays.
 }
 \examples{
-
 library(QFeatures)
 library(QFeaturesGUI)
 
 data("sampleTable")
 data("inputTable")
-qfeatures <- readQFeatures(inputTable,
-    colData = sampleTable,
-    runCol = "Raw.file"
+
+qfeatures <- readQFeatures(
+  inputTable,
+  colData = sampleTable,
+  runCol = "Raw.file"
 )
-app <- processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
+
+app <- processQFeatures(
+  qfeatures,
+  initialSets = seq_along(qfeatures)
+)
 
 if (interactive()) {
-    shiny::runApp(app)
+  shiny::runApp(app)
 }
-
 }

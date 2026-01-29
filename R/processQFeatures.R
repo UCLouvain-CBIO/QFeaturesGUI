@@ -1,58 +1,79 @@
-#' @title A shiny app to process QFeatures objects.
+#' Launch a Shiny application to process QFeatures objects
 #'
-#' @description processQFeatures is a simple graphical interface to process QFeatures object.
+#' @description
+#' \code{processQFeatures()} launches an interactive Shiny application
+#' that allows users to visually configure and apply pre-processing
+#' workflows to a \linkS4class{QFeatures} object.
 #'
-#' @param qfeatures a `QFeatures` object that will be process by the application
-#'  it can also be the path to a .rds file that contains a `QFeatures`
-#' @param initialSets numeric() specifying which sets to use as starting point
-#'   for the processing
+#' The input \code{qfeatures} can be provided either as an in-memory
+#' \linkS4class{QFeatures} object or as a path to an \code{.rds} file
+#' containing one.
 #'
-#' @return Return the "processQFeatures" shiny app object.
+#' @param qfeatures A \linkS4class{QFeatures} object to be processed,
+#'   or a character string specifying the path to a \code{.rds} file
+#'   containing a \linkS4class{QFeatures} object.
+#'
+#' @param initialSets An integer, logical, or character vector specifying
+#'   which assays (feature sets) should be used as the starting point for
+#'   processing. Defaults to all assays in \code{qfeatures}.
+#'
+#' @return
+#' The processQFeatures shiny application.
+#'
+#' @details
+#' The application provides a drag-and-drop workflow builder that allows
+#' users to select, order, and configure processing steps such as filtering,
+#' normalization, and transformation. The configured workflow can then be
+#' applied to the selected assays.
+#'
 #' @export
+#'
 #' @importFrom shiny shinyApp runApp addResourcePath
 #'
 #' @examples
-#'
 #' library(QFeatures)
 #' library(QFeaturesGUI)
 #'
 #' data("sampleTable")
 #' data("inputTable")
-#' qfeatures <- readQFeatures(inputTable,
-#'     colData = sampleTable,
-#'     runCol = "Raw.file"
+#'
+#' qfeatures <- readQFeatures(
+#'   inputTable,
+#'   colData = sampleTable,
+#'   runCol = "Raw.file"
 #' )
-#' app <- processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
+#'
+#' app <- processQFeatures(
+#'   qfeatures,
+#'   initialSets = seq_along(qfeatures)
+#' )
 #'
 #' if (interactive()) {
-#'     shiny::runApp(app)
+#'   shiny::runApp(app)
 #' }
-#'
-processQFeatures <- function(qfeatures, initialSets = seq_along(qfeatures)) {
-    if (missing(qfeatures)) stop("`qfeatures` argument is missing")
-    # If qfeatures is a character, treat it as a path
-    if (is.character(qfeatures)) {
-        if (!file.exists(qfeatures)) {
-            stop("The file '", qfeatures, "' does not exist.")
-        }
-        loaded <- tryCatch(readRDS(qfeatures),
-            error = function(e) {
-                stop("Failed to read RDS file: ", e$message)
-            }
-        )
-        qfeatures <- loaded
-    }
-    if (!inherits(qfeatures, "QFeatures")) {
-        stop("`qfeatures` must be a QFeatures object or a valid path to an RDS file containing one.")
-    }
+processQFeatures <- function(qfeatures,
+                             initialSets = seq_along(qfeatures),
+                             prefilledSteps = c("sample_filtering",
+                                                "feature_filtering")) {
 
-    options(shiny.maxRequestSize = 100 * 1024^2)
-    addResourcePath(
-        "app-assets",
-        system.file("www", package = "QFeaturesGUI")
-    )
-    ui <- build_process_ui()
-    server <- build_process_server(qfeatures, initialSets)
-    shinyApp(ui = ui, server = server)
+  ## Validate QFeatures input
+  qfeatures <- check_qfeatures(qfeatures)
+
+  ## Normalize initial assay selection
+  initial_sets <- normalise_initial_sets(qfeatures, initialSets)
+
+  ## Validate and map workflow steps
+  initial_steps <- check_prefilled_steps(prefilledSteps)
+
+  options(shiny.maxRequestSize = 100 * 1024^2)
+  addResourcePath(
+    "app-assets",
+    system.file("www", package = "QFeaturesGUI")
+  )
+
+  ui <- build_process_ui(initial_steps)
+  server <- build_process_server(qfeatures, initial_sets, initial_steps)
+
+  shinyApp(ui = ui, server = server)
 }
 

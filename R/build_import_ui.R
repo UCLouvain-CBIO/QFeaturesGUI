@@ -4,7 +4,7 @@
 #' @rdname INTERNAL_build_import_ui
 #' @keywords internal
 #'
-#' @importFrom shinydashboard dashboardBody tabItem tabItems
+#' @importFrom shinydashboard dashboardBody tabItem tabItems dashboardSidebar
 #' @importFrom shinydashboardPlus dashboardPage
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback

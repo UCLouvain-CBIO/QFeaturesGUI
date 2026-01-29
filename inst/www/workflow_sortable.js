@@ -63,4 +63,3 @@ Shiny.addCustomMessageHandler("initWorkflowSortable", function(msg) {
 
   send(); // initial value
 });
-
