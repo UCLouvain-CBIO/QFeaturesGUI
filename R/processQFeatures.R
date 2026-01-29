@@ -20,7 +20,7 @@
 #' qfeatures <- readQFeatures(inputTable,
 #'     colData = sampleTable,
 #'     runCol = "Raw.file")
-#' app <- importQFeatures(qfeatures, initialSets = seq_along(qfeatures))
+#' app <- processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
 #'
 #' if (interactive()) {
 #'     shiny::runApp(app)
