@@ -7,7 +7,8 @@
 processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
 }
 \arguments{
-\item{qfeatures}{a \code{QFeatures} object that will be process by the application}
+\item{qfeatures}{a \code{QFeatures} object that will be process by the application
+it can also be the path to a .rds file that contains a \code{QFeatures}}
 
 \item{initialSets}{numeric() specifying which sets to use as starting point
 for the processing}
@@ -27,7 +28,8 @@ data("sampleTable")
 data("inputTable")
 qfeatures <- readQFeatures(inputTable,
     colData = sampleTable,
-    runCol = "Raw.file")
+    runCol = "Raw.file"
+)
 app <- processQFeatures(qfeatures, initialSets = seq_along(qfeatures))
 
 if (interactive()) {
