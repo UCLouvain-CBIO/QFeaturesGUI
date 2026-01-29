@@ -1,7 +1,7 @@
-#' UI builder
+#' UI builder for the processQFeatures app
 #'
 #' @return A shiny dashboard UI
-#' @rdname INTERNAL_build_ui
+#' @rdname INTERNAL_build_process_ui
 #' @keywords internal
 #'
 #' @importFrom shinydashboard dashboardBody tabItem tabItems
@@ -9,23 +9,27 @@
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
 #'
-build_ui <- function() {
+build_process_ui <- function() {
     ui <- dashboardPage(
         skin = "blue",
         header = header("Process QFeatures"),
         sidebar = sidebar <- dashboardSidebar(
             sidebarMenu(
-                menuItem("Import", icon = icon("1"), tabName = "import_tab"),
-                menuItem("Workflow Config", icon = icon("2"), tabName = "workflow_config_tab"),
+                menuItem("Workflow Config",
+                    icon = icon("screwdriver-wrench"),
+                    tabName = "workflow_config_tab"
+                ),
                 menuItemOutput("dynamic_sidebar"),
-                menuItem("Summary", icon = icon("4"), tabName = "summary_tab")
+                menuItem("Summary",
+                    icon = icon("readme"), # table
+                    tabName = "summary_tab"
+                )
             )
         ),
         body = dashboardBody(
             useShinyFeedback(),
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             tabItems(
-                tabItem(tabName = "import_tab", import_tab()),
                 tabItem(
                     tabName = "workflow_config_tab",
                     interface_module_workflow_config_tab("workflow_config")

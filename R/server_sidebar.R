@@ -20,7 +20,8 @@ server_sidebar <- function(input, output, session) {
             step_items <- lapply(seq_len(n_steps), function(i) {
                 menuSubItem(
                     text = global_rv$workflow_config[[i]],
-                    tabName = paste0("step_", i)
+                    tabName = paste0("step_", i),
+                    icon = icon(as.character(i))
                 )
             })
         } else {
@@ -29,7 +30,8 @@ server_sidebar <- function(input, output, session) {
 
         menuItem(
             paste0("Pre-processing (", n_steps, " steps)"),
-            icon = icon("3"),
+            icon = icon("list-check"),
+            # list-ol
             step_items
         )
     })

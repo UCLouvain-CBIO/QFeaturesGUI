@@ -18,16 +18,31 @@ Shiny.addCustomMessageHandler("initWorkflowSortable", function(msg) {
     animation: 150
   });
 
+  const MAX_STEPS = 20;
+
   new Sortable(workflow, {
     group: "steps",
     animation: 180,
     ghostClass: "sortable-ghost",
-    onAdd: function(evt){
+
+    onAdd: function (evt) {
+      const steps = workflow.querySelectorAll(".step");
+
+      if (steps.length > MAX_STEPS) {
+        evt.item.remove();
+
+        alert("Maximum of 20 steps allowed in the workflow.");
+
+        return;
+      }
+
       addDeleteBtn(evt.item);
       send();
     },
+
     onSort: send
   });
+     
 
   document
     .querySelectorAll("#" + msg.workflow + " .step")

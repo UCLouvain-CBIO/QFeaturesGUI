@@ -226,7 +226,24 @@ add_exception <- function(title, type, func_call, message, full_message, time) {
     global_rv$exception_data <- rbind(new_row, old_data)
 }
 
-#' A little function that will capitalize the first letter of a string
+#' A function that will format the names of the sets of a QFeatures,
+#'   initial_sets will be flagged with "_(QFeaturesGUI#0)"
+#'
+#' @param qfeatures the initial qfeatures that will be formated
+#' @param initial_sets the sets that will be flagged
+#'
+#' @return a `QFeatures` with initial sets flagged with "_(QFeaturesGUI#0)"
+#' @rdname INTERNAL_format_qfeatures
+#' @keywords internal
+format_qfeatures <- function(qfeatures, initial_sets) {
+    names(qfeatures)[initial_sets] <- paste0(
+        names(qfeatures)[initial_sets],
+        "_(QFeaturesGUI#0)"
+    )
+    qfeatures
+}
+
+#' A function that will capitalize the first letter of a string
 #'
 #' @param string `str` string to capitalize the first letter
 #'
