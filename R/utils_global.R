@@ -158,10 +158,12 @@ clickableMessageItem <- function(id, title, time, type = c("error", "warning")) 
 #' @importFrom htmltools HTML div
 #'
 #' @rdname INTERNAL_show_exception_notification
-show_exception_notification <- function(component_name,
-    type = c("error", "warning"),
-    time,
-    duration = 30) {
+show_exception_notification <- function(
+      component_name,
+      type = c("error", "warning"),
+      time,
+      duration = 30
+) {
     type <- match.arg(type)
 
     title <- paste0(
@@ -224,7 +226,24 @@ add_exception <- function(title, type, func_call, message, full_message, time) {
     global_rv$exception_data <- rbind(new_row, old_data)
 }
 
-#' A little function that will capitalize the first letter of a string
+#' A function that will format the names of the sets of a QFeatures,
+#'   initial_sets will be flagged with "_(QFeaturesGUI#0)"
+#'
+#' @param qfeatures the initial qfeatures that will be formatted
+#' @param initial_sets the sets that will be flagged
+#'
+#' @return a `QFeatures` with initial sets flagged with "_(QFeaturesGUI#0)"
+#' @rdname INTERNAL_format_qfeatures
+#' @keywords internal
+format_qfeatures <- function(qfeatures, initial_sets) {
+    names(qfeatures)[initial_sets] <- paste0(
+        names(qfeatures)[initial_sets],
+        "_(QFeaturesGUI#0)"
+    )
+    qfeatures
+}
+
+#' A function that will capitalize the first letter of a string
 #'
 #' @param string `str` string to capitalize the first letter
 #'
@@ -263,6 +282,152 @@ loading <- function(msg) {
     ))
 }
 
+#' Normalize and validate set selection indices
+#'
+#' Internal helper to validate and normalise assay selections for a
+#' QFeatures object. This function accepts numeric, logical,
+#' or character indices and always returns a validated numeric vector of
+#' set positions.
+#'
+#' This function mirrors the behavior of internal QFeatures index validation
+#' helpers, but is implemented locally to avoid relying on non-exported
+#' functions.
+#'
+#' @param qfeatures A QFeatures object.
+#'
+#' @param initialSets A vector selecting assays in \code{qfeatures}.
+#'   Can be:
+#'   \itemize{
+#'     \item numeric indices
+#'     \item logical vector (same length as number of assays)
+#'     \item character vector of assay names
+#'   }
+#'
+#' @return An integer vector of validated assay indices.
+#'
+#' @rdname INTERNAL_normalize_initial_sets
+#' @keywords internal
+normalise_initial_sets <- function(qfeatures, initialSets) {
+  assay_names <- names(qfeatures)
+  n <- length(assay_names)
+
+  if (is.null(initialSets) || length(initialSets) == 0) {
+    stop("`initialSets` must select at least one assay.")
+  }
+
+  ## Logical indexing
+  if (is.logical(initialSets)) {
+    if (length(initialSets) != n) {
+      stop(
+        "`initialSets` is logical but its length (", length(initialSets),
+        ") does not match the number of assays (", n, ")."
+      )
+    }
+    idx <- which(initialSets)
+
+  ## Numeric indexing
+  } else if (is.numeric(initialSets)) {
+    if (any(initialSets < 1 | initialSets > n)) {
+      stop("`initialSets` contains out-of-bounds indices.")
+    }
+    if (any(is.na(initialSets))) {
+      stop("`initialSets` contains NA values.")
+    }
+    idx <- as.integer(initialSets)
+
+  ## Character indexing (assay names)
+  } else if (is.character(initialSets)) {
+    missing <- setdiff(initialSets, assay_names)
+    if (length(missing) > 0) {
+      stop(
+        "The following assay(s) were not found: ",
+        paste(missing, collapse = ", ")
+      )
+    }
+    idx <- match(initialSets, assay_names)
+
+  } else {
+    stop(
+      "`initialSets` must be numeric, logical, or character (assay names)."
+    )
+  }
+
+  if (length(idx) == 0) {
+    stop("No assay selected by `initialSets`.")
+  }
+
+  unique(idx)
+}
+
+#' Validate and load a QFeatures object
+#'
+#' Internal helper to validate the \code{qfeatures} argument. If a character
+#' path is provided, the function attempts to read an RDS file and validates
+#' that it contains a \linkS4class{QFeatures} object.
+#'
+#' @param qfeatures A \linkS4class{QFeatures} object or a character path to
+#'   an RDS file containing one.
+#'
+#' @return A validated \linkS4class{QFeatures} object.
+#'
+#' @keywords internal
+#' @noRd
+check_qfeatures <- function(qfeatures) {
+  if (missing(qfeatures)) {
+    stop("`qfeatures` argument is missing")
+  }
+
+  if (is.character(qfeatures)) {
+    if (!file.exists(qfeatures)) {
+      stop("The file '", qfeatures, "' does not exist.")
+    }
+
+    qfeatures <- tryCatch(
+      readRDS(qfeatures),
+      error = function(e) {
+        stop("Failed to read RDS file: ", e$message)
+      }
+    )
+  }
+
+  if (!inherits(qfeatures, "QFeatures")) {
+    stop(
+      "`qfeatures` must be a QFeatures object or a valid path to an RDS file containing one."
+    )
+  }
+
+  qfeatures
+}
+
+#' Validate and map prefilled workflow steps
+#'
+#' Internal helper to validate workflow step identifiers and convert them
+#' to their displayed names used in the UI.
+#'
+#' @param prefilledSteps Character vector of workflow step identifiers
+#'   (e.g. \code{"sample_filtering"}).
+#'
+#' @return A character vector of display names for workflow steps.
+#'
+#' @keywords internal
+#' @noRd
+check_prefilled_steps <- function(prefilledSteps) {
+  valid_steps <- c(
+    sample_filtering   = "Sample Filtering",
+    normalisation      = "Normalisation",
+    feature_filtering  = "Feature Filtering"
+  )
+
+  unknown_steps <- setdiff(prefilledSteps, names(valid_steps))
+  if (length(unknown_steps) > 0) {
+    stop(
+      "Unknown workflow steps: ",
+      paste(unknown_steps, collapse = ", ")
+    )
+  }
+
+  unname(valid_steps[prefilledSteps])
+}
 
 #' Will convert a qfeatures object to a summary data.frame object
 #'
@@ -567,11 +732,9 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
 #'
-plotlyridges <- function(
-      data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
-      height = NULL,
-      width = NULL
-) {
+plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+    height = NULL,
+    width = NULL) {
     data <- subset(data, !is.na(data[, vardens]))
 
     r <- range(data[, vardens])

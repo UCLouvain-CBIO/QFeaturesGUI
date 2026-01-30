@@ -69,7 +69,7 @@ box_read_table_ui <- function(id) {
                         inputId = NS(id, "import_button"),
                         label = "Import",
                         width = "100%",
-                        style = "color: #fff; background-color: #3c8dbc; border-color: #2e6da4"
+                        class = "load-button"
                     )
                 )
             )

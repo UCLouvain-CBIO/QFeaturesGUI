@@ -4,7 +4,7 @@
 #' @rdname INTERNAL_build_import_ui
 #' @keywords internal
 #'
-#' @importFrom shinydashboard dashboardBody tabItem tabItems
+#' @importFrom shinydashboard dashboardBody tabItem tabItems dashboardSidebar
 #' @importFrom shinydashboardPlus dashboardPage
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
@@ -15,6 +15,7 @@ build_import_ui <- function() {
         header = header("import QFeatures App"),
         dashboardSidebar(collapsed = TRUE, disable = TRUE, width = 0),
         dashboardBody(
+            includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             import_tab()
         )
     )

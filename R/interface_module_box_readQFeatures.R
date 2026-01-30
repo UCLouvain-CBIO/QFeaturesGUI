@@ -63,7 +63,6 @@ box_readqfeatures_ui <- function(id) {
                     "Convert to a QFeatures object",
                     class = "add-button no-bottom-margin",
                     width = "100%",
-                    style = "font-size: 14px;"
                 )
             ),
             box(
