@@ -414,7 +414,7 @@ check_qfeatures <- function(qfeatures) {
 check_prefilled_steps <- function(prefilledSteps) {
   valid_steps <- c(
     sample_filtering   = "Sample Filtering",
-    normalization      = "Normalisation",
+    normalisation      = "Normalisation",
     feature_filtering  = "Feature Filtering"
   )
 

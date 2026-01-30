@@ -18,6 +18,11 @@ containing a \linkS4class{QFeatures} object.}
 \item{initialSets}{An integer, logical, or character vector specifying
 which assays (feature sets) should be used as the starting point for
 processing. Defaults to all assays in \code{qfeatures}.}
+
+\item{prefilledSteps}{A character vector specifying the initial workflow
+steps to display when the application launches. Steps must be provided
+using their internal identifiers (e.g. \code{"sample_filtering"},
+\code{"feature_filtering"}, \code{"normalisation"}).}
 }
 \value{
 The processQFeatures shiny application.
