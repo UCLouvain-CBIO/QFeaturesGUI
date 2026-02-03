@@ -13,6 +13,7 @@
 #' @importFrom QFeatures readQFeatures
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom methods as
+#' @importFrom zip zip
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
 #' @import MultiAssayExperiment
@@ -163,16 +164,51 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 )
             }
         })
-
+        
+        # observeEvent(input$downloadQFeatures, {
+        #   tmpdir <- tempdir()
+        #   setwd(tempdir())
+        #   final_qfeatures <- qfeatures()
+        #   names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
+        #   writeLines("tata","out/2sessinfo.txt")
+        #   saveRDS(final_qfeatures, "out/qfeatures_object.rds")
+        #   writeLines("titi", "out/sessionInfo.txt")
+        # })
+        
         output$downloadQFeatures <- downloadHandler(
-            filename = function() {
-                "qfeatures_object.rds"
-            },
-            content = function(file) {
-                final_qfeatures <- qfeatures()
-                names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-                saveRDS(final_qfeatures, file)
-            }
+          filename = function(){
+            "qfeatures_object.zip"
+          },
+          content = function(file){
+            tmpdir <- tempdir()
+            final_qfeatures <- qfeatures()
+            names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
+            rds_file <- file.path(tmpdir,"qfeatures_object.rds")
+            saveRDS(final_qfeatures, rds_file)
+            rmd_file <- file.path(tmpdir,"sessionInfo.Rmd")
+            SI_file <- file.path(tmpdir,"sessionInfo.html")
+            writeLines(c(
+              "---",
+              "title : \"SessionInfo\"",
+              "output: html_document",
+              "---",
+              "",
+              "```{r}",
+              "sessionInfo()",
+              "```"
+            ),
+            rmd_file
+            )
+            rmarkdown::render(
+              rmd_file,
+              output_file = SI_file,
+              quiet = TRUE)
+            zip(
+              zipfile = file, 
+              files = c(rds_file, SI_file), 
+              flags = "-j"
+              )
+          }
         )
     })
 }
