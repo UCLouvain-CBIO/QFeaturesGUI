@@ -21,7 +21,7 @@
 box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
     stopifnot(is.reactive(sample_table))
-
+    
     moduleServer(id, function(input, output, session) {
         qfeatures <- eventReactive(input$convert, {
             loading(paste("Be aware that this operation",
@@ -164,17 +164,18 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 )
             }
         })
-        
-        # observeEvent(input$downloadQFeatures, {
-        #   tmpdir <- tempdir()
-        #   setwd(tempdir())
-        #   final_qfeatures <- qfeatures()
-        #   names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-        #   writeLines("tata","out/2sessinfo.txt")
-        #   saveRDS(final_qfeatures, "out/qfeatures_object.rds")
-        #   writeLines("titi", "out/sessionInfo.txt")
-        # })
-        
+        code_log <- reactiveVal(character())
+        observeEvent(input$convert,{
+          codeLines <- code_generator_importQFeatures(input_table, 
+                                                      sample_table,
+                                                      qfeatures,
+                                                      input$run_col,
+                                                      input$removeEmptyCols,
+                                                      input$quant_cols,
+                                                      input$logTransform,
+                                                      input$zero_as_NA)
+          code_log(c(code_log(), codeLines))
+        })
         output$downloadQFeatures <- downloadHandler(
           filename = function(){
             "qfeatures_object.zip"
@@ -183,10 +184,11 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             tmpdir <- tempdir()
             final_qfeatures <- qfeatures()
             names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-            rds_file <- file.path(tmpdir,"qfeatures_object.rds")
+            rds_file <- file.path(tmpdir,"initial_QFeatures.rds")
             saveRDS(final_qfeatures, rds_file)
             rmd_file <- file.path(tmpdir,"sessionInfo.Rmd")
-            SI_file <- file.path(tmpdir,"sessionInfo.html")
+            SI_file <- file.path(tmpdir,"initial_QFeatures_sessionInfo.html")
+            r_file <- file.path(tmpdir,"importQFeatures_script.R")
             writeLines(c(
               "---",
               "title : \"SessionInfo\"",
@@ -203,9 +205,18 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
               rmd_file,
               output_file = SI_file,
               quiet = TRUE)
+            writeLines(
+              c(
+                "# Reproducible R script",
+                paste0("# Generated on: ", Sys.time()),
+                "",
+                code_log()
+              ),
+              r_file
+            )
             zip(
               zipfile = file, 
-              files = c(rds_file, SI_file), 
+              files = c(rds_file, SI_file, r_file), 
               flags = "-j"
               )
           }
