@@ -4,6 +4,7 @@ Version: 0.1.1
 Date: 2024-04-23
 Authors@R: 
     person(given = "Léopold", family = "Guyot", email = "leopold.guyot@ulb.be", role = c("aut", "cre"))
+    person(given =  "Loïc", family = "Guille", email = "loic.guille@uclouvain.be", role = c("aut"))
 Description: "QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: 'importQFeatures'."
 biocViews: Software, ShinyApps, GUI, Proteomics
 URL: https://uclouvain-cbio.github.io/QFeaturesGUI/, https://github.com/UCLouvain-CBIO/QFeaturesGUI
@@ -31,7 +32,8 @@ Imports:
     stats,
     SingleCellExperiment,
     ggplot2,
-    tidyr
+    tidyr,
+    zip
 Depends:
     shinyBS,
     R (>= 4.3.0)
