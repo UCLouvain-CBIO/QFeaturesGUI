@@ -162,7 +162,7 @@
 ##' were selected in the `scp1` dataset (see `?scp1`) were kept along
 ##' with a blank run. The data is stored as a `data.frame`.
 ##'
-##' @seealso [readSCP()] for an example on how `mqScpData` is
+##' @seealso `readSCP()` from the `scp` package for an example on how `mqScpData` is
 ##'     parsed into a [QFeatures] object.
 ##'
 ##' @md
@@ -197,7 +197,7 @@
 ##' for the blank run was added manually. The data is stored as a
 ##' `data.frame`.
 ##'
-##' @seealso [readSCP()] to see how this file is used.
+##' @seealso `readSCP()` from the `scp` package to see how this file is used.
 ##'
 ##' @md
 "sampleTable"

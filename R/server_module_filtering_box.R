@@ -134,14 +134,12 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
 #' @importFrom plotly plot_ly renderPlotly
 #' @importFrom shinyBS createAlert closeAlert
 #'
-server_module_annotation_plot <- function(
-      id,
-      assays_to_process,
-      type,
-      filter_value,
-      selected_annotation,
-      filter_operator
-) {
+server_module_annotation_plot <- function(id,
+    assays_to_process,
+    type,
+    filter_value,
+    selected_annotation,
+    filter_operator) {
     moduleServer(id, function(input, output, session) {
         observe({
             req(assays_to_process())
@@ -216,12 +214,10 @@ server_module_annotation_plot <- function(
 #'
 #' @importFrom plotly plot_ly config %>% add_histogram layout add_annotations
 #'
-annotation_plot_wrapper <- function(
-      annotation,
-      filtered_annotation,
-      assay_name,
-      annotation_name
-) {
+annotation_plot_wrapper <- function(annotation,
+    filtered_annotation,
+    assay_name,
+    annotation_name) {
     if (all(is.na(annotation))) {
         plot <- plot_ly(
             x = numeric(0),

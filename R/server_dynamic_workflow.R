@@ -14,67 +14,24 @@
 #'
 
 server_dynamic_workflow <- function(input, output, session) {
-    observeEvent(global_rv$workflow_config, {
-        output$all_tabs <- renderUI({
-            static_tabs <- list(
-                tabItem(
-                    tabName = "import_tab",
-                    import_tab()
-                ),
-                tabItem(
-                    tabName = "workflow_config_tab",
-                    interface_module_workflow_config_tab("workflow_config")
-                ),
-                tabItem(
-                    tabName = "summary_tab",
-                    interface_module_summary_tab("summary_tab")
-                )
-            )
-
-            dynamic_tabs <- lapply(seq_along(global_rv$workflow_config), function(i) {
-                tabItem(
-                    tabName = paste0("step_", i),
-                    if (global_rv$workflow_config[[i]] == "Samples Filtering") {
-                        interface_module_samples_filtering_tab(
-                            paste0("samples_filtering_", i)
-                        )
-                    } else if (global_rv$workflow_config[[i]] == "Features Filtering") {
-                        interface_module_features_filtering_tab(
-                            paste0("features_filtering_", i)
-                        )
-                    } else if (global_rv$workflow_config[[i]] == "Log Transformation") {
-                        interface_module_log_transform_tab(
-                            paste0("log_transform_", i)
-                        )
-                    } else if (global_rv$workflow_config[[i]] == "Normalisation") {
-                        interface_module_normalisation_tab(
-                            paste0("normalisation_", i)
-                        )
-                    }
+    observe({
+        lapply(seq_along(global_rv$workflow_config), function(i) {
+            output[[paste0("dynamic_step_ui_", i)]] <- renderUI({
+                switch(global_rv$workflow_config[[i]],
+                    "Sample Filtering"     = interface_module_samples_filtering_tab(paste0("sample_filtering_", i)),
+                    "Feature Filtering"    = interface_module_features_filtering_tab(paste0("feature_filtering_", i)),
+                    "Log Transformation"    = interface_module_log_transform_tab(paste0("log_transform_", i)),
+                    "Normalisation"         = interface_module_normalisation_tab(paste0("normalisation_", i))
                 )
             })
 
-            do.call(tabItems, c(static_tabs, dynamic_tabs))
-        })
-
-        lapply(seq_along(global_rv$workflow_config), function(i) {
-            if (global_rv$workflow_config[[i]] == "Samples Filtering") {
-                server_module_samples_filtering_tab(paste0("samples_filtering_", i),
-                    step_number = i
-                )
-            } else if (global_rv$workflow_config[[i]] == "Features Filtering") {
-                server_module_features_filtering_tab(paste0("features_filtering_", i),
-                    step_number = i
-                )
-            } else if (global_rv$workflow_config[[i]] == "Log Transformation") {
-                server_module_log_transform_tab(paste0("log_transform_", i),
-                    step_number = i
-                )
-            } else if (global_rv$workflow_config[[i]] == "Normalisation") {
-                server_module_normalisation_tab(paste0("normalisation_", i),
-                    step_number = i
-                )
-            }
+            # Call the corresponding server module
+            switch(global_rv$workflow_config[[i]],
+                "Sample Filtering"     = server_module_samples_filtering_tab(paste0("sample_filtering_", i), step_number = i),
+                "Feature Filtering"    = server_module_features_filtering_tab(paste0("feature_filtering_", i), step_number = i),
+                "Log Transformation"    = server_module_log_transform_tab(paste0("log_transform_", i), step_number = i),
+                "Normalisation"         = server_module_normalisation_tab(paste0("normalisation_", i), step_number = i)
+            )
         })
     })
 }
