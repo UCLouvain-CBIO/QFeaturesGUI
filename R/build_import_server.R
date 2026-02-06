@@ -22,6 +22,11 @@ build_import_server <- function(sample_table, input_table) {
             full_message = character(),
             time = as.POSIXct(character())
         )
+        global_rv$code_lines <- list(
+          read_input_data = character(),
+          read_sample_data = character(),
+          create_qfeatures = character()
+        )
         server_exception_menu(input, output, session)
         server_import_tab(
             input,

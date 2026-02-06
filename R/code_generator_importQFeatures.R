@@ -24,17 +24,17 @@ code_generator_importQFeatures <- function(input_table, sample_table, qfeatures,
     if (is.data.frame(sample_table())) {
       if (run_col != "NULL") {
          codeLines <- c(codeLines, sprintf("qfeatures <- QFeatures::readQFeatures(
-                assayData = input_table(),
-                colData = sample_table(),
-                runCol = %s,
+                assayData = input_table,
+                colData = sample_table,
+                runCol = '%s',
                 removeEmptyCols = %s,
                 verbose = FALSE)", 
                 run_col,
                 removeEmptyCols))
       } else {
        codeLines <- c(codeLines,sprintf("qfeatures <- QFeatures::readQFeatures(
-                assayData = input_table(),
-                colData = sample_table(),
+                assayData = input_table,
+                colData = sample_table,
                 runCol = NULL,
                 removeEmptyCols = %s,
                 verbose = FALSE
@@ -46,9 +46,9 @@ code_generator_importQFeatures <- function(input_table, sample_table, qfeatures,
       if (run_col != "NULL") {
         codeLines <- c(codeLines,sprintf(
           "qfeatures <- QFeatures::readQFeatures(
-           assayData = input_table(),
-           runCol = %s,
-           quantCols = %s,
+           assayData = input_table,
+           runCol = '%s',
+           quantCols = '%s',
            removeEmptyCols = %s,
            verbose = FALSE
            )",
@@ -58,9 +58,9 @@ code_generator_importQFeatures <- function(input_table, sample_table, qfeatures,
         ))
       } else {
         codeLines <- c(codeLines,sprintf("qfeatures <- QFeatures::readQFeatures(
-                  assayData = input_table(),
+                  assayData = input_table,
                   runCol = NULL,
-                  quantCols = %s,
+                  quantCols = '%s',
                   removeEmptyCols = %s,
                   verbose = FALSE
                   )",
@@ -84,4 +84,24 @@ code_generator_importQFeatures <- function(input_table, sample_table, qfeatures,
     }
     codeLines
 }
-  
+
+code_generator_read_table <- function(id, file, sep, dec, skip, stringAsFactors, comment){
+  codeLines <- c()
+  codeLines <- c(codeLines,sprintf("%s_table <- read.table(%s,
+    sep = '%s',
+    dec = '%s',
+    skip = '%s',
+    stringsAsFactors = %s,
+    comment.char = '%s',
+    header = TRUE,
+    row.names = 1
+    )", id,
+        file,
+        sep,
+        dec,
+        skip,
+        stringAsFactors,
+        comment
+      ))
+  codeLines
+}

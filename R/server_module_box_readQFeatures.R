@@ -13,7 +13,7 @@
 #' @importFrom QFeatures readQFeatures
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom methods as
-#' @importFrom zip zip
+#' @importFrom utils zip
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
 #' @import MultiAssayExperiment
@@ -164,9 +164,8 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 )
             }
         })
-        code_log <- reactiveVal(character())
         observeEvent(input$convert,{
-          codeLines <- code_generator_importQFeatures(input_table, 
+          global_rv$code_lines$create_qfeatures <- code_generator_importQFeatures(input_table,
                                                       sample_table,
                                                       qfeatures,
                                                       input$run_col,
@@ -174,7 +173,6 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                                                       input$quant_cols,
                                                       input$logTransform,
                                                       input$zero_as_NA)
-          code_log(c(code_log(), codeLines))
         })
         output$downloadQFeatures <- downloadHandler(
           filename = function(){
@@ -210,13 +208,20 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 "# Reproducible R script",
                 paste0("# Generated on: ", Sys.time()),
                 "",
-                code_log()
+                "# insert the path to your input data table here",
+                "# input_data <- ('input_data_table')",
+                global_rv$code_lines$read_input_data,
+                "# insert the path to your sample data table here",
+                "# sample_data <- ('sample_data_table')",
+                global_rv$code_lines$read_sample_data,
+                "# Create QFeatures object",
+                global_rv$code_lines$create_qfeatures
               ),
               r_file
             )
-            zip(
+            utils::zip(
               zipfile = file, 
-              files = c(rds_file, SI_file, r_file), 
+              files = c(rds_file, SI_file, r_file),
               flags = "-j"
               )
           }
