@@ -34,8 +34,10 @@ build_process_ui <- function(initial_steps) {
             tabItems(
                 tabItem(
                     tabName = "workflow_config_tab",
-                    interface_module_workflow_config_tab("workflow_config",
-                        initial_steps)
+                    interface_module_workflow_config_tab(
+                        "workflow_config",
+                        initial_steps
+                    )
                 ),
                 tabItem(
                     tabName = "summary_tab",

@@ -36,23 +36,27 @@ box_read_table_server <- function(id, given_table = NULL) {
                 )
                 removeModal()
                 table(new_table)
-                if(id  == "input"){
-                  global_rv$code_lines$read_input_data <- code_generator_read_table(id = "input",
-                                                                                    file = "input_table",
-                                                                                    sep = input$sep,
-                                                                                    dec = input$dec,
-                                                                                    skip = input$skip,
-                                                                                    stringAsFactors = input$stringsAsFactors,
-                                                                                    comment = input$comment_char)
+                if (id == "input") {
+                    global_rv$code_lines$read_input_data <- code_generator_read_table(
+                        id = "input",
+                        file = "input_table",
+                        sep = input$sep,
+                        dec = input$dec,
+                        skip = input$skip,
+                        stringAsFactors = input$stringsAsFactors,
+                        comment = input$comment_char
+                    )
                 } else {
-                  global_rv$code_lines$read_sample_data <- code_generator_read_table(id = "sample", 
-                                                                                     file = "sample_table",
-                                                                                     sep = input$sep,
-                                                                                     dec = input$dec,
-                                                                                     skip = input$skip,
-                                                                                     stringAsFactors = input$stringsAsFactors,
-                                                                                     comment = input$comment_char)
-                } 
+                    global_rv$code_lines$read_sample_data <- code_generator_read_table(
+                        id = "sample",
+                        file = "sample_table",
+                        sep = input$sep,
+                        dec = input$dec,
+                        skip = input$skip,
+                        stringAsFactors = input$stringsAsFactors,
+                        comment = input$comment_char
+                    )
+                }
             }
         )
 

@@ -25,7 +25,7 @@
 #'
 importQFeatures <- function(colData = NULL, assayData = NULL, maxSize = 1000) {
     oldOptions <- options(shiny.maxRequestSize = maxSize * 1024^2)
-    onStop(function()options(oldOptions))
+    onStop(function() options(oldOptions))
     ui <- build_import_ui()
     server <- build_import_server(colData, assayData)
     shinyApp(ui = ui, server = server)

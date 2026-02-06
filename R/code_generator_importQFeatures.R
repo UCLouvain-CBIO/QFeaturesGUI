@@ -13,7 +13,7 @@
 #' @rdname INTERNAL_code_generator_importQFeatures
 #' @keywords internal
 #'
-#' @importFrom shiny is.reactive reactive moduleServer observe eventReactive 
+#' @importFrom shiny is.reactive reactive moduleServer observe eventReactive
 #' @importFrom methods as
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
@@ -22,17 +22,20 @@
 code_generator_importQFeatures <- function(input_table, sample_table, qfeatures, run_col, removeEmptyCols, quant_cols, logTransform, zero_as_NA) {
     codeLines <- c()
     if (is.data.frame(sample_table())) {
-      if (run_col != "NULL") {
-         codeLines <- c(codeLines, sprintf("qfeatures <- QFeatures::readQFeatures(
+        if (run_col != "NULL") {
+            codeLines <- c(codeLines, sprintf(
+                "qfeatures <- QFeatures::readQFeatures(
                 assayData = input_table,
                 colData = sample_table,
                 runCol = '%s',
                 removeEmptyCols = %s,
-                verbose = FALSE)", 
+                verbose = FALSE)",
                 run_col,
-                removeEmptyCols))
-      } else {
-       codeLines <- c(codeLines,sprintf("qfeatures <- QFeatures::readQFeatures(
+                removeEmptyCols
+            ))
+        } else {
+            codeLines <- c(codeLines, sprintf(
+                "qfeatures <- QFeatures::readQFeatures(
                 assayData = input_table,
                 colData = sample_table,
                 runCol = NULL,
@@ -40,54 +43,55 @@ code_generator_importQFeatures <- function(input_table, sample_table, qfeatures,
                 verbose = FALSE
                 )",
                 removeEmptyCols
-        ))
-      }
+            ))
+        }
     } else {
-      if (run_col != "NULL") {
-        codeLines <- c(codeLines,sprintf(
-          "qfeatures <- QFeatures::readQFeatures(
+        if (run_col != "NULL") {
+            codeLines <- c(codeLines, sprintf(
+                "qfeatures <- QFeatures::readQFeatures(
            assayData = input_table,
            runCol = '%s',
            quantCols = '%s',
            removeEmptyCols = %s,
            verbose = FALSE
            )",
-          run_col,
-          quant_cols,
-          removeEmptyCols
-        ))
-      } else {
-        codeLines <- c(codeLines,sprintf("qfeatures <- QFeatures::readQFeatures(
+                run_col,
+                quant_cols,
+                removeEmptyCols
+            ))
+        } else {
+            codeLines <- c(codeLines, sprintf(
+                "qfeatures <- QFeatures::readQFeatures(
                   assayData = input_table,
                   runCol = NULL,
                   quantCols = '%s',
                   removeEmptyCols = %s,
                   verbose = FALSE
                   )",
-                  quant_cols,
-                  removeEmptyCols
-        ))
-      }
+                quant_cols,
+                removeEmptyCols
+            ))
+        }
     }
     if (zero_as_NA && length(qfeatures) > 0) {
-      codeLines <- c(codeLines,"qfeatures <- QFeatures::zeroIsNA(
+        codeLines <- c(codeLines, "qfeatures <- QFeatures::zeroIsNA(
                     object = qfeatures,
                     i = seq_along(qfeatures))")
     }
     if (logTransform) {
-      codeLines <- c(codeLines,"qfeatures <- QFeatures::logTransform(
+        codeLines <- c(codeLines, "qfeatures <- QFeatures::logTransform(
         object = qfeatures,
         i = seq_along(qfeatures),
         base = 2,
         name = paste0(names(qfeatures), '_logTransformed'))")
-      
     }
     codeLines
 }
 
-code_generator_read_table <- function(id, file, sep, dec, skip, stringAsFactors, comment){
-  codeLines <- c()
-  codeLines <- c(codeLines,sprintf("%s_table <- read.table(%s,
+code_generator_read_table <- function(id, file, sep, dec, skip, stringAsFactors, comment) {
+    codeLines <- c()
+    codeLines <- c(codeLines, sprintf(
+        "%s_table <- read.table(%s,
     sep = '%s',
     dec = '%s',
     skip = '%s',
@@ -102,6 +106,6 @@ code_generator_read_table <- function(id, file, sep, dec, skip, stringAsFactors,
         skip,
         stringAsFactors,
         comment
-      ))
-  codeLines
+    ))
+    codeLines
 }

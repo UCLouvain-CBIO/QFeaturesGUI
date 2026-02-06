@@ -43,42 +43,42 @@
 #' data("inputTable")
 #'
 #' qfeatures <- readQFeatures(
-#'   inputTable,
-#'   colData = sampleTable,
-#'   runCol = "Raw.file"
+#'     inputTable,
+#'     colData = sampleTable,
+#'     runCol = "Raw.file"
 #' )
 #'
 #' app <- processQFeatures(
-#'   qfeatures,
-#'   initialSets = seq_along(qfeatures)
+#'     qfeatures,
+#'     initialSets = seq_along(qfeatures)
 #' )
 #'
 #' if (interactive()) {
-#'   shiny::runApp(app)
+#'     shiny::runApp(app)
 #' }
 processQFeatures <- function(qfeatures,
-                             initialSets = seq_along(qfeatures),
-                             prefilledSteps = c("sample_filtering",
-                                                "feature_filtering")) {
+    initialSets = seq_along(qfeatures),
+    prefilledSteps = c(
+        "sample_filtering",
+        "feature_filtering"
+    )) {
+    ## Validate QFeatures input
+    qfeatures <- check_qfeatures(qfeatures)
 
-  ## Validate QFeatures input
-  qfeatures <- check_qfeatures(qfeatures)
+    ## Normalize initial assay selection
+    initial_sets <- normalise_initial_sets(qfeatures, initialSets)
 
-  ## Normalize initial assay selection
-  initial_sets <- normalise_initial_sets(qfeatures, initialSets)
+    ## Validate and map workflow steps
+    initial_steps <- check_prefilled_steps(prefilledSteps)
 
-  ## Validate and map workflow steps
-  initial_steps <- check_prefilled_steps(prefilledSteps)
+    options(shiny.maxRequestSize = 100 * 1024^2)
+    addResourcePath(
+        "app-assets",
+        system.file("www", package = "QFeaturesGUI")
+    )
 
-  options(shiny.maxRequestSize = 100 * 1024^2)
-  addResourcePath(
-    "app-assets",
-    system.file("www", package = "QFeaturesGUI")
-  )
+    ui <- build_process_ui(initial_steps)
+    server <- build_process_server(qfeatures, initial_sets, initial_steps)
 
-  ui <- build_process_ui(initial_steps)
-  server <- build_process_server(qfeatures, initial_sets, initial_steps)
-
-  shinyApp(ui = ui, server = server)
+    shinyApp(ui = ui, server = server)
 }
-
