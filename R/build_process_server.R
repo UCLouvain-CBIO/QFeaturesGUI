@@ -4,7 +4,7 @@
 #' @param initial_sets index of the base sets of the QFeatures
 #' @param initial_steps prefilled workflow steps
 #'
-#' @return return the server function for the scpGUI app.
+#' @return return the server function for the processQFeatures app.
 #' @rdname INTERNAL_build_process_server
 #' @keywords internal
 #'

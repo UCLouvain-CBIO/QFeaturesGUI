@@ -9,7 +9,7 @@ output:
         toc_float: true
         toc_depth: 2
         code_folding: show
-bibliography: scpGUI.bib
+bibliography: QFeaturesGUI.bib
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('QFeaturesGUI')`"
 vignette: >
@@ -108,7 +108,7 @@ box). Check with this preview if the conversion process went fine. By clicking
 on a row (corresponding to an assay), the selected assay will appear below,
 once again check if everything looks as expected.
 
-Once everything looks fine, you can continue the analysis using scpGUI (the
+Once everything looks fine, you can continue the analysis using QFeaturesGUI (the
 QFeatures object will be available for the other sections of the app) or
 download the QFeatures to use it with R.
 
