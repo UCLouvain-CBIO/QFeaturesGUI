@@ -46,13 +46,13 @@ BiocManager::install("UCLouvain-CBIO/QFeaturesGUI")
 
 ## Documentation
 
-Package website: <https://uclouvain-cbio.github.io/QFeaturesGUI/>
+[Package website](https://uclouvain-cbio.github.io/QFeaturesGUI/)
 
-Getting started: vignette(“QFeaturesGUI”)
+[Import
+App](https://uclouvain-cbio.github.io/QFeaturesGUI/articles/importQFeatures.html)
 
-Data import app: vignette(“importQFeatures”)
-
-Data processing app: vignette(“processQFeatures”)
+[Processing
+App](https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html)
 
 ## Related packages
 
