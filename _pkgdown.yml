@@ -2,8 +2,6 @@ url: https://uclouvain-cbio.github.io/QFeaturesGUI/
 
 template:
   bootstrap: 5
-  params:
-    bootswatch: flatly
 
 home:
   title: QFeaturesGUI
@@ -13,20 +11,14 @@ home:
 
 navbar:
   structure:
-    left:
-      - home
-      - articles
-      - reference
-      - news
-    right:
-      - github
+    navbar:
+      structure:
+        left:  [intro, reference, articles, news]
+        right: [search, github, lightswitch]
   components:
     articles:
-      text: Articles
+      text: Application Documentations
       menu:
-        - text: Overview
-          href: articles/QFeaturesGUI.html
-        - text: Applications
         - text: Data import
           href: articles/importQFeatures.html
         - text: Data processing
