@@ -10,14 +10,13 @@
 user interfaces for MS-based proteomics data analysis using the Bioconductor
 ecosystem. It supports both **bulk** and **single-cell proteomics (SCP)**
 workflows and builds on the
-[`QFeatures`](https://rformassspectrometry.github.io/QFeatures/) and
+[`QFeatures`](https://www.bioconductor.org/packages/release/bioc/html/QFeatures.html) and
 [`scp`](https://bioconductor.org/packages/release/bioc/html/scp.html) packages.
 
 Rather than a single application, QFeaturesGUI is composed of
 multiple apps, each dedicated to a specific step of the proteomics data
 analysis workflow.
 
----
 
 ## Features
 
@@ -27,7 +26,6 @@ analysis workflow.
 - Modular design with task-specific applications
 - Built using **Shiny** and **shinydashboardPlus**
 
----
 
 ## Available applications
 
@@ -41,7 +39,6 @@ Currently available applications include:
 
 Additional applications will be added in future releases.
 
----
 
 ## Installation
 
@@ -53,7 +50,7 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("UCLouvain-CBIO/QFeaturesGUI")
 ```
-# Documentation
+## Documentation
 
 Package website: https://uclouvain-cbio.github.io/QFeaturesGUI/
 
@@ -63,15 +60,15 @@ Data import app: vignette("importQFeatures")
 
 Data processing app: vignette("processQFeatures")
 
-# Related packages
+## Related packages
 
 `QFeaturesGUI` builds upon and integrates with several Bioconductor packages
 and projects for MS-based proteomics and single-cell data analysis:
 
-- [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)  
+- [`QFeatures`](https://www.bioconductor.org/packages/release/bioc/html/QFeatures.html)  
   Data infrastructure for MS-based quantitative proteomics.
 
-- [`scp`](https://uclouvain-cbio.github.io/scp/)  
+- [`scp`](https://bioconductor.org/packages/release/bioc/html/scp.html)  
   Extension of `QFeatures` for single-cell proteomics data analysis.
 
 - [`RforMassSpectrometry`](https://www.rformassspectrometry.org/)  
