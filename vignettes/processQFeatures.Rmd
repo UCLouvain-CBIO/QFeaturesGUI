@@ -1,0 +1,29 @@
+---
+title: "processQFeatures App"
+author:
+    - name: Léopold Guyot
+output:
+    BiocStyle::html_document:
+        self_contained: yes
+        toc: true
+        toc_float: true
+        toc_depth: 2
+        code_folding: show
+bibliography: scpGUI.bib
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('QFeaturesGUI')`"
+vignette: >
+  %\VignetteIndexEntry{Import Section}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    crop = NULL
+)
+```
+
+*WIP*

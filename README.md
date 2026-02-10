@@ -6,26 +6,96 @@
 
 # QFeaturesGUI
 
-`QFeaturesGUI` is a R package that contains a suite of shiny app to offer a graphical interface for the QFeatures package.
-Currently the package can be used to convert tables (csv and tsv) into a QFeatures object.
-This works for both bulk and single-cell data.
-The user can also apply several pre-processing steps to the imported QFeatures.
-This process is performed with the readQFeatures function from the QFeatures package.
+**QFeaturesGUI** is a collection of Shiny applications that provide graphical
+user interfaces for MS-based proteomics data analysis using the Bioconductor
+ecosystem. It supports both **bulk** and **single-cell proteomics (SCP)**
+workflows and builds on the
+[`QFeatures`](https://rformassspectrometry.github.io/QFeatures/) and
+[`scp`](https://bioconductor.org/packages/release/bioc/html/scp.html) packages.
+
+Rather than a single application, QFeaturesGUI is composed of
+multiple apps, each dedicated to a specific step of the proteomics data
+analysis workflow.
+
+---
+
+## Features
+
+- Graphical interfaces for MS-based proteomics data analysis
+- Support for **bulk** and **single-cell proteomics**
+- Native integration with `QFeatures` and `scp`
+- Modular design with task-specific applications
+- Built using **Shiny** and **shinydashboardPlus**
+
+---
+
+## Available applications
+
+Currently available applications include:
+
+- **Data import** (`importQFeatures`)  
+  Import quantitative proteomics data into `QFeatures` objects
+
+- **Data processing** (`processQFeatures`)  
+  Perform common data processing steps on `QFeatures` and `scp` objects
+
+Additional applications will be added in future releases.
+
+---
 
 ## Installation
 
-Get the package:
+### Bioconductor (recommended)
 
 ```r
-# Check if remotes is installed. Otherwise install it.
-if (!require("remotes", quietly = TRUE)){
-    install.packages("remotes")
-}
-# Install the package
-remotes::install_github("UCLouvain-CBIO/QFeaturesGUI",
-    build_manual = TRUE,
-    build_vignettes = TRUE
-)
-# Load the package
-library(QFeaturesGUI)
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("UCLouvain-CBIO/QFeaturesGUI")
 ```
+# Documentation
+
+Package website: https://uclouvain-cbio.github.io/QFeaturesGUI/
+
+Getting started: vignette("QFeaturesGUI")
+
+Data import app: vignette("importQFeatures")
+
+Data processing app: vignette("processQFeatures")
+
+# Related packages
+
+`QFeaturesGUI` builds upon and integrates with several Bioconductor packages
+and projects for MS-based proteomics and single-cell data analysis:
+
+- [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)  
+  Data infrastructure for MS-based quantitative proteomics.
+
+- [`scp`](https://uclouvain-cbio.github.io/scp/)  
+  Extension of `QFeatures` for single-cell proteomics data analysis.
+
+- [`RforMassSpectrometry`](https://www.rformassspectrometry.org/)  
+  A collection of R packages for the analysis and interpretation of mass
+  spectrometry data.
+
+- [`SingleCellExperiment`](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)  
+  Core Bioconductor data container for single-cell data.
+
+- [`SummarizedExperiment`](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html)  
+  Provides a general container for high-throughput assays and associated metadata.
+
+- [`MultiAssayExperiment`](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html)  
+  Infrastructure for managing and integrating multiple assays for the same set of samples.
+
+## Contributing
+
+Contributions to `QFeaturesGUI` are welcome. This includes bug reports,
+feature requests, and suggestions for new applications or improvements to
+existing ones.
+
+Issues and enhancement requests can be submitted via the
+[GitHub issue tracker](https://github.com/UCLouvain-CBIO/QFeaturesGUI/issues).
+
+When reporting bugs, please include a minimal reproducible example when
+possible, along with information about your R session and package versions.
+

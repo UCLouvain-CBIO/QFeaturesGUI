@@ -1,0 +1,64 @@
+url: https://uclouvain-cbio.github.io/QFeaturesGUI/
+
+template:
+  bootstrap: 5
+  params:
+    bootswatch: flatly
+
+home:
+  title: QFeaturesGUI
+  description: >
+    A collection of Shiny applications for MS-based bulk and single-cell
+    proteomics data analysis using QFeatures and scp.
+
+navbar:
+  structure:
+    left:
+      - home
+      - articles
+      - reference
+      - news
+    right:
+      - github
+  components:
+    articles:
+      text: Articles
+      menu:
+        - text: Overview
+          href: articles/QFeaturesGUI.html
+        - text: Applications
+        - text: Data import
+          href: articles/importQFeatures.html
+        - text: Data processing
+          href: articles/processQFeatures.html
+
+articles:
+  - title: Getting started
+    contents:
+      - QFeaturesGUI
+
+  - title: Applications
+    contents:
+      - importQFeatures
+      - processQFeatures
+
+reference:
+  - title: Application launchers
+    contents:
+      - importQFeatures
+      - processQFeatures
+
+  - title: Data 
+    contents:
+      - inputTable
+      - sampleTable
+
+news:
+  one_page: true
+
+repo:
+  url:
+    home: https://github.com/UCLouvain-CBIO/QFeaturesGUI
+    source: https://github.com/UCLouvain-CBIO/QFeaturesGUI
+    issue: https://github.com/UCLouvain-CBIO/QFeaturesGUI/issues
+
