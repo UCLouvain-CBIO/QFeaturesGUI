@@ -10,7 +10,7 @@
 #'
 #' @return Return the "importQFeatures" shiny app object.
 #' @export
-#' @importFrom shiny shinyApp runApp
+#' @importFrom shiny shinyApp runApp onStop
 #'
 #' @examples
 #' library(QFeaturesGUI)
@@ -25,7 +25,7 @@
 #'
 importQFeatures <- function(colData = NULL, assayData = NULL, maxSize = 1000) {
     oldOptions <- options(shiny.maxRequestSize = maxSize * 1024^2)
-    on.exit(options(oldOptions))
+    onStop(function() options(oldOptions))
     ui <- build_import_ui()
     server <- build_import_server(colData, assayData)
     shinyApp(ui = ui, server = server)

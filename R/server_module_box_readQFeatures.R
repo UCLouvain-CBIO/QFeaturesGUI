@@ -13,6 +13,7 @@
 #' @importFrom QFeatures readQFeatures
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom methods as
+#' @importFrom utils zip
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
 #' @import MultiAssayExperiment
@@ -163,15 +164,70 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 )
             }
         })
-
+        observeEvent(input$convert, {
+            global_rv$code_lines$create_qfeatures <- code_generator_importQFeatures(
+                input_table,
+                sample_table,
+                qfeatures,
+                input$run_col,
+                input$removeEmptyCols,
+                input$quant_cols,
+                input$logTransform,
+                input$zero_as_NA
+            )
+        })
         output$downloadQFeatures <- downloadHandler(
             filename = function() {
-                "qfeatures_object.rds"
+                "qfeatures_object.zip"
             },
             content = function(file) {
+                tmpdir <- tempdir()
                 final_qfeatures <- qfeatures()
                 names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-                saveRDS(final_qfeatures, file)
+                rds_file <- file.path(tmpdir, "initial_QFeatures.rds")
+                saveRDS(final_qfeatures, rds_file)
+                rmd_file <- file.path(tmpdir, "sessionInfo.Rmd")
+                SI_file <- file.path(tmpdir, "initial_QFeatures_sessionInfo.html")
+                r_file <- file.path(tmpdir, "importQFeatures_script.R")
+                writeLines(
+                    c(
+                        "---",
+                        "title : \"SessionInfo\"",
+                        "output: html_document",
+                        "---",
+                        "",
+                        "```{r}",
+                        "sessionInfo()",
+                        "```"
+                    ),
+                    rmd_file
+                )
+                rmarkdown::render(
+                    rmd_file,
+                    output_file = SI_file,
+                    quiet = TRUE
+                )
+                writeLines(
+                    c(
+                        "# Reproducible R script",
+                        paste0("# Generated on: ", Sys.time()),
+                        "",
+                        "# insert the path to your input data table here",
+                        "# input_data <- ('input_data_table')",
+                        global_rv$code_lines$read_input_data,
+                        "# insert the path to your sample data table here",
+                        "# sample_data <- ('sample_data_table')",
+                        global_rv$code_lines$read_sample_data,
+                        "# Create QFeatures object",
+                        global_rv$code_lines$create_qfeatures
+                    ),
+                    r_file
+                )
+                utils::zip(
+                    zipfile = file,
+                    files = c(rds_file, SI_file, r_file),
+                    flags = "-j"
+                )
             }
         )
     })
