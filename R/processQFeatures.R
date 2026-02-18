@@ -56,12 +56,14 @@
 #' if (interactive()) {
 #'     shiny::runApp(app)
 #' }
-processQFeatures <- function(qfeatures,
-    initialSets = seq_along(qfeatures),
-    prefilledSteps = c(
-        "sample_filtering",
-        "feature_filtering"
-    )) {
+processQFeatures <- function(
+      qfeatures,
+      initialSets = seq_along(qfeatures),
+      prefilledSteps = c(
+          "sample_filtering",
+          "feature_filtering"
+      )
+) {
     ## Validate QFeatures input
     qfeatures <- check_qfeatures(qfeatures)
 
