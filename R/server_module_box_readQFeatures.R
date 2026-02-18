@@ -14,9 +14,9 @@
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom methods as
 #' @importFrom utils zip
-#' @import SingleCellExperiment
-#' @import SummarizedExperiment
-#' @import MultiAssayExperiment
+#' @import SingleCellExperiment SingleCellExperiment
+#' @import SummarizedExperiment SummarizedExperiment
+#' @import MultiAssayExperiment MultiAssayExperiment
 #'
 box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
@@ -29,50 +29,32 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 sep = " "
             ))
             if (is.data.frame(sample_table())) {
+                colData <- sample_table()
+                quantCols <- NULL
                 if (input$run_col != "NULL") {
-                    qfeatures <- error_handler(
-                        QFeatures::readQFeatures,
-                        component_name = "QFeatures converting (readQFeatures)",
-                        assayData = input_table(),
-                        colData = sample_table(),
-                        runCol = input$run_col,
-                        removeEmptyCols = input$removeEmptyCols,
-                        verbose = FALSE
-                    )
+                    runCol <- input$run_col
                 } else {
-                    qfeatures <- error_handler(
-                        QFeatures::readQFeatures,
-                        component_name = "QFeatures converting (readQFeatures)",
-                        assayData = input_table(),
-                        colData = sample_table(),
-                        runCol = NULL,
-                        removeEmptyCols = input$removeEmptyCols,
-                        verbose = FALSE
-                    )
+                    runCol <- NULL
                 }
             } else {
+                colData <- NULL
+                quantCols <- input$quant_cols
                 if (input$run_col != "NULL") {
-                    qfeatures <- error_handler(
-                        QFeatures::readQFeatures,
-                        component_name = "QFeatures converting (readQFeatures)",
-                        assayData = input_table(),
-                        runCol = input$run_col,
-                        quantCols = input$quant_cols,
-                        removeEmptyCols = input$removeEmptyCols,
-                        verbose = FALSE
-                    )
+                    runCol <- input$run_col
                 } else {
-                    qfeatures <- error_handler(
-                        QFeatures::readQFeatures,
-                        component_name = "QFeatures converting (readQFeatures)",
-                        assayData = input_table(),
-                        runCol = NULL,
-                        quantCols = input$quant_cols,
-                        removeEmptyCols = input$removeEmptyCols,
-                        verbose = FALSE
-                    )
+                    runCol <- input$run_col
                 }
             }
+            qfeatures <- error_handler(
+                QFeatures::readQFeatures,
+                component_name = "QFeatures converting (readQFeatures)",
+                assayData = input_table(),
+                colData = colData,
+                runCol = runCol,
+                quantCols = quantCols,
+                removeEmptyCols = input$removeEmptyCols,
+                verbose = FALSE
+            )
             if (input$zero_as_NA && length(qfeatures) > 0) {
                 qfeatures <- error_handler(
                     QFeatures::zeroIsNA,
