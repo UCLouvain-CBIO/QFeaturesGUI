@@ -31,19 +31,15 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             if (is.data.frame(sample_table())) {
                 colData <- sample_table()
                 quantCols <- NULL
-                if (input$run_col != "NULL") {
-                    runCol <- input$run_col
-                } else {
-                    runCol <- NULL
-                }
             } else {
                 colData <- NULL
                 quantCols <- input$quant_cols
-                if (input$run_col != "NULL") {
-                    runCol <- input$run_col
-                } else {
-                    runCol <- input$run_col
-                }
+            }
+          
+            if (input$run_col != "NULL") {
+              runCol <- input$run_col
+            } else {
+              runCol <- NULL
             }
             qfeatures <- error_handler(
                 QFeatures::readQFeatures,

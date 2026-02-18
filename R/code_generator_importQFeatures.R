@@ -15,65 +15,40 @@
 
 
 code_generator_importQFeatures <- function(input_table, sample_table, qfeatures, run_col, removeEmptyCols, quant_cols, logTransform, zero_as_NA) {
-    codeLines <- c()
     if (is.data.frame(sample_table())) {
         colData <- "sample_table"
-        quantCols <- "NULL"
-        if (run_col != "NULL") {
-            runCol <- run_col
-        } else {
-            runCol <- "NULL"
-        }
+        quantCols <- "NULL"    
     } else {
         colData <- "NULL"
         quantCols <- quant_cols
-        if (run_col != "NULL") {
-            runCol <- run_col
-        } else {
-            runCol <- "NULL"
-        }
     }
-    codeLines <- c(codeLines, sprintf(
-        "qfeatures <- QFeatures::readQFeatures(
-      assayData = input_table,
-      colData = %s,
-      runCol = '%s',
-      quantCols = %s,
-      removeEmptyCols = %s,
-      verbose = FALSE
-      )",
-        colData,
-        runCol,
-        quantCols,
-        removeEmptyCols
-    ))
+    
+    if (run_col != "NULL") {
+      runCol <- paste0("'",run_col,"'")
+    } else {
+      runCol <- "NULL"
+    }
+    
+    quantColumns <- paste(sprintf('"%s"', quantCols), collapse = ',\n\t\t')
+    codeLines <- sprintf("\nqfeatures <- QFeatures::readQFeatures(\n\tassayData = input_table,\n\tcolData = %s,\n\trunCol = %s,\n\tquantCols = c(%s),\n\tremoveEmptyCols = %s,\n\tverbose = FALSE\n)",
+                                      colData,
+                                      runCol,
+                                      quantColumns,
+                                      removeEmptyCols
+    )
     if (zero_as_NA && length(qfeatures) > 0) {
-        codeLines <- c(codeLines, "qfeatures <- QFeatures::zeroIsNA(
-                    object = qfeatures,
-                    i = seq_along(qfeatures))")
+        codeLines <- c(codeLines, "\nqfeatures <- QFeatures::zeroIsNA(\n\tobject = qfeatures,\n\ti = seq_along(qfeatures)\n)")
     }
     if (logTransform) {
-        codeLines <- c(codeLines, "qfeatures <- QFeatures::logTransform(
-        object = qfeatures,
-        i = seq_along(qfeatures),
-        base = 2,
-        name = paste0(names(qfeatures), '_logTransformed'))")
+        codeLines <- c(codeLines, "\nqfeatures <- QFeatures::logTransform(\n\tobject = qfeatures,\n\ti = seq_along(qfeatures),\n\tbase = 2,\n\tname = paste0(names(qfeatures), '_logTransformed')\n)")
     }
     codeLines
 }
 
 code_generator_read_table <- function(id, file, sep, dec, skip, stringAsFactors, comment) {
     codeLines <- c()
-    codeLines <- c(codeLines, sprintf(
-        "%s_table <- read.table(%s,
-    sep = '%s',
-    dec = '%s',
-    skip = '%s',
-    stringsAsFactors = %s,
-    comment.char = '%s',
-    header = TRUE,
-    row.names = 1
-    )", id,
+    codeLines <- c(codeLines, sprintf("\n%s_table <- read.table(%s,\n\tsep = '%s',\n\tdec = '%s',\n\tskip = '%s',\n\tstringsAsFactors = %s,\n\tcomment.char = '%s',\n\theader = TRUE,\n\trow.names = 1\n)", 
+        id,
         file,
         sep,
         dec,
