@@ -12,6 +12,7 @@
 #' @importFrom DT dataTableOutput
 #'
 box_readqfeatures_ui <- function(id) {
+    ns <- NS(id)
     tagList(
         box(
             title = "QFeatures Converter",
@@ -83,11 +84,13 @@ box_readqfeatures_ui <- function(id) {
                 id = NS(id, "assay_preview"),
                 DT::dataTableOutput(NS(id, "assay_table"))
             ),
-            downloadButton(
-                outputId = NS(id, "downloadQFeatures"),
-                "Download QFeatures object",
-                class = "load-button",
-                style = "width: 100%;"
+            disabled(
+                downloadButton(
+                    outputId = NS(id, "downloadQFeatures"),
+                    "Download QFeatures object",
+                    class = "load-button",
+                    style = "width: 100%;"
+                )
             )
         )
     )
