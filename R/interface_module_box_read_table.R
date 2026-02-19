@@ -65,11 +65,13 @@ box_read_table_ui <- function(id) {
                         label = "String as Factor",
                         value = FALSE
                     ),
-                    actionButton(
-                        inputId = NS(id, "import_button"),
-                        label = "Import",
-                        width = "100%",
-                        class = "load-button"
+                    disabled(
+                        actionButton(
+                            inputId = NS(id, "import_button"),
+                            label = "Import",
+                            width = "100%",
+                            class = "load-button"
+                        )
                     )
                 )
             )

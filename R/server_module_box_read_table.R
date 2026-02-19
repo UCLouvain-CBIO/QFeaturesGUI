@@ -18,6 +18,10 @@ box_read_table_server <- function(id, given_table = NULL) {
             }
         )
         observeEvent(
+            input$file,{
+                shinyjs::enable("import_button")
+            })
+        observeEvent(
             input$import_button,
             {
                 req(input$file)
