@@ -14,6 +14,8 @@
 #' @importFrom QFeatures zeroIsNA
 #' @importFrom methods as
 #' @importFrom utils zip
+#' @importFrom shinycssloaders  showPageSpinner hidePageSpinner
+#' @importFrom shinyjs enable show
 #' @import SingleCellExperiment SingleCellExperiment
 #' @import SummarizedExperiment SummarizedExperiment
 #' @import MultiAssayExperiment MultiAssayExperiment
@@ -32,7 +34,7 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 type = "6",
                 caption = "Be aware that this operation can be quite time consuming for large datasets"
             )
-            shinyjs::enable("downloadQFeatures")
+            shinyjs::show("downloadQFeatures")
             if (is.data.frame(sample_table())) {
                 colData <- sample_table()
                 quantCols <- NULL
@@ -164,6 +166,10 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 "qfeatures_object.zip"
             },
             content = function(file) {
+                shinycssloaders::showPageSpinner(
+                  type = "6",
+                  caption = "Preparing download, can be quite time consuming"
+                )
                 tmpdir <- tempdir()
                 final_qfeatures <- qfeatures()
                 names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
@@ -211,6 +217,7 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     files = c(rds_file, SI_file, r_file),
                     flags = "-j"
                 )
+                shinycssloaders::hidePageSpinner()
             }
         )
     })
