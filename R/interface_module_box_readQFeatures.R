@@ -10,6 +10,7 @@
 #' @importFrom shiny tagList selectInput checkboxInput actionButton downloadButton NS
 #' @importFrom shinydashboardPlus box
 #' @importFrom DT dataTableOutput
+#' @importFrom shinyjs disabled hidden
 #'
 box_readqfeatures_ui <- function(id) {
     tagList(
@@ -85,13 +86,13 @@ box_readqfeatures_ui <- function(id) {
                 id = NS(id, "assay_preview"),
                 DT::dataTableOutput(NS(id, "assay_table"))
             ),
-            disabled(
+            hidden(
                 downloadButton(
                     outputId = NS(id, "downloadQFeatures"),
                     "Download QFeatures object",
                     class = "load-button",
                     style = "width: 100%;"
-                )
+                )   
             )
         )
     )
