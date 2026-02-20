@@ -9,6 +9,7 @@
 #' @importFrom shiny tagList fileInput fluidRow NS textInput numericInput checkboxInput actionButton
 #' @importFrom shinydashboardPlus box
 #' @importFrom DT dataTableOutput
+#' @importFrom shinyjs disabled
 #'
 box_read_table_ui <- function(id) {
     tagList(

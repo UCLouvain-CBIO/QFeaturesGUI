@@ -8,6 +8,7 @@
 #' @importFrom shinydashboardPlus dashboardPage
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
+#' @importFrom shinyjs useShinyjs
 #'
 build_import_ui <- function() {
     ui <- dashboardPage(

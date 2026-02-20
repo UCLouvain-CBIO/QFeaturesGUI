@@ -9,6 +9,8 @@
 #'
 #' @importFrom shiny moduleServer observe observeEvent reactiveVal req
 #' @importFrom utils data read.table
+#' @importFrom shinyjs enable
+#' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 box_read_table_server <- function(id, given_table = NULL) {
     moduleServer(id, function(input, output, session) {
         table <- reactiveVal()
