@@ -20,16 +20,18 @@ box_read_table_server <- function(id, given_table = NULL) {
             }
         )
         observeEvent(
-            input$file,{
+            input$file,
+            {
                 shinyjs::enable("import_button")
-            })
+            }
+        )
         observeEvent(
             input$import_button,
             {
                 shinycssloaders::showPageSpinner(
-                  type = "6",
-                  caption = "Be aware that this operation can be quite time consuming for large datasets"
-                  )
+                    type = "6",
+                    caption = "Be aware that this operation can be quite time consuming for large datasets"
+                )
                 req(input$file)
                 new_table <- error_handler(
                     read.table,
@@ -54,7 +56,6 @@ box_read_table_server <- function(id, given_table = NULL) {
                     stringAsFactors = input$stringsAsFactors,
                     comment = input$comment_char
                 )
-                
             }
         )
 

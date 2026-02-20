@@ -25,9 +25,9 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(sample_table))
     moduleServer(id, function(input, output, session) {
         observe({
-          if(!is.null(input_table())){
-            shinyjs::enable("convert")
-          }
+            if (!is.null(input_table())) {
+                shinyjs::enable("convert")
+            }
         })
         qfeatures <- eventReactive(input$convert, {
             shinycssloaders::showPageSpinner(
@@ -42,11 +42,11 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                 colData <- NULL
                 quantCols <- input$quant_cols
             }
-          
+
             if (input$run_col != "NULL") {
-              runCol <- input$run_col
+                runCol <- input$run_col
             } else {
-              runCol <- NULL
+                runCol <- NULL
             }
             qfeatures <- error_handler(
                 QFeatures::readQFeatures,
@@ -167,8 +167,8 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
             },
             content = function(file) {
                 shinycssloaders::showPageSpinner(
-                  type = "6",
-                  caption = "Preparing download, can be quite time consuming"
+                    type = "6",
+                    caption = "Preparing download, can be quite time consuming"
                 )
                 tmpdir <- tempdir()
                 final_qfeatures <- qfeatures()

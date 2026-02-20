@@ -92,7 +92,7 @@ box_readqfeatures_ui <- function(id) {
                     "Download QFeatures object",
                     class = "load-button",
                     style = "width: 100%;"
-                )   
+                )
             )
         )
     )
