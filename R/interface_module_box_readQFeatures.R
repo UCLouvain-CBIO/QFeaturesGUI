@@ -12,7 +12,6 @@
 #' @importFrom DT dataTableOutput
 #'
 box_readqfeatures_ui <- function(id) {
-    ns <- NS(id)
     tagList(
         box(
             title = "QFeatures Converter",
@@ -59,11 +58,13 @@ box_readqfeatures_ui <- function(id) {
                     label = "Single cell data",
                     value = FALSE
                 ),
-                actionButton(
-                    inputId = NS(id, "convert"),
-                    "Convert to a QFeatures object",
-                    class = "add-button no-bottom-margin",
-                    width = "100%",
+                disabled(
+                    actionButton(
+                        inputId = NS(id, "convert"),
+                        "Convert to a QFeatures object",
+                        class = "add-button no-bottom-margin",
+                        width = "100%"
+                    )
                 )
             ),
             box(

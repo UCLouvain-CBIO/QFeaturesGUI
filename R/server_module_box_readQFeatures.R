@@ -22,6 +22,11 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
     stopifnot(is.reactive(sample_table))
     moduleServer(id, function(input, output, session) {
+        observe({
+          if(!is.null(input_table())){
+            shinyjs::enable("convert")
+          }
+        })
         qfeatures <- eventReactive(input$convert, {
             shinyjs::enable("downloadQFeatures")
             loading(paste("Be aware that this operation",
