@@ -28,11 +28,11 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
           }
         })
         qfeatures <- eventReactive(input$convert, {
+            shinycssloaders::showPageSpinner(
+                type = "6",
+                caption = "Be aware that this operation can be quite time consuming for large datasets"
+            )
             shinyjs::enable("downloadQFeatures")
-            loading(paste("Be aware that this operation",
-                "can be quite time consuming for large data sets",
-                sep = " "
-            ))
             if (is.data.frame(sample_table())) {
                 colData <- sample_table()
                 quantCols <- NULL
@@ -92,7 +92,7 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     "_(QFeaturesGUI#0)_initial_import"
                 )
             }
-            removeModal()
+            shinycssloaders::hidePageSpinner()
             qfeatures
         })
 

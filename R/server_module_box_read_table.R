@@ -29,7 +29,6 @@ box_read_table_server <- function(id, given_table = NULL) {
                   caption = "Be aware that this operation can be quite time consuming for large datasets"
                   )
                 req(input$file)
-                #loading("Be aware that this operation can be quite time consuming for large data sets")
                 new_table <- error_handler(
                     read.table,
                     component_name = paste0("read.table ", id),
@@ -43,7 +42,6 @@ box_read_table_server <- function(id, given_table = NULL) {
                     row.names = 1
                 )
                 shinycssloaders::hidePageSpinner()
-                #removeModal()
                 table(new_table)
                 global_rv$code_lines[paste0("read_", id, "_data")] <- code_generator_read_table(
                     id = id,
