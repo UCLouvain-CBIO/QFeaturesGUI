@@ -16,9 +16,9 @@
 #' @importFrom utils zip
 #' @importFrom shinycssloaders  showPageSpinner hidePageSpinner
 #' @importFrom shinyjs enable show
-#' @import SingleCellExperiment SingleCellExperiment
-#' @import SummarizedExperiment SummarizedExperiment
-#' @import MultiAssayExperiment MultiAssayExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @importFrom MultiAssayExperiment MultiAssayExperiment
 #'
 box_readqfeatures_server <- function(id, input_table, sample_table) {
     stopifnot(is.reactive(input_table))
