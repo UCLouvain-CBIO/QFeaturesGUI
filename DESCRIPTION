@@ -33,6 +33,7 @@ Imports:
     SingleCellExperiment,
     ggplot2,
     tidyr,
+    shinyjs,
 Depends:
     shinyBS,
     R (>= 4.3.0)
