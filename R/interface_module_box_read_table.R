@@ -9,6 +9,7 @@
 #' @importFrom shiny tagList fileInput fluidRow NS textInput numericInput checkboxInput actionButton
 #' @importFrom shinydashboardPlus box
 #' @importFrom DT dataTableOutput
+#' @importFrom shinyjs disabled
 #'
 box_read_table_ui <- function(id) {
     tagList(
@@ -65,11 +66,13 @@ box_read_table_ui <- function(id) {
                         label = "String as Factor",
                         value = FALSE
                     ),
-                    actionButton(
-                        inputId = NS(id, "import_button"),
-                        label = "Import",
-                        width = "100%",
-                        class = "load-button"
+                    disabled(
+                        actionButton(
+                            inputId = NS(id, "import_button"),
+                            label = "Import",
+                            width = "100%",
+                            class = "load-button"
+                        )
                     )
                 )
             )

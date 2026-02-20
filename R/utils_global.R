@@ -308,55 +308,54 @@ loading <- function(msg) {
 #' @rdname INTERNAL_normalize_initial_sets
 #' @keywords internal
 normalise_initial_sets <- function(qfeatures, initialSets) {
-  assay_names <- names(qfeatures)
-  n <- length(assay_names)
+    assay_names <- names(qfeatures)
+    n <- length(assay_names)
 
-  if (is.null(initialSets) || length(initialSets) == 0) {
-    stop("`initialSets` must select at least one assay.")
-  }
-
-  ## Logical indexing
-  if (is.logical(initialSets)) {
-    if (length(initialSets) != n) {
-      stop(
-        "`initialSets` is logical but its length (", length(initialSets),
-        ") does not match the number of assays (", n, ")."
-      )
+    if (is.null(initialSets) || length(initialSets) == 0) {
+        stop("`initialSets` must select at least one assay.")
     }
-    idx <- which(initialSets)
 
-  ## Numeric indexing
-  } else if (is.numeric(initialSets)) {
-    if (any(initialSets < 1 | initialSets > n)) {
-      stop("`initialSets` contains out-of-bounds indices.")
+    ## Logical indexing
+    if (is.logical(initialSets)) {
+        if (length(initialSets) != n) {
+            stop(
+                "`initialSets` is logical but its length (", length(initialSets),
+                ") does not match the number of assays (", n, ")."
+            )
+        }
+        idx <- which(initialSets)
+
+        ## Numeric indexing
+    } else if (is.numeric(initialSets)) {
+        if (any(initialSets < 1 | initialSets > n)) {
+            stop("`initialSets` contains out-of-bounds indices.")
+        }
+        if (any(is.na(initialSets))) {
+            stop("`initialSets` contains NA values.")
+        }
+        idx <- as.integer(initialSets)
+
+        ## Character indexing (assay names)
+    } else if (is.character(initialSets)) {
+        missing <- setdiff(initialSets, assay_names)
+        if (length(missing) > 0) {
+            stop(
+                "The following assay(s) were not found: ",
+                paste(missing, collapse = ", ")
+            )
+        }
+        idx <- match(initialSets, assay_names)
+    } else {
+        stop(
+            "`initialSets` must be numeric, logical, or character (assay names)."
+        )
     }
-    if (any(is.na(initialSets))) {
-      stop("`initialSets` contains NA values.")
+
+    if (length(idx) == 0) {
+        stop("No assay selected by `initialSets`.")
     }
-    idx <- as.integer(initialSets)
 
-  ## Character indexing (assay names)
-  } else if (is.character(initialSets)) {
-    missing <- setdiff(initialSets, assay_names)
-    if (length(missing) > 0) {
-      stop(
-        "The following assay(s) were not found: ",
-        paste(missing, collapse = ", ")
-      )
-    }
-    idx <- match(initialSets, assay_names)
-
-  } else {
-    stop(
-      "`initialSets` must be numeric, logical, or character (assay names)."
-    )
-  }
-
-  if (length(idx) == 0) {
-    stop("No assay selected by `initialSets`.")
-  }
-
-  unique(idx)
+    unique(idx)
 }
 
 #' Validate and load a QFeatures object
@@ -373,30 +372,30 @@ normalise_initial_sets <- function(qfeatures, initialSets) {
 #' @keywords internal
 #' @noRd
 check_qfeatures <- function(qfeatures) {
-  if (missing(qfeatures)) {
-    stop("`qfeatures` argument is missing")
-  }
-
-  if (is.character(qfeatures)) {
-    if (!file.exists(qfeatures)) {
-      stop("The file '", qfeatures, "' does not exist.")
+    if (missing(qfeatures)) {
+        stop("`qfeatures` argument is missing")
     }
 
-    qfeatures <- tryCatch(
-      readRDS(qfeatures),
-      error = function(e) {
-        stop("Failed to read RDS file: ", e$message)
-      }
-    )
-  }
+    if (is.character(qfeatures)) {
+        if (!file.exists(qfeatures)) {
+            stop("The file '", qfeatures, "' does not exist.")
+        }
 
-  if (!inherits(qfeatures, "QFeatures")) {
-    stop(
-      "`qfeatures` must be a QFeatures object or a valid path to an RDS file containing one."
-    )
-  }
+        qfeatures <- tryCatch(
+            readRDS(qfeatures),
+            error = function(e) {
+                stop("Failed to read RDS file: ", e$message)
+            }
+        )
+    }
 
-  qfeatures
+    if (!inherits(qfeatures, "QFeatures")) {
+        stop(
+            "`qfeatures` must be a QFeatures object or a valid path to an RDS file containing one."
+        )
+    }
+
+    qfeatures
 }
 
 #' Validate and map prefilled workflow steps
@@ -412,21 +411,21 @@ check_qfeatures <- function(qfeatures) {
 #' @keywords internal
 #' @noRd
 check_prefilled_steps <- function(prefilledSteps) {
-  valid_steps <- c(
-    sample_filtering   = "Sample Filtering",
-    normalisation      = "Normalisation",
-    feature_filtering  = "Feature Filtering"
-  )
-
-  unknown_steps <- setdiff(prefilledSteps, names(valid_steps))
-  if (length(unknown_steps) > 0) {
-    stop(
-      "Unknown workflow steps: ",
-      paste(unknown_steps, collapse = ", ")
+    valid_steps <- c(
+        sample_filtering   = "Sample Filtering",
+        normalisation      = "Normalisation",
+        feature_filtering  = "Feature Filtering"
     )
-  }
 
-  unname(valid_steps[prefilledSteps])
+    unknown_steps <- setdiff(prefilledSteps, names(valid_steps))
+    if (length(unknown_steps) > 0) {
+        stop(
+            "Unknown workflow steps: ",
+            paste(unknown_steps, collapse = ", ")
+        )
+    }
+
+    unname(valid_steps[prefilledSteps])
 }
 
 #' Will convert a qfeatures object to a summary data.frame object

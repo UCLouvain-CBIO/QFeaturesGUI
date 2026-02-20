@@ -50,17 +50,17 @@ data("sampleTable")
 data("inputTable")
 
 qfeatures <- readQFeatures(
-  inputTable,
-  colData = sampleTable,
-  runCol = "Raw.file"
+    inputTable,
+    colData = sampleTable,
+    runCol = "Raw.file"
 )
 
 app <- processQFeatures(
-  qfeatures,
-  initialSets = seq_along(qfeatures)
+    qfeatures,
+    initialSets = seq_along(qfeatures)
 )
 
 if (interactive()) {
-  shiny::runApp(app)
+    shiny::runApp(app)
 }
 }

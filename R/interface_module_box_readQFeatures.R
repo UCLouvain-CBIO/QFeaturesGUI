@@ -10,6 +10,7 @@
 #' @importFrom shiny tagList selectInput checkboxInput actionButton downloadButton NS
 #' @importFrom shinydashboardPlus box
 #' @importFrom DT dataTableOutput
+#' @importFrom shinyjs disabled hidden
 #'
 box_readqfeatures_ui <- function(id) {
     tagList(
@@ -58,11 +59,13 @@ box_readqfeatures_ui <- function(id) {
                     label = "Single cell data",
                     value = FALSE
                 ),
-                actionButton(
-                    inputId = NS(id, "convert"),
-                    "Convert to a QFeatures object",
-                    class = "add-button no-bottom-margin",
-                    width = "100%",
+                disabled(
+                    actionButton(
+                        inputId = NS(id, "convert"),
+                        "Convert to a QFeatures object",
+                        class = "add-button no-bottom-margin",
+                        width = "100%"
+                    )
                 )
             ),
             box(
@@ -83,11 +86,13 @@ box_readqfeatures_ui <- function(id) {
                 id = NS(id, "assay_preview"),
                 DT::dataTableOutput(NS(id, "assay_table"))
             ),
-            downloadButton(
-                outputId = NS(id, "downloadQFeatures"),
-                "Download QFeatures object",
-                class = "load-button",
-                style = "width: 100%;"
+            hidden(
+                downloadButton(
+                    outputId = NS(id, "downloadQFeatures"),
+                    "Download QFeatures object",
+                    class = "load-button",
+                    style = "width: 100%;"
+                )
             )
         )
     )
