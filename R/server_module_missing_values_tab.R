@@ -25,9 +25,25 @@ server_module_missing_values_tab <- function(id, step_number, type){
       )
       output[[paste0("plot_na_", type)]] <- renderPlot({
         ggplot(filteringTable)+
-          geom_histogram(aes(x=pNA, fill = input[[paste0("pca_color_", type)]]))+
-          geom_vline(xintercept = input[[paste0("threshold_", type)]], colour = "red")+
-          annotate("rect", xmin = input[[paste0("threshold_", type)]], xmax = Inf, ymin = -Inf, ymax = Inf, alpha = .5)
+          geom_histogram(
+            aes(
+              x=pNA,
+              fill = .data[[input[[paste0("pca_color_", type)]]]]
+            ),
+            show.legend = input[[paste0("show_legend_", type)]]
+          )+
+          geom_vline(
+            xintercept = input[[paste0("threshold_", type)]],
+            colour = "red"
+          )+
+          annotate(
+            "rect", 
+            xmin = input[[paste0("threshold_", type)]], 
+            xmax = Inf, 
+            ymin = -Inf, 
+            ymax = Inf, 
+            alpha = .5
+          )
       })
       output[[paste0("nb_removed_", type)]] <- renderInfoBox({
         nbRemoved <- sum(filteringTable$pNA > input[[paste0("threshold_", type)]])
@@ -40,7 +56,5 @@ server_module_missing_values_tab <- function(id, step_number, type){
         infoBox(paste0("Percent of ", type, " removed: "), percent, fill = TRUE, color = color)
       })
     })
-    
-     
   })
 }

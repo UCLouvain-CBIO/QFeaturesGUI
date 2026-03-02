@@ -28,7 +28,7 @@ interface_module_missing_values_tab <- function(id, type){
           choices = NULL
         ),
         checkboxInput(
-          inputId = paste0("show_legend_", type),
+          inputId = NS(id,paste0("show_legend_", type)),
           label = "Show Legend",
           value = FALSE
         )
