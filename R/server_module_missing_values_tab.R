@@ -41,13 +41,20 @@ server_module_missing_values_tab <- function(id, step_number, type){
           options = list(scrollX = TRUE))
       })
       output[[paste0("plot_na_", type)]] <- renderPlot({
-        ggplot(filteringTable())+
+          plot <- ggplot(filteringTable())+
           geom_histogram(
             aes(
               x=pNA,
               fill = .data[[input[[paste0("pca_color_", type)]]]]
             ),
-            show.legend = input[[paste0("show_legend_", type)]]
+            show.legend = input[[paste0("show_legend_", type)]],
+            bins = 20,
+            boundary = 20,
+            closed = "right"
+          )+
+          scale_x_continuous(
+              limits = c(0,1),
+              expand = c(0,0)
           )+
           geom_vline(
             xintercept = input[[paste0("threshold_", type)]],
@@ -61,6 +68,7 @@ server_module_missing_values_tab <- function(id, step_number, type){
             ymax = Inf,
             alpha = .5
           )
+          suppressMessages(print(plot))
       })
       output[[paste0("nb_removed_", type)]] <- renderInfoBox({
         nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
