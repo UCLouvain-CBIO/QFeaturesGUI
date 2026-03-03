@@ -27,18 +27,18 @@ server_module_missing_values_tab <- function(id, step_number, type){
       filteringTable
     })
     observe({
-      #req(assays_to_process())
       req(filteringTable())
       output[[paste0("dynamic_",type)]] <- renderUI({
-        
-        if (sum(filteringTable()$pNA) > 10) {
+        if (length(unique(filteringTable()$name)) > 10) {
           plotOutput(NS(id,paste0("plot_na_",type)))
         } else {
           DT::dataTableOutput(NS(id, paste0("dataTable_na_", type)))
         } 
       })
       output[[paste0("dataTable_na_",type)]] <- DT::renderDataTable({
-        as.data.frame(filteringTable())
+        DT::datatable(
+          as.data.frame(filteringTable()),
+          options = list(scrollX = TRUE))
       })
       output[[paste0("plot_na_", type)]] <- renderPlot({
         ggplot(filteringTable())+
@@ -64,14 +64,32 @@ server_module_missing_values_tab <- function(id, step_number, type){
       })
       output[[paste0("nb_removed_", type)]] <- renderInfoBox({
         nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
-        infoBox(paste0("Number of ", type, " removed: "), nbRemoved, fill = TRUE, color = "light-blue")
+        infoBox(paste0("Number of ", type, " removed: "), nbRemoved, fill = TRUE, color = "light-blue", icon = icon("filter"))
       })
       output[[paste0("percent_removed_", type)]] <- renderInfoBox({
         nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
-        percent <- nbRemoved/length(filteringTable()$pNA)
-        if(percent < 0.25){color <- "olive"}else if(percent >=0.25 && percent<0.75){color <- "orange"}else{color <- "red"}
-        infoBox(paste0("Percent of ", type, " removed: "), percent, fill = TRUE, color = color)
+        percent <- nbRemoved/length(filteringTable()$pNA)*100
+        infoBox(paste0("Percent of ", type, " removed: "), paste(percent,"%"), fill = TRUE, color = "light-blue", icon = icon("percent"))
       })
+    })
+
+    observeEvent(input$export, {
+      req(filteringTable())
+      shinycssloaders::showPageSpinner(
+        type = "6",
+        caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
+      )
+      processed_assays <- QFeatures::filterNA(assays_to_process(),
+                                   i = seq_along(assays_to_process()), 
+                                   pNA = input[[paste0("threshold_", type)]])
+      error_handler(
+        add_assays_to_global_rv,
+        component_name = "Add assays to global_rv",
+        processed_qfeatures = processed_assays,
+        step_number = step_number,
+        type = "features_filtering"
+      )
+      shinycssloaders::hidePageSpinner()
     })
   })
 }
