@@ -7,7 +7,7 @@ server_module_missing_values_tab <- function(id, step_number, type){
                     pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
       )
     })
-    observe({
+    filteringTable <- reactive({
       req(assays_to_process())
       tableNA <- QFeatures::nNA(
         object = assays_to_process(),
@@ -23,8 +23,25 @@ server_module_missing_values_tab <- function(id, step_number, type){
         inputId = paste0("pca_color_", type),
         choices = colnames(filteringTable)
       )
+      
+      filteringTable
+    })
+    observe({
+      #req(assays_to_process())
+      req(filteringTable())
+      output[[paste0("dynamic_",type)]] <- renderUI({
+        
+        if (sum(filteringTable()$pNA) > 10) {
+          plotOutput(NS(id,paste0("plot_na_",type)))
+        } else {
+          DT::dataTableOutput(NS(id, paste0("dataTable_na_", type)))
+        } 
+      })
+      output[[paste0("dataTable_na_",type)]] <- DT::renderDataTable({
+        as.data.frame(filteringTable())
+      })
       output[[paste0("plot_na_", type)]] <- renderPlot({
-        ggplot(filteringTable)+
+        ggplot(filteringTable())+
           geom_histogram(
             aes(
               x=pNA,
@@ -37,21 +54,21 @@ server_module_missing_values_tab <- function(id, step_number, type){
             colour = "red"
           )+
           annotate(
-            "rect", 
-            xmin = input[[paste0("threshold_", type)]], 
-            xmax = Inf, 
-            ymin = -Inf, 
-            ymax = Inf, 
+            "rect",
+            xmin = input[[paste0("threshold_", type)]],
+            xmax = Inf,
+            ymin = -Inf,
+            ymax = Inf,
             alpha = .5
           )
       })
       output[[paste0("nb_removed_", type)]] <- renderInfoBox({
-        nbRemoved <- sum(filteringTable$pNA > input[[paste0("threshold_", type)]])
+        nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
         infoBox(paste0("Number of ", type, " removed: "), nbRemoved, fill = TRUE, color = "light-blue")
       })
       output[[paste0("percent_removed_", type)]] <- renderInfoBox({
-        nbRemoved <- sum(filteringTable$pNA > input[[paste0("threshold_", type)]])
-        percent <- nbRemoved/length(filteringTable$pNA)
+        nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
+        percent <- nbRemoved/length(filteringTable()$pNA)
         if(percent < 0.25){color <- "olive"}else if(percent >=0.25 && percent<0.75){color <- "orange"}else{color <- "red"}
         infoBox(paste0("Percent of ", type, " removed: "), percent, fill = TRUE, color = color)
       })

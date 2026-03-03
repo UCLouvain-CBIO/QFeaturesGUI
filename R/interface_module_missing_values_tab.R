@@ -33,7 +33,7 @@ interface_module_missing_values_tab <- function(id, type){
           value = FALSE
         )
       ),
-      plotOutput(NS(id, paste0("plot_na_", type)))
+      uiOutput(NS(id, paste0("dynamic_", type)))
     ),
     box(
       numericInput(
