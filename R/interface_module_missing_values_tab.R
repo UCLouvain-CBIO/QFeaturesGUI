@@ -1,3 +1,15 @@
+#' QFeatures missing values tab (section) ui builder
+#'
+#' @return A shiny fluidRow object that contains the missing values tab UI components
+#' @rdname INTERNAL_interface_module_missing_values_tab
+#' @keywords internal
+#'
+#' @importFrom shiny fluidRow NS actionButton icon uiOutput checkBoxInput selectInput numericInput
+#' @importFrom shinydashboardPlus box boxSidebar
+#' @importFrom shinydashboard infoBoxOutput
+#' @importFrom htmltools tagList
+#' @importFrom shinyBS bsTooltip
+#'
 interface_module_missing_values_tab <- function(id, type){
   tagList(
     actionButton(

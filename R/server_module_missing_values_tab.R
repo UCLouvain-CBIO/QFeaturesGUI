@@ -1,3 +1,19 @@
+#' @title Server logic for the missing values tab
+#' @param id The module id
+#' @param step_number The step number
+#' @param type the type of data to deal missing values with (e.g. features or samples)
+#'
+#' @return The processed assays
+#' @rdname INTERNAL_server_module_missing_values_tab
+#' @keywords internal
+#'
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues 
+#' @importFrom shiny observe reactiveValuesToList NS reactive updateSelectInput plotOutput renderInfoBox
+#' @importFrom shinycssloaders showPageSpinner hidePageSpinner
+#' @importFrom QFeatures nNA filterNA rbindRowData rowDataNames
+#' @importFrom DT renderDataTable dataTableOutput datatable
+#' @importFrom SingleCellExperiment colData
+#' @importFrom ggplot2 ggplot
 server_module_missing_values_tab <- function(id, step_number, type){
   moduleServer(id, function(input, output, session) {
     assays_to_process <- eventReactive(input$reload, {
