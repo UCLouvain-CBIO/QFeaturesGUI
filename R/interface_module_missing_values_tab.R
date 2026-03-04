@@ -4,7 +4,7 @@
 #' @rdname INTERNAL_interface_module_missing_values_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow NS actionButton icon uiOutput checkBoxInput selectInput numericInput
+#' @importFrom shiny fluidRow NS actionButton icon uiOutput checkboxInput selectInput numericInput
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom shinydashboard infoBoxOutput
 #' @importFrom htmltools tagList

@@ -8,7 +8,8 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues 
-#' @importFrom shiny observe reactiveValuesToList NS reactive updateSelectInput plotOutput renderInfoBox
+#' @importFrom shiny observe reactiveValuesToList NS reactive updateSelectInput plotOutput
+#' @importFrom shinydashboard renderInfoBox
 #' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 #' @importFrom QFeatures nNA filterNA rbindRowData rowDataNames
 #' @importFrom DT renderDataTable dataTableOutput datatable
