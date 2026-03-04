@@ -34,7 +34,8 @@ Imports:
     ggplot2,
     tidyr,
     shinyjs,
-    rmarkdown
+    rmarkdown,
+    shinyalert
 Depends:
     shinyBS,
     R (>= 4.3.0)
