@@ -453,7 +453,7 @@ qfeatures_to_df <- function(qfeatures) {
         df[i, "nFeatures"] <- nrow(qfeatures[[i]])[[1]]
         df[i, "nSamples"] <- ncol(qfeatures[[i]])[[1]]
         df[i, "nFeaturesMetadata"] <- ncol(rowData(qfeatures[[i]]))[[1]]
-        df[i, "nSamplesMetadata"] <- suppressWarnings(ncol(colData(getWithColData(qfeatures, i))))
+        df[i, "nSamplesMetadata"] <- suppressWarnings(ncol(colData(qfeatures)))
     }
 
     df
