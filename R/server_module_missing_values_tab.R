@@ -7,89 +7,126 @@ server_module_missing_values_tab <- function(id, step_number, type){
                     pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
       )
     })
-    filteringTable <- reactive({
+    
+    qf_with_NA <- reactive({
       req(assays_to_process())
-      tableNA <- QFeatures::nNA(
+      tableNA <- nNA(
         object = assays_to_process(),
-        i = seq_along(assays_to_process())
+        i = seq_along(assays_to_process()),
+        addToObject = TRUE
       )
       if(type == "features"){
-        filteringTable <- tableNA$nNAcols
+        updateSelectInput(
+          session = session,
+          inputId = paste0("pca_color_",type),
+          choices = c("NULL", rowDataNames(tableNA)[[1]]),
+          selected = "NULL"
+        )
       } else {
-        filteringTable <- tableNA$nNArows
+        updateSelectInput(
+          session = session,
+          inputId = paste0("pca_color_",type),
+          choices = c("NULL", names(colData(tableNA))),
+          selected = "NULL"
+        )
       }
-      updateSelectInput(
-        session = session,
-        inputId = paste0("pca_color_", type),
-        choices = colnames(filteringTable)
-      )
       
-      filteringTable
+      tableNA
     })
-    observe({
-      req(filteringTable())
-      output[[paste0("dynamic_",type)]] <- renderUI({
-        if (length(unique(filteringTable()$name)) > 10) {
-          plotOutput(NS(id,paste0("plot_na_",type)))
+    
+    output[[paste0("dynamic_",type)]] <- renderUI({
+      req(qf_with_NA())
+      if (type == "features"){
+        plotOutput(NS(id,paste0("plot_na_",type)))
+      } else {
+        if (length(rownames(colData(qf_with_NA()))) > 10) {
+          plotOutput(NS(id,paste0("plot_na_",type))) 
         } else {
           DT::dataTableOutput(NS(id, paste0("dataTable_na_", type)))
-        } 
-      })
-      output[[paste0("dataTable_na_",type)]] <- DT::renderDataTable({
-        DT::datatable(
-          as.data.frame(filteringTable()),
-          options = list(scrollX = TRUE))
-      })
-      output[[paste0("plot_na_", type)]] <- renderPlot({
-          plot <- ggplot(filteringTable())+
-          geom_histogram(
-            aes(
-              x=pNA,
-              fill = .data[[input[[paste0("pca_color_", type)]]]]
-            ),
-            show.legend = input[[paste0("show_legend_", type)]],
-            bins = 20,
-            boundary = 20,
-            closed = "right"
-          )+
-          scale_x_continuous(
-              limits = c(0,1),
-              expand = c(0,0)
-          )+
-          geom_vline(
-            xintercept = input[[paste0("threshold_", type)]],
-            colour = "red"
-          )+
-          annotate(
-            "rect",
-            xmin = input[[paste0("threshold_", type)]],
-            xmax = Inf,
-            ymin = -Inf,
-            ymax = Inf,
-            alpha = .5
-          )
-          suppressMessages(print(plot))
-      })
-      output[[paste0("nb_removed_", type)]] <- renderInfoBox({
-        nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
-        infoBox(paste0("Number of ", type, " removed: "), nbRemoved, fill = TRUE, color = "light-blue", icon = icon("filter"))
-      })
-      output[[paste0("percent_removed_", type)]] <- renderInfoBox({
-        nbRemoved <- sum(filteringTable()$pNA > input[[paste0("threshold_", type)]])
-        percent <- nbRemoved/length(filteringTable()$pNA)*100
-        infoBox(paste0("Percent of ", type, " removed: "), paste(percent,"%"), fill = TRUE, color = "light-blue", icon = icon("percent"))
-      })
+        }
+      } 
+    })
+    
+    tablePlot <- reactive({
+      req(qf_with_NA())
+      
+      if (type == "features"){
+        tablePlot <- rbindRowData(qf_with_NA(), i = seq_along(qf_with_NA()))
+      } else {
+        tablePlot <- colData(qf_with_NA())
+      }
+      tablePlot
+    })
+    output[[paste0("dataTable_na_",type)]] <- DT::renderDataTable({
+      req(tablePlot())
+      DT::datatable(
+        as.data.frame(tablePlot()),
+        options = list(scrollX = TRUE))
+    })
+    output[[paste0("nb_removed_", type)]] <- renderInfoBox({
+      req(tablePlot())
+      nbRemoved <- sum(tablePlot()$pNA >= input[[paste0("threshold_", type)]])
+      infoBox(paste0("Number of ", type, " removed: "), nbRemoved, fill = TRUE, color = "light-blue", icon = icon("filter"))
+    })
+    output[[paste0("percent_removed_", type)]] <- renderInfoBox({
+      req(tablePlot())
+      nbRemoved <- sum(tablePlot()$pNA >= input[[paste0("threshold_", type)]])
+      percent <- round(nbRemoved/length(tablePlot()$pNA)*100, digits = 1)
+      infoBox(paste0("Percent of ", type, " removed: "), paste(percent,"%"), fill = TRUE, color = "light-blue", icon = icon("percent"))
+    })
+
+    plotNA <- reactive({
+      if (input[[paste0("pca_color_", type)]] == "NULL"){
+        color <- NULL
+      } else {
+        color <- tablePlot()[[input[[paste0("pca_color_", type)]]]]
+      }
+      ggplot(tablePlot())+
+        geom_histogram(
+          aes(
+            x=pNA,
+            fill = color
+          ),
+          show.legend = input[[paste0("show_legend_", type)]],
+          binwidth = 0.01,
+          boundary = 20,
+          closed = "right"
+        )+
+        scale_x_continuous(
+          limits = c(0,1),
+          expand = c(0,0)
+        )
+    })
+    output[[paste0("plot_na_", type)]] <- renderPlot({
+      plotNA() +
+        geom_vline(
+          xintercept = input[[paste0("threshold_", type)]],
+          colour = "red"
+        )+
+        annotate(
+          "rect",
+          xmin = input[[paste0("threshold_", type)]],
+          xmax = Inf,
+          ymin = -Inf,
+          ymax = Inf,
+          alpha = .5
+        )
     })
 
     observeEvent(input$export, {
-      req(filteringTable())
+      req(qf_with_NA())
       shinycssloaders::showPageSpinner(
         type = "6",
         caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
       )
-      processed_assays <- QFeatures::filterNA(assays_to_process(),
-                                   i = seq_along(assays_to_process()), 
-                                   pNA = input[[paste0("threshold_", type)]])
+      if (type == "features"){
+        processed_assays <- QFeatures::filterNA(qf_with_NA(),
+                                                i = seq_along(qf_with_NA()), 
+                                                pNA = input[[paste0("threshold_", type)]])
+      } else {
+        processed_assays <- qf_with_NA()[, qf_with_NA()$pNA >= input[[paste0("threshold_", type)]],]
+      }
+      
       error_handler(
         add_assays_to_global_rv,
         component_name = "Add assays to global_rv",
