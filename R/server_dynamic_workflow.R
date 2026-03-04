@@ -22,8 +22,8 @@ server_dynamic_workflow <- function(input, output, session) {
                     "Feature Filtering" = interface_module_features_filtering_tab(paste0("feature_filtering_", i)),
                     "Log Transformation" = interface_module_log_transform_tab(paste0("log_transform_", i)),
                     "Normalisation" = interface_module_normalisation_tab(paste0("normalisation_", i)),
-                    "Filtering NAs by Features" = interface_module_missing_values_tab(paste0("missing_values_",i),"features"),
-                    "Filtering NAs by Samples" = interface_module_missing_values_tab(paste0("missing_values_",i),"samples")
+                    "Filtering NAs by Features" = interface_module_missing_values_tab(paste0("missing_values_", i), "features"),
+                    "Filtering NAs by Samples" = interface_module_missing_values_tab(paste0("missing_values_", i), "samples")
                 )
             })
 
@@ -33,8 +33,8 @@ server_dynamic_workflow <- function(input, output, session) {
                 "Feature Filtering" = server_module_features_filtering_tab(paste0("feature_filtering_", i), step_number = i),
                 "Log Transformation" = server_module_log_transform_tab(paste0("log_transform_", i), step_number = i),
                 "Normalisation" = server_module_normalisation_tab(paste0("normalisation_", i), step_number = i),
-                "Filtering NAs by Features" = server_module_missing_values_tab(paste0("missing_values_",i), step_number = i, type = "features"),
-                "Filtering NAs by Samples" = server_module_missing_values_tab(paste0("missing_values_",i), step_number = i, type = "samples")
+                "Filtering NAs by Features" = server_module_missing_values_tab(paste0("missing_values_", i), step_number = i, type = "features"),
+                "Filtering NAs by Samples" = server_module_missing_values_tab(paste0("missing_values_", i), step_number = i, type = "samples")
             )
         })
     })
