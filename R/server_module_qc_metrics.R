@@ -77,9 +77,9 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
         annotation_names <- reactive({
             req(single_assay())
             if (id == "features") {
-                colnames(rowData(single_assay()))
+                c("NULL", colnames(rowData(single_assay())))
             } else {
-                colnames(colData(single_assay()))
+                c("NULL", colnames(colData(single_assay())))
             }
         })
 
@@ -89,29 +89,31 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             stopifnot(is(single_assay(), "SummarizedExperiment"))
             updateSelectInput(session,
                 "pca_color",
-                choices = annotation_names()
+                choices = annotation_names(),
+                 selected = "NULL"
             )
         })
 
         color_data <- reactive({
             req(single_assay())
             req(input$pca_color)
-            if (id == "features") {
-                df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
-            } else {
-                df <- colData(single_assay())[, input$pca_color, drop = FALSE]
+            if(input$pca_color != "NULL") {
+              if (id == "features") {
+                  df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
+              } else {
+                  df <- colData(single_assay())[, input$pca_color, drop = FALSE]
+              }
+              if (is.character(df[, 1])) {
+                  df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
+                      paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
+                  )
+              }
+              if (all(is.na(df))) {
+                  df[, 1] <- "NA"
+              }
+              colnames(df) <- input$pca_color
+              return(df)
             }
-            if (is.character(df[, 1])) {
-                df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
-                    paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
-                )
-            }
-            if (all(is.na(df))) {
-                df[, 1] <- "NA"
-            }
-            colnames(df) <- input$pca_color
-
-            return(df)
         })
 
 
@@ -127,12 +129,18 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
         })
         dataframe <- reactive({
             req(pca_result())
-            req(color_data())
-            as.data.frame(merge(
+            if(input$pca_color == 'NULL'){
+              as.data.frame(
+                data.frame(scores(pca_result())),
+              )
+            } else {
+              req(color_data())
+              as.data.frame(merge(
                 data.frame(scores(pca_result())),
                 color_data(),
                 by = "row.names"
-            ))
+              ))
+            }
         })
 
         output$pca <- renderPlotly({

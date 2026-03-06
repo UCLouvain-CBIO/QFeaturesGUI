@@ -533,12 +533,19 @@ page_assays_subset <- function(qfeatures, pattern) {
 #' @importFrom viridisLite viridis
 #'
 pca_plotly <- function(df, pca_result, color_name, show_legend) {
-    stopifnot(is.data.frame(df))
+  stopifnot(is.data.frame(df))
+    if (color_name == "NULL"){
+      colorFormula = NULL
+      text <- row.names(df)
+    } else {
+      colorFormula <- as.formula(paste0("~", color_name))
+      text <- ~Row.names
+    }
     plotly <- plot_ly(df,
         x = ~PC1,
         y = ~PC2,
-        color = as.formula(paste0("~", color_name)),
-        text = ~Row.names,
+        color = colorFormula,
+        text = text,
         type = "scatter",
         mode = "markers",
         colors = if (is.numeric(df[[color_name]])) {
