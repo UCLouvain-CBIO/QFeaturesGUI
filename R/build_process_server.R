@@ -11,6 +11,7 @@
 #' @importFrom QFeatures QFeatures
 #' @importFrom shiny observeEvent
 #' @importFrom shinydashboard updateTabItems
+#' @importFrom shinyalert shinyalert
 #'
 build_process_server <- function(qfeatures, initial_sets, initial_steps) {
     server <- function(input, output, session) {
@@ -30,8 +31,22 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps) {
         server_sidebar(input, output, session)
         server_module_workflow_config("workflow_config")
         server_dynamic_workflow(input, output, session)
-
         server_module_summary_tab("summary_tab")
+
+        n_sets <- length(names(.qf$qfeatures))
+        n_steps <- length(initial_steps)
+        shinyalert(
+            title = "App ready",
+            text = paste0(
+                "Loaded QFeatures with ", n_sets,
+                " initial set", if (n_sets != 1) "s" else "", ".",
+                if (n_steps > 0) paste0(
+                    "\nWorkflow pre-configured with ", n_steps,
+                    " step", if (n_steps != 1) "s" else "", "."
+                ) else ""
+            ),
+            type = "success"
+        )
     }
 
     server

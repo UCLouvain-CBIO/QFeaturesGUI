@@ -8,6 +8,7 @@
 #' @keywords internal
 #' @importFrom shiny moduleServer observeEvent reactiveVal showModal modalDialog
 #' @importFrom shiny modalButton actionButton removeModal tagList p
+#' @importFrom shinyalert shinyalert
 #'
 #' @keywords internal
 server_module_workflow_config <- function(id) {
@@ -47,6 +48,15 @@ server_module_workflow_config <- function(id) {
                 ))
             } else {
                 global_rv$workflow_config <- input$workflow_list
+                n <- length(input$workflow_list)
+                shinyalert(
+                    title = "Workflow applied",
+                    text = paste0(
+                        n, " step", if (n != 1) "s" else "",
+                        " successfully configured."
+                    ),
+                    type = "success"
+                )
             }
         })
 
@@ -64,6 +74,16 @@ server_module_workflow_config <- function(id) {
             global_rv$workflow_config <- pending_config()
             pending_config(NULL)
             removeModal()
+            n <- length(global_rv$workflow_config)
+            shinyalert(
+                title = "Workflow reset & applied",
+                text = paste0(
+                    "Processing progress cleared.\n",
+                    n, " step", if (n != 1) "s" else "",
+                    " successfully configured."
+                ),
+                type = "success"
+            )
         })
     })
 }

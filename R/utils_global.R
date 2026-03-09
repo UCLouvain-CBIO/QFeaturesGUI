@@ -604,6 +604,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #'
 #' @return (NULL) does not return anything but will add the assays to the global_rv qfeatures object
 #' @importFrom QFeatures addAssayLink
+#' @importFrom shinyalert shinyalert
 
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
     for (name in names(processed_qfeatures)) {
@@ -621,6 +622,15 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
             to = new_name
         )
     }
+    n <- length(processed_qfeatures)
+    shinyalert(
+        title = "Step saved",
+        text = paste0(
+            n, " set", if (n != 1) "s" else "",
+            " added to QFeatures."
+        ),
+        type = "success"
+    )
 }
 
 

@@ -10,6 +10,7 @@
 #' @importFrom shinydashboardPlus dashboardPage
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
+#' @importFrom shinyalert useShinyalert
 #' @importFrom shiny icon
 build_process_ui <- function(initial_steps) {
     ui <- dashboardPage(
@@ -30,6 +31,7 @@ build_process_ui <- function(initial_steps) {
         ),
         body = dashboardBody(
             useShinyFeedback(),
+            useShinyalert(force = TRUE),
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             tabItems(
                 tabItem(
