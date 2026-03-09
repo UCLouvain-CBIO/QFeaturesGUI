@@ -33,7 +33,7 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps) {
         server_dynamic_workflow(input, output, session)
         server_module_summary_tab("summary_tab")
 
-        n_sets <- length(names(.qf$qfeatures))
+        n_sets <- length(initial_sets)
         n_steps <- length(initial_steps)
         shinyalert(
             title = "App ready",
