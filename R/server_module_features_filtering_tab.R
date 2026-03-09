@@ -9,12 +9,12 @@
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_features_filtering_tab <- function(id, step_number) {
+server_module_features_filtering_tab <- function(id, step_number, step_rv) {
     moduleServer(id, function(input, output, session) {
         assays_to_process <- eventReactive(input$reload, {
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
-                qfeatures = global_rv$qfeatures,
+                qfeatures = .qf$qfeatures,
                 pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
             )
         })
@@ -164,6 +164,7 @@ server_module_features_filtering_tab <- function(id, step_number) {
                 step_number = step_number,
                 type = "features_filtering"
             )
+            step_rv(step_rv() + 1L)
             removeModal()
         })
     })

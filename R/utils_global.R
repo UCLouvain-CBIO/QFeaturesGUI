@@ -613,10 +613,10 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
             "_", type, "_", step_number
         )
 
-        global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+        .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
 
-        global_rv$qfeatures <- addAssayLink(
-            global_rv$qfeatures,
+        .qf$qfeatures <- addAssayLink(
+            .qf$qfeatures,
             from = name,
             to = new_name
         )

@@ -8,12 +8,12 @@
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
 #'
-server_module_log_transform_tab <- function(id, step_number) {
+server_module_log_transform_tab <- function(id, step_number, step_rv) {
     moduleServer(id, function(input, output, session) {
         assays_to_process <- eventReactive(input$reload, {
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
-                qfeatures = global_rv$qfeatures,
+                qfeatures = .qf$qfeatures,
                 pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
             )
         })
@@ -70,6 +70,7 @@ server_module_log_transform_tab <- function(id, step_number) {
                 step_number = step_number,
                 type = "log_transformation"
             )
+            step_rv(step_rv() + 1L)
             removeModal()
         })
     })

@@ -24,7 +24,7 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps) {
             time = as.POSIXct(character()),
             stringsAsFactors = FALSE
         )
-        global_rv$qfeatures <- format_qfeatures(qfeatures, initial_sets)
+        .qf$qfeatures <- format_qfeatures(qfeatures, initial_sets)
         global_rv$workflow_config <- initial_steps
         server_exception_menu(input, output, session)
         server_sidebar(input, output, session)
