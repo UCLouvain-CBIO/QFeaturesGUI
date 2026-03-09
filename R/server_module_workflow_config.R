@@ -54,7 +54,7 @@ server_module_workflow_config <- function(id) {
             # Strip .qf$qfeatures back to the initial state: keep original
             # assays (no suffix) and the initial sets (#0), remove all step
             # outputs (#1, #2, ...).
-            keep <- !grepl("_(QFeaturesGUI#[1-9][0-9]*)", names(.qf$qfeatures))
+            keep <- !grepl("_\\(QFeaturesGUI#[1-9][0-9]*\\)", names(.qf$qfeatures))
             .qf$qfeatures <- .qf$qfeatures[, , keep]
 
             # Reset every step reactiveVal so downstream modules and the
