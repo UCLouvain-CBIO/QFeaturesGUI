@@ -30,25 +30,35 @@ server_module_missing_values_tab <- function(id, step_number, type) {
             tableNA <- nNA(
                 object = assays_to_process(),
                 i = seq_along(assays_to_process()),
-                addToObject = TRUE
             )
+            qf_na <- assays_to_process()
+            for(a in unique(tableNA$nNArows$assay)) {
+              se <- assays_to_process()[[a]]
+              tmp <- tableNA$nNArows[tableNA$nNArows$assay == a, ]
+              rowData(se)$pNA <- tmp$pNA[match(rownames(se), tmp$name)]
+              qf_na[[a]] <- se
+            }
+            cd <- colData(qf_na)
+            cd$pNA <- tableNA$nNAcols$pNA[match(rownames(cd), tableNA$nNAcols$name)]
+            colData(qf_na) <- cd
+            
             if (type == "features") {
                 updateSelectInput(
                     session = session,
                     inputId = paste0("pca_color_", type),
-                    choices = c("NULL", rowDataNames(tableNA)[[1]]),
+                    choices = c("NULL", rowDataNames(qf_na)[[1]]),
                     selected = "NULL"
                 )
             } else {
                 updateSelectInput(
                     session = session,
                     inputId = paste0("pca_color_", type),
-                    choices = c("NULL", names(colData(tableNA))),
+                    choices = c("NULL", names(colData(qf_na))),
                     selected = "NULL"
                 )
             }
 
-            tableNA
+            qf_na
         })
 
         output[[paste0("dynamic_", type)]] <- renderUI({
