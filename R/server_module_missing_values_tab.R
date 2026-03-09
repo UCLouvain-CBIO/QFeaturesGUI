@@ -29,7 +29,7 @@ server_module_missing_values_tab <- function(id, step_number, type) {
             req(assays_to_process())
             tableNA <- nNA(
                 object = assays_to_process(),
-                i = seq_along(assays_to_process()),
+                i = seq_along(assays_to_process())
             )
             qf_na <- assays_to_process()
             for(a in unique(tableNA$nNArows$assay)) {
