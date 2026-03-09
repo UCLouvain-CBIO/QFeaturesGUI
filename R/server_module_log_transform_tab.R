@@ -5,7 +5,7 @@
 #' @rdname INTERNAL_server_module_log_transformation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive
+#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive isolate
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_log_transform_tab <- function(id, step_number, step_rv, parent_rv, workflow_version_rv) {

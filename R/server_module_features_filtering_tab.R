@@ -6,7 +6,7 @@
 #' @rdname INTERNAL_server_module_features_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive isolate
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
 server_module_features_filtering_tab <- function(id, step_number, step_rv, parent_rv, workflow_version_rv) {
@@ -137,7 +137,7 @@ server_module_features_filtering_tab <- function(id, step_number, step_rv, paren
                 filtering_conditions_list()[[index]]
             })
             res <- unlist(res)
-            if (length(n_boxes()) > 0) {
+            if (length(res) > 0) {
                 return(as.formula(paste0("~", paste(res, collapse = " & "))))
             } else {
                 return(NULL)

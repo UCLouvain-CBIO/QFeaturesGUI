@@ -6,7 +6,7 @@
 #' @rdname INTERNAL_server_module_samples_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive isolate
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
 server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent_rv, workflow_version_rv) {
