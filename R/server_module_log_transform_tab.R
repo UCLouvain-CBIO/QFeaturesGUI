@@ -5,12 +5,13 @@
 #' @rdname INTERNAL_server_module_log_transformation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
+#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
 #'
-server_module_log_transform_tab <- function(id, step_number, step_rv) {
+server_module_log_transform_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        assays_to_process <- eventReactive(input$reload, {
+        assays_to_process <- reactive({
+            if (!is.null(parent_rv)) req(parent_rv() > 0L)
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
                 qfeatures = .qf$qfeatures,

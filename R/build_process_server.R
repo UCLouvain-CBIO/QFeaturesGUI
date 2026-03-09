@@ -9,7 +9,7 @@
 #' @keywords internal
 #'
 #' @importFrom QFeatures QFeatures
-#' @importFrom shiny observeEvent invalidateLater
+#' @importFrom shiny observeEvent
 #' @importFrom shinydashboard updateTabItems
 #'
 build_process_server <- function(qfeatures, initial_sets, initial_steps) {

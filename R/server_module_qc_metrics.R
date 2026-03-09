@@ -19,10 +19,11 @@ server_module_qc_metrics <- function(id, assays_to_process, type) {
             return(choices_vector)
         })
         observe({
-            req(assays_choices_vector)
+            choices <- assays_choices_vector()
+            req(choices)
             updateSelectInput(session,
                 "selected_assay",
-                choices = names(assays_choices_vector())
+                choices = names(choices)
             )
         })
         single_assay <- reactive({

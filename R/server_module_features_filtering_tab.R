@@ -9,9 +9,10 @@
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_features_filtering_tab <- function(id, step_number, step_rv) {
+server_module_features_filtering_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        assays_to_process <- eventReactive(input$reload, {
+        assays_to_process <- reactive({
+            if (!is.null(parent_rv)) req(parent_rv() > 0L)
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
                 qfeatures = .qf$qfeatures,
