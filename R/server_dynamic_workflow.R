@@ -14,7 +14,12 @@
 #'
 
 server_dynamic_workflow <- function(input, output, session) {
+    version_counter <- local(0L)
+
     observe({
+        version_counter <<- version_counter + 1L
+        v <- version_counter
+
         step_rvs <- lapply(
             seq_along(global_rv$workflow_config),
             function(i) reactiveVal(0)
@@ -23,6 +28,16 @@ server_dynamic_workflow <- function(input, output, session) {
 
         lapply(seq_along(global_rv$workflow_config), function(i) {
             parent_rv <- if (i == 1) NULL else step_rvs[[i - 1]]
+
+            # Versioned module IDs ensure each reset creates a fresh namespace.
+            # Old module instances survive but write to orphaned IDs no longer
+            # present in the UI, so their stale state is completely harmless.
+            module_id <- switch(global_rv$workflow_config[[i]],
+                "Sample Filtering"  = paste0("sample_filtering_", i, "_v", v),
+                "Feature Filtering" = paste0("feature_filtering_", i, "_v", v),
+                "Log Transformation" = paste0("log_transform_", i, "_v", v),
+                "Normalisation"     = paste0("normalisation_", i, "_v", v)
+            )
 
             output[[paste0("dynamic_step_ui_", i)]] <- renderUI({
                 if (!is.null(parent_rv) && parent_rv() == 0L) {
@@ -44,10 +59,10 @@ server_dynamic_workflow <- function(input, output, session) {
                     )
                 } else {
                     switch(global_rv$workflow_config[[i]],
-                        "Sample Filtering" = interface_module_samples_filtering_tab(paste0("sample_filtering_", i)),
-                        "Feature Filtering" = interface_module_features_filtering_tab(paste0("feature_filtering_", i)),
-                        "Log Transformation" = interface_module_log_transform_tab(paste0("log_transform_", i)),
-                        "Normalisation" = interface_module_normalisation_tab(paste0("normalisation_", i))
+                        "Sample Filtering"   = interface_module_samples_filtering_tab(module_id),
+                        "Feature Filtering"  = interface_module_features_filtering_tab(module_id),
+                        "Log Transformation" = interface_module_log_transform_tab(module_id),
+                        "Normalisation"      = interface_module_normalisation_tab(module_id)
                     )
                 }
             })
@@ -58,10 +73,10 @@ server_dynamic_workflow <- function(input, output, session) {
 
             # Call the corresponding server module
             switch(global_rv$workflow_config[[i]],
-                "Sample Filtering" = server_module_samples_filtering_tab(paste0("sample_filtering_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Feature Filtering" = server_module_features_filtering_tab(paste0("feature_filtering_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Log Transformation" = server_module_log_transform_tab(paste0("log_transform_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Normalisation" = server_module_normalisation_tab(paste0("normalisation_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv)
+                "Sample Filtering"   = server_module_samples_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Feature Filtering"  = server_module_features_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Log Transformation" = server_module_log_transform_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Normalisation"      = server_module_normalisation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv)
             )
         })
     })
