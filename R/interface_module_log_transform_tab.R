@@ -11,22 +11,6 @@
 #'
 interface_module_log_transform_tab <- function(id) {
     tagList(
-        actionButton(
-            NS(id, "reload"),
-            "Load assays from previous step",
-            icon("hand-pointer", class = "fa-solid"),
-            width = "100%",
-            class = "load-button"
-        ),
-        shinyBS::bsTooltip(
-            id = NS(id, "reload"),
-            title = paste("Load the assays from the previous step.",
-                "Click on this button the first time you visit this page",
-                "or if you updated the assays from the previous steps.",
-                sep = " "
-            ),
-            trigger = "hover"
-        ),
         box(
             title = "Log Transformation",
             status = "primary",

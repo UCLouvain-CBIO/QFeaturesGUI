@@ -9,17 +9,25 @@
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_features_filtering_tab <- function(id, step_number) {
+server_module_features_filtering_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        assays_to_process <- eventReactive(input$reload, {
+        pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
+
+        step_ready <- reactive({
+            if (!is.null(parent_rv)) req(parent_rv() > 0L)
+            TRUE
+        })
+
+        parent_assays <- reactive({
+            req(step_ready())
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
-                qfeatures = global_rv$qfeatures,
-                pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
+                qfeatures = .qf$qfeatures,
+                pattern = pattern
             )
         })
 
-        server_module_qc_metrics("psm_pre", assays_to_process)
+        server_module_qc_metrics("psm_pre", parent_assays)
 
         n_boxes <- reactiveVal(0)
 
@@ -52,7 +60,7 @@ server_module_features_filtering_tab <- function(id, step_number) {
                 lapply(seq_len(n_boxes()), function(i) {
                     res <- server_module_filtering_box(
                         paste0("filtering_", i),
-                        assays_to_process,
+                        parent_assays,
                         "features",
                         boxes_states[[paste0("box_", i)]]
                     )
@@ -128,7 +136,7 @@ server_module_features_filtering_tab <- function(id, step_number) {
                 filtering_conditions_list()[[index]]
             })
             res <- unlist(res)
-            if (length(n_boxes()) > 0) {
+            if (length(res) > 0) {
                 return(as.formula(paste0("~", paste(res, collapse = " & "))))
             } else {
                 return(NULL)
@@ -136,16 +144,16 @@ server_module_features_filtering_tab <- function(id, step_number) {
         })
 
         processed_assays <- eventReactive(
-            c(input$apply_filters, assays_to_process()),
+            c(input$apply_filters, step_ready()),
             {
                 if (length(filtering_conditions_list()) > 0) {
                     return(error_handler(filterFeatures,
                         component_name = "Filter features",
-                        object = assays_to_process(),
+                        object = parent_assays(),
                         filter = entire_condition()
                     ))
                 } else {
-                    return(assays_to_process())
+                    return(parent_assays())
                 }
             }
         )
@@ -164,7 +172,8 @@ server_module_features_filtering_tab <- function(id, step_number) {
                 step_number = step_number,
                 type = "features_filtering"
             )
+            step_rv(step_rv() + 1L)
             removeModal()
-        })
+        }, ignoreInit = TRUE)
     })
 }

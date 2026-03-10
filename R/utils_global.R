@@ -158,12 +158,10 @@ clickableMessageItem <- function(id, title, time, type = c("error", "warning")) 
 #' @importFrom htmltools HTML div
 #'
 #' @rdname INTERNAL_show_exception_notification
-show_exception_notification <- function(
-      component_name,
-      type = c("error", "warning"),
-      time,
-      duration = 30
-) {
+show_exception_notification <- function(component_name,
+    type = c("error", "warning"),
+    time,
+    duration = 30) {
     type <- match.arg(type)
 
     title <- paste0(
@@ -412,9 +410,11 @@ check_qfeatures <- function(qfeatures) {
 #' @noRd
 check_prefilled_steps <- function(prefilledSteps) {
     valid_steps <- c(
-        sample_filtering   = "Sample Filtering",
-        normalisation      = "Normalisation",
-        feature_filtering  = "Feature Filtering"
+        sample_filtering = "Sample Filtering",
+        normalisation = "Normalisation",
+        feature_filtering = "Feature Filtering",
+        missing_values_features = "Filtering NAs by Features",
+        missing_values_samples = "Filtering NAs by Samples"
     )
 
     unknown_steps <- setdiff(prefilledSteps, names(valid_steps))
@@ -451,7 +451,7 @@ qfeatures_to_df <- function(qfeatures) {
         df[i, "nFeatures"] <- nrow(qfeatures[[i]])[[1]]
         df[i, "nSamples"] <- ncol(qfeatures[[i]])[[1]]
         df[i, "nFeaturesMetadata"] <- ncol(rowData(qfeatures[[i]]))[[1]]
-        df[i, "nSamplesMetadata"] <- suppressWarnings(ncol(colData(getWithColData(qfeatures, i))))
+        df[i, "nSamplesMetadata"] <- suppressWarnings(ncol(colData(qfeatures)))
     }
 
     df
@@ -602,15 +602,24 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 }
 
 
-#' A function that will add the assays to the global_rv qfeatures object
+#' A function that adds processed assays to the non-reactive global QFeatures store
 #'
-#' @param processed_qfeatures `QFeatures` object to add to the global_rv qfeatures object
-#' @param step_number `int` number of the step
+#' @param processed_qfeatures `QFeatures` object whose assays will be added to
+#'   `.qf$qfeatures`. Each assay is renamed with a step-number suffix following
+#'   the `_(QFeaturesGUI#<step_number>)_<type>_<step_number>` convention, and
+#'   an assay link from the parent assay is recorded.
+#' @param step_number `int` the workflow step number, used to construct the new
+#'   assay names and links
+#' @param type `character(1)` label describing the processing type (e.g.
+#'   `"samples_filtering"`, `"log_transformation"`), embedded in the new assay
+#'   names
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
-#' @return (NULL) does not return anything but will add the assays to the global_rv qfeatures object
+#' @return Invisibly `NULL`. Called for its side effect: assays are written into
+#'   `.qf$qfeatures` (the non-reactive global environment store).
 #' @importFrom QFeatures addAssayLink
+#' @importFrom shinyalert shinyalert
 
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
     for (name in names(processed_qfeatures)) {
@@ -620,14 +629,23 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
             "_", type, "_", step_number
         )
 
-        global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+        .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
 
-        global_rv$qfeatures <- addAssayLink(
-            global_rv$qfeatures,
+        .qf$qfeatures <- addAssayLink(
+            .qf$qfeatures,
             from = name,
             to = new_name
         )
     }
+    n <- length(processed_qfeatures)
+    shinyalert(
+        title = "Step saved",
+        text = paste0(
+            n, " set", if (n != 1) "s" else "",
+            " added to QFeatures."
+        ),
+        type = "success"
+    )
 }
 
 
@@ -738,9 +756,11 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
 #'
-plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
-    height = NULL,
-    width = NULL) {
+plotlyridges <- function(
+      data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+      height = NULL,
+      width = NULL
+) {
     data <- subset(data, !is.na(data[, vardens]))
 
     r <- range(data[, vardens])
