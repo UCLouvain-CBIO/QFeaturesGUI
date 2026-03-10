@@ -14,7 +14,7 @@
 #' @importFrom QFeatures nNA filterNA rbindRowData rowDataNames
 #' @importFrom DT renderDataTable dataTableOutput datatable
 #' @importFrom SingleCellExperiment colData
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot aes geom_histogram geom_vline scale_x_continuous annotate
 server_module_missing_values_tab <- function(id, step_number, type) {
     moduleServer(id, function(input, output, session) {
         assays_to_process <- eventReactive(input$reload, {
@@ -25,48 +25,40 @@ server_module_missing_values_tab <- function(id, step_number, type) {
             )
         })
 
-        qf_with_NA <- reactive({
+        tableMetadataNA <- reactive({
             req(assays_to_process())
             tableNA <- nNA(
                 object = assays_to_process(),
                 i = seq_along(assays_to_process())
             )
-            qf_na <- assays_to_process()
-            for(a in unique(tableNA$nNArows$assay)) {
-              se <- assays_to_process()[[a]]
-              tmp <- tableNA$nNArows[tableNA$nNArows$assay == a, ]
-              rowData(se)$pNA <- tmp$pNA[match(rownames(se), tmp$name)]
-              qf_na[[a]] <- se
-            }
-            cd <- colData(qf_na)
-            cd$pNA <- tableNA$nNAcols$pNA[match(rownames(cd), tableNA$nNAcols$name)]
-            colData(qf_na) <- cd
-            
             if (type == "features") {
+                df_to_render <- rbindRowData(assays_to_process(), seq_along(assays_to_process()))
+                df_to_render <- merge(df_to_render, y = tableNA$nNArows, by = c("rowname", "assay"), by.x = c("rowname", "assay"), by.y = c("name", "assay"))
                 updateSelectInput(
                     session = session,
                     inputId = paste0("pca_color_", type),
-                    choices = c("NULL", rowDataNames(qf_na)[[1]]),
+                    choices = c("NULL", names(df_to_render)),
                     selected = "NULL"
                 )
             } else {
+                df_to_render <- colData(assays_to_process())
+                df_to_render$pNA <- tableNA$nNAcols$pNA[match(rownames(df_to_render), tableNA$nNAcols$name)]
                 updateSelectInput(
                     session = session,
                     inputId = paste0("pca_color_", type),
-                    choices = c("NULL", names(colData(qf_na))),
+                    choices = c("NULL", names(dt_cols)),
                     selected = "NULL"
                 )
             }
-
-            qf_na
+            df_to_render
         })
 
         output[[paste0("dynamic_", type)]] <- renderUI({
-            req(qf_with_NA())
+            req(tableMetadataNA())
             if (type == "features") {
                 plotOutput(NS(id, paste0("plot_na_", type)))
             } else {
-                if (length(rownames(colData(qf_with_NA()))) > 10) {
+                if (length(rownames(tableMetadataNA())) > 10) {
                     plotOutput(NS(id, paste0("plot_na_", type)))
                 } else {
                     DT::dataTableOutput(NS(id, paste0("dataTable_na_", type)))
@@ -74,32 +66,22 @@ server_module_missing_values_tab <- function(id, step_number, type) {
             }
         })
 
-        tablePlot <- reactive({
-            req(qf_with_NA())
-
-            if (type == "features") {
-                tablePlot <- rbindRowData(qf_with_NA(), i = seq_along(qf_with_NA()))
-            } else {
-                tablePlot <- colData(qf_with_NA())
-            }
-            tablePlot
-        })
         output[[paste0("dataTable_na_", type)]] <- DT::renderDataTable({
-            req(tablePlot())
+            req(tableMetadataNA())
             DT::datatable(
-                as.data.frame(tablePlot()),
+                as.data.frame(tableMetadataNA()),
                 options = list(scrollX = TRUE)
             )
         })
         output[[paste0("nb_removed_", type)]] <- renderInfoBox({
-            req(tablePlot())
-            nbRemoved <- sum(tablePlot()$pNA >= input[[paste0("threshold_", type)]])
+            req(tableMetadataNA())
+            nbRemoved <- sum(tableMetadataNA()$pNA >= input[[paste0("threshold_", type)]], na.rm = TRUE)
             infoBox(paste0("Number of ", type, " removed: "), nbRemoved, fill = TRUE, color = "light-blue", icon = icon("filter"))
         })
         output[[paste0("percent_removed_", type)]] <- renderInfoBox({
-            req(tablePlot())
-            nbRemoved <- sum(tablePlot()$pNA >= input[[paste0("threshold_", type)]])
-            percent <- round(nbRemoved / length(tablePlot()$pNA) * 100, digits = 1)
+            req(tableMetadataNA())
+            nbRemoved <- sum(tableMetadataNA()$pNA >= input[[paste0("threshold_", type)]], na.rm = TRUE)
+            percent <- round(nbRemoved / length(tableMetadataNA()$pNA) * 100, digits = 1)
             infoBox(paste0("Percent of ", type, " removed: "), paste(percent, "%"), fill = TRUE, color = "light-blue", icon = icon("percent"))
         })
 
@@ -107,9 +89,9 @@ server_module_missing_values_tab <- function(id, step_number, type) {
             if (input[[paste0("pca_color_", type)]] == "NULL") {
                 color <- NULL
             } else {
-                color <- tablePlot()[[input[[paste0("pca_color_", type)]]]]
+                color <- tableMetadataNA()[[input[[paste0("pca_color_", type)]]]]
             }
-            ggplot(tablePlot()) +
+            ggplot(as.data.frame(tableMetadataNA())) +
                 geom_histogram(
                     aes(
                         x = pNA,
@@ -142,26 +124,25 @@ server_module_missing_values_tab <- function(id, step_number, type) {
         })
 
         observeEvent(input$export, {
-            req(qf_with_NA())
+            req(tableMetadataNA())
             shinycssloaders::showPageSpinner(
                 type = "6",
                 caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
             )
             if (type == "features") {
-                processed_assays <- QFeatures::filterNA(qf_with_NA(),
-                    i = seq_along(qf_with_NA()),
+                processed_assays <- QFeatures::filterNA(assays_to_process(),
+                    i = seq_along(assays_to_process()),
                     pNA = input[[paste0("threshold_", type)]]
                 )
             } else {
-                processed_assays <- qf_with_NA()[, qf_with_NA()$pNA >= input[[paste0("threshold_", type)]], ]
+                processed_assays <- assays_to_process()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
             }
-
             error_handler(
                 add_assays_to_global_rv,
                 component_name = "Add assays to global_rv",
                 processed_qfeatures = processed_assays,
                 step_number = step_number,
-                type = "features_filtering"
+                type = paste0("missing_values", type)
             )
             shinycssloaders::hidePageSpinner()
         })
