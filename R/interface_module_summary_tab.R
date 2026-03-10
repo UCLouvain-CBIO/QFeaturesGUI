@@ -9,6 +9,7 @@
 #' @importFrom DT dataTableOutput
 #' @importFrom shiny NS
 #' @importFrom plotly plotlyOutput
+#' @importFrom shinycssloaders withSpinner
 interface_module_summary_tab <- function(id) {
     box(
         title = "QFeatures Summary",
@@ -16,15 +17,24 @@ interface_module_summary_tab <- function(id) {
         solidHeader = TRUE,
         collapsible = TRUE,
         width = 12,
-        DT::dataTableOutput(NS(id, "qfeatures_dt")),
-        DT::dataTableOutput(NS(id, "assay_table")),
+        withSpinner(DT::dataTableOutput(NS(id, "qfeatures_dt")),
+            type = 6,
+            color = "#3c8dbc"
+        ),
+        withSpinner(DT::dataTableOutput(NS(id, "assay_table")),
+            type = 6,
+            color = "#3c8dbc"
+        ),
         box(
             title = "Visual Summary",
             status = "primary",
             solidHeader = FALSE,
             collapsible = TRUE,
             width = 12,
-            plotlyOutput(NS(id, "qfeatures_plot"))
+            withSpinner(plotlyOutput(NS(id, "qfeatures_plot")),
+                type = 6,
+                color = "#3c8dbc"
+            )
         ),
         downloadButton(
             outputId = NS(id, "download_qfeatures"),

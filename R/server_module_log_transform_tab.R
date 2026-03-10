@@ -5,25 +5,33 @@
 #' @rdname INTERNAL_server_module_log_transformation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
+#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
 #'
-server_module_log_transform_tab <- function(id, step_number) {
+server_module_log_transform_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        assays_to_process <- eventReactive(input$reload, {
+        pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
+
+        step_ready <- reactive({
+            if (!is.null(parent_rv)) req(parent_rv() > 0L)
+            TRUE
+        })
+
+        parent_assays <- reactive({
+            req(step_ready())
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
-                qfeatures = global_rv$qfeatures,
-                pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
+                qfeatures = .qf$qfeatures,
+                pattern = pattern
             )
         })
 
         processed_assays <- reactive({
-            req(assays_to_process())
+            req(parent_assays())
             error_handler(
                 log_transform_qfeatures,
                 component_name = "Log transformation",
-                qfeatures = assays_to_process(),
+                qfeatures = parent_assays(),
                 base = as.integer(input$log_base),
                 pseudocount = as.integer(input$pseudocount)
             )
@@ -70,7 +78,8 @@ server_module_log_transform_tab <- function(id, step_number) {
                 step_number = step_number,
                 type = "log_transformation"
             )
+            step_rv(step_rv() + 1L)
             removeModal()
-        })
+        }, ignoreInit = TRUE)
     })
 }

@@ -595,14 +595,22 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 }
 
 
-#' A function that will add the assays to the global_rv qfeatures object
+#' A function that adds processed assays to the non-reactive global QFeatures store
 #'
-#' @param processed_qfeatures `QFeatures` object to add to the global_rv qfeatures object
-#' @param step_number `int` number of the step
+#' @param processed_qfeatures `QFeatures` object whose assays will be added to
+#'   `.qf$qfeatures`. Each assay is renamed with a step-number suffix following
+#'   the `_(QFeaturesGUI#<step_number>)_<type>_<step_number>` convention, and
+#'   an assay link from the parent assay is recorded.
+#' @param step_number `int` the workflow step number, used to construct the new
+#'   assay names and links
+#' @param type `character(1)` label describing the processing type (e.g.
+#'   `"samples_filtering"`, `"log_transformation"`), embedded in the new assay
+#'   names
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
-#' @return (NULL) does not return anything but will add the assays to the global_rv qfeatures object
+#' @return Invisibly `NULL`. Called for its side effect: assays are written into
+#'   `.qf$qfeatures` (the non-reactive global environment store).
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 
@@ -614,20 +622,21 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
             "_", type, "_", step_number
         )
 
-        global_rv$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+        .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
 
-        global_rv$qfeatures <- addAssayLink(
-            global_rv$qfeatures,
+        .qf$qfeatures <- addAssayLink(
+            .qf$qfeatures,
             from = name,
             to = new_name
         )
     }
-    shinyalert::shinyalert(
-        title = "Success",
-        text = "QFeatures updated",
-        size = "l",
-        closeOnClickOutside = TRUE,
-        closeOnEsc = TRUE,
+    n <- length(processed_qfeatures)
+    shinyalert(
+        title = "Step saved",
+        text = paste0(
+            n, " set", if (n != 1) "s" else "",
+            " added to QFeatures."
+        ),
         type = "success"
     )
 }
