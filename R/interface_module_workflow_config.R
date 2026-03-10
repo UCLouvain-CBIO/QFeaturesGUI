@@ -48,7 +48,9 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                                                 "Sample Filtering",
                                                 "Feature Filtering",
                                                 "Log Transformation",
-                                                "Normalisation"
+                                                "Normalisation",
+                                                "Filtering NAs by Features",
+                                                "Filtering NAs by Samples"
                                             ),
                                             function(s) div(class = "step", `data-step` = s, s)
                                         )
