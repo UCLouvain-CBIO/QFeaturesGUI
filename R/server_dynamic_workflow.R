@@ -14,13 +14,7 @@
 #'
 
 server_dynamic_workflow <- function(input, output, session) {
-    workflow_version_rv <- reactiveVal(0L)
-    version_counter <- local(0L)
-
     observe({
-        version_counter <<- version_counter + 1L
-        workflow_version_rv(version_counter)
-
         step_rvs <- lapply(
             seq_along(global_rv$workflow_config),
             function(i) reactiveVal(0)
@@ -64,10 +58,10 @@ server_dynamic_workflow <- function(input, output, session) {
 
             # Call the corresponding server module
             switch(global_rv$workflow_config[[i]],
-                "Sample Filtering" = server_module_samples_filtering_tab(paste0("sample_filtering_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, workflow_version_rv = workflow_version_rv),
-                "Feature Filtering" = server_module_features_filtering_tab(paste0("feature_filtering_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, workflow_version_rv = workflow_version_rv),
-                "Log Transformation" = server_module_log_transform_tab(paste0("log_transform_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, workflow_version_rv = workflow_version_rv),
-                "Normalisation" = server_module_normalisation_tab(paste0("normalisation_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, workflow_version_rv = workflow_version_rv)
+                "Sample Filtering" = server_module_samples_filtering_tab(paste0("sample_filtering_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Feature Filtering" = server_module_features_filtering_tab(paste0("feature_filtering_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Log Transformation" = server_module_log_transform_tab(paste0("log_transform_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Normalisation" = server_module_normalisation_tab(paste0("normalisation_", i), step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv)
             )
         })
     })

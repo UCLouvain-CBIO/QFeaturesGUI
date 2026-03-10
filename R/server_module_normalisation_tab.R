@@ -5,12 +5,11 @@
 #' @rdname INTERNAL_server_module_normalisation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive isolate
+#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
 #'
-server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv, workflow_version_rv) {
+server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        this_version <- isolate(workflow_version_rv())
         pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
 
         step_ready <- reactive({
@@ -59,7 +58,6 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv,
         })
 
         observeEvent(input$export, {
-            req(workflow_version_rv() == this_version)
             req(processed_assays())
             loading(paste("Be aware that this operation",
                 "can be quite time consuming for large data sets",

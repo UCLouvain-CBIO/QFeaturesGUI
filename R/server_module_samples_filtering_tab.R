@@ -6,12 +6,11 @@
 #' @rdname INTERNAL_server_module_samples_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive isolate
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent_rv, workflow_version_rv) {
+server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        this_version <- isolate(workflow_version_rv())
         pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
 
         step_ready <- reactive({
@@ -159,7 +158,6 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
         server_module_qc_metrics("psm_filtered", processed_assays)
 
         observeEvent(input$export, {
-            req(workflow_version_rv() == this_version)
             req(processed_assays())
             loading(paste("Be aware that this operation",
                 "can be quite time consuming for large data sets",
