@@ -45,7 +45,7 @@ server_sidebar <- function(input, output, session) {
         }
 
         menuItem(
-            paste0("Pre-processing (", n_steps, " steps)"),
+            paste0("Pre-processing (", n_steps, " steps)        "),
             icon = icon("list-check"),
             startExpanded = TRUE,
             step_items

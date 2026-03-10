@@ -33,10 +33,12 @@ server_dynamic_workflow <- function(input, output, session) {
             # Old module instances survive but write to orphaned IDs no longer
             # present in the UI, so their stale state is completely harmless.
             module_id <- switch(global_rv$workflow_config[[i]],
-                "Sample Filtering"  = paste0("sample_filtering_", i, "_v", v),
-                "Feature Filtering" = paste0("feature_filtering_", i, "_v", v),
-                "Log Transformation" = paste0("log_transform_", i, "_v", v),
-                "Normalisation"     = paste0("normalisation_", i, "_v", v)
+                "Sample Filtering"          = paste0("sample_filtering_", i, "_v", v),
+                "Feature Filtering"         = paste0("feature_filtering_", i, "_v", v),
+                "Log Transformation"        = paste0("log_transform_", i, "_v", v),
+                "Normalisation"             = paste0("normalisation_", i, "_v", v),
+                "Filtering NAs by Features" = paste0("missing_values_features_", i, "_v", v),
+                "Filtering NAs by Samples"  = paste0("missing_values_samples_", i, "_v", v)
             )
 
             output[[paste0("dynamic_step_ui_", i)]] <- renderUI({
@@ -59,10 +61,12 @@ server_dynamic_workflow <- function(input, output, session) {
                     )
                 } else {
                     switch(global_rv$workflow_config[[i]],
-                        "Sample Filtering"   = interface_module_samples_filtering_tab(module_id),
-                        "Feature Filtering"  = interface_module_features_filtering_tab(module_id),
-                        "Log Transformation" = interface_module_log_transform_tab(module_id),
-                        "Normalisation"      = interface_module_normalisation_tab(module_id)
+                        "Sample Filtering"          = interface_module_samples_filtering_tab(module_id),
+                        "Feature Filtering"         = interface_module_features_filtering_tab(module_id),
+                        "Log Transformation"        = interface_module_log_transform_tab(module_id),
+                        "Normalisation"             = interface_module_normalisation_tab(module_id),
+                        "Filtering NAs by Features" = interface_module_missing_values_tab(module_id, type = "features"),
+                        "Filtering NAs by Samples"  = interface_module_missing_values_tab(module_id, type = "samples")
                     )
                 }
             })
@@ -73,12 +77,12 @@ server_dynamic_workflow <- function(input, output, session) {
 
             # Call the corresponding server module
             switch(global_rv$workflow_config[[i]],
-                "Sample Filtering"   = server_module_samples_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Feature Filtering"  = server_module_features_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Log Transformation" = server_module_log_transform_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Normalisation"      = server_module_normalisation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv)
-                "Filtering NAs by Features" = server_module_missing_values_tab(paste0("missing_values_", i), type = "features", step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Filtering NAs by Samples" = server_module_missing_values_tab(paste0("missing_values_", i), type = "samples", step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv)
+                "Sample Filtering"          = server_module_samples_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Feature Filtering"         = server_module_features_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Log Transformation"        = server_module_log_transform_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Normalisation"             = server_module_normalisation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Filtering NAs by Features" = server_module_missing_values_tab(module_id, step_number = i, type = "features", step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Filtering NAs by Samples"  = server_module_missing_values_tab(module_id, step_number = i, type = "samples", step_rv = step_rvs[[i]], parent_rv = parent_rv)
             )
         })
     })

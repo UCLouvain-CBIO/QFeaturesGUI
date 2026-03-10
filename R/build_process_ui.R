@@ -6,8 +6,8 @@
 #' @keywords internal
 #'
 #' @importFrom shinydashboard dashboardBody tabItem tabItems
-#' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem menuItemOutput
-#' @importFrom shinydashboardPlus dashboardPage
+#' @importFrom shinydashboard  sidebarMenu menuItem menuItemOutput
+#' @importFrom shinydashboardPlus dashboardPage dashboardSidebar
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
 #' @importFrom shinyalert useShinyalert
@@ -27,7 +27,9 @@ build_process_ui <- function(initial_steps) {
                     icon = icon("readme"), # table
                     tabName = "summary_tab"
                 )
-            )
+            ),
+            width = 273,
+            minified = FALSE
         ),
         body = dashboardBody(
             useShinyFeedback(),

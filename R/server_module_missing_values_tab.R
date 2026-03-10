@@ -8,31 +8,39 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues
-#' @importFrom shiny observe reactiveValuesToList NS reactive updateSelectInput plotOutput
+#' @importFrom shiny observe reactiveValuesToList NS reactive updateSelectInput plotOutput isolate
 #' @importFrom shinydashboard renderInfoBox
 #' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 #' @importFrom QFeatures nNA filterNA rbindRowData rowDataNames
 #' @importFrom DT renderDataTable dataTableOutput datatable
 #' @importFrom SingleCellExperiment colData
 #' @importFrom ggplot2 ggplot aes geom_histogram geom_vline scale_x_continuous annotate
-server_module_missing_values_tab <- function(id, step_number, type) {
+server_module_missing_values_tab <- function(id, step_number, type, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
-        assays_to_process <- eventReactive(input$reload, {
+        pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
+
+        step_ready <- reactive({
+            if (!is.null(parent_rv)) req(parent_rv() > 0L)
+            TRUE
+        })
+
+        parent_assays <- reactive({
+            req(step_ready())
             error_handler(page_assays_subset,
                 component_name = "Page assays subset",
-                qfeatures = global_rv$qfeatures,
-                pattern = paste0("_(QFeaturesGUI#", step_number - 1, ")")
+                qfeatures = .qf$qfeatures,
+                pattern = pattern
             )
         })
 
         tableMetadataNA <- reactive({
-            req(assays_to_process())
+            req(parent_assays())
             tableNA <- nNA(
-                object = assays_to_process(),
-                i = seq_along(assays_to_process())
+                object = parent_assays(),
+                i = seq_along(parent_assays())
             )
             if (type == "features") {
-                df_to_render <- rbindRowData(assays_to_process(), seq_along(assays_to_process()))
+                df_to_render <- rbindRowData(parent_assays(), seq_along(parent_assays()))
                 df_to_render <- merge(df_to_render, y = tableNA$nNArows, by = c("rowname", "assay"), by.x = c("rowname", "assay"), by.y = c("name", "assay"))
                 updateSelectInput(
                     session = session,
@@ -41,7 +49,7 @@ server_module_missing_values_tab <- function(id, step_number, type) {
                     selected = "NULL"
                 )
             } else {
-                df_to_render <- colData(assays_to_process())
+                df_to_render <- colData(parent_assays())
                 df_to_render$pNA <- tableNA$nNAcols$pNA[match(rownames(df_to_render), tableNA$nNAcols$name)]
                 updateSelectInput(
                     session = session,
@@ -130,12 +138,12 @@ server_module_missing_values_tab <- function(id, step_number, type) {
                 caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
             )
             if (type == "features") {
-                processed_assays <- QFeatures::filterNA(assays_to_process(),
-                    i = seq_along(assays_to_process()),
+                processed_assays <- QFeatures::filterNA(parent_assays(),
+                    i = seq_along(parent_assays()),
                     pNA = input[[paste0("threshold_", type)]]
                 )
             } else {
-                processed_assays <- assays_to_process()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
+                processed_assays <- parent_assays()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
             }
             error_handler(
                 add_assays_to_global_rv,
@@ -144,7 +152,8 @@ server_module_missing_values_tab <- function(id, step_number, type) {
                 step_number = step_number,
                 type = paste0("missing_values", type)
             )
+            step_rv(step_rv() + 1L)
             shinycssloaders::hidePageSpinner()
-        })
+        }, ignoreInit = TRUE)
     })
 }
