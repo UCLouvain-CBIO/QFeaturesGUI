@@ -51,9 +51,9 @@ interface_module_missing_values_tab <- function(id, type) {
             numericInput(
                 inputId = NS(id, paste0("threshold_", type)),
                 label = paste("Threshold value for", type),
-                value = "0.95",
-                min = "0", max = "1",
-                step = "0.05"
+                value = 0.95,
+                min = 0, max = 1,
+                step = 0.05
             ),
             infoBoxOutput(
                 NS(id, paste0("nb_removed_", type)),
