@@ -68,7 +68,11 @@ interface_module_samples_filtering_tab <- function(id) {
                     "Apply Filters",
                     width = "100%",
                     class = "load-button"
-                )
+                ),
+                # infoBox("Box_test", 30),
+                # infoBox("Percent_test", paste(20,"%"))
+                infoBoxOutput(NS(id, "Number_samples_removed")),
+                infoBoxOutput(NS(id, "Percent_samples_removed"))
             )
         ),
         fluidRow(
