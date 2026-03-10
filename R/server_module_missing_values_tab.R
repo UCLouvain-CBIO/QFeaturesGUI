@@ -46,7 +46,7 @@ server_module_missing_values_tab <- function(id, step_number, type) {
                 updateSelectInput(
                     session = session,
                     inputId = paste0("pca_color_", type),
-                    choices = c("NULL", names(dt_cols)),
+                    choices = c("NULL", names(df_to_render)),
                     selected = "NULL"
                 )
             }
