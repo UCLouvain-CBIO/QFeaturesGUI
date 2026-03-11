@@ -32,10 +32,10 @@ server_module_qc_metrics <- function(id, assays_to_process) {
             # Warning appears here
             # Warning message: 'experiments' dropped; see 'drops()'
             # see with Chris
-            getWithColData(
+            suppressWarnings(getWithColData(
                 assays_to_process(),
                 assays_choices_vector()[input$selected_assay]
-            )
+            ))
         })
 
         server_module_pca_box(
