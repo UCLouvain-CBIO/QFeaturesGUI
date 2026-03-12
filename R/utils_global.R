@@ -537,9 +537,29 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     if (color_name == "NULL"){
       colorFormula = NULL
       text <- row.names(df)
+      colorPalette = suppressWarnings(RColorBrewer::brewer.pal(1,"Set1"))
+      hoverText = paste(
+        "%{text}<br>",
+        "%{customdata}<extra></extra>"
+      )
+      customizeData = "NULL"
+      
     } else {
       colorFormula <- as.formula(paste0("~", color_name))
       text <- ~Row.names
+      colorPalette = if (is.numeric(df[[color_name]])) {
+        viridisLite::viridis(10)
+      } else {
+        suppressWarnings(RColorBrewer::brewer.pal(
+          length(unique(df[[color_name]])),
+          "Set1"
+        ))
+      }
+      hoverText = paste(
+        "%{text}<br>",
+        paste0(color_name, ": %{customdata}<extra></extra>")
+      )
+      customizeData = as.formula(paste0("~", color_name))
     }
     plotly <- plot_ly(df,
         x = ~PC1,
@@ -548,19 +568,9 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         text = text,
         type = "scatter",
         mode = "markers",
-        colors = if (is.numeric(df[[color_name]])) {
-            viridisLite::viridis(10)
-        } else {
-            suppressWarnings(RColorBrewer::brewer.pal(
-                length(unique(df[[color_name]])),
-                "Set1"
-            ))
-        },
-        hovertemplate = paste(
-            "%{text}<br>",
-            paste0(color_name, ": %{customdata}<extra></extra>")
-        ),
-        customdata = as.formula(paste0("~", color_name))
+        colors = colorPalette,
+        hovertemplate = hoverText,
+        customdata = customizeData 
     ) %>%
         layout(
             xaxis = list(title = paste(
