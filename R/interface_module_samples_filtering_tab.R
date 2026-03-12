@@ -53,8 +53,8 @@ interface_module_samples_filtering_tab <- function(id) {
                     width = "100%",
                     class = "load-button"
                 ),
-                infoBoxOutput(NS(id, "Number_samples_removed"),width = 6),
-                infoBoxOutput(NS(id, "Percent_samples_removed"), width = 6)
+                infoBoxOutput(NS(id, "number_samples_removed"),width = 6),
+                infoBoxOutput(NS(id, "percent_samples_removed"), width = 6)
             )
         ),
         fluidRow(

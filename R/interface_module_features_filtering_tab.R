@@ -53,8 +53,8 @@ interface_module_features_filtering_tab <- function(id) {
                     width = "100%",
                     class = "load-button"
                 ),
-                infoBoxOutput(NS(id, "Number_features_removed"),width = 6),
-                infoBoxOutput(NS(id, "Percent_features_removed"), width = 6)
+                infoBoxOutput(NS(id, "number_features_removed"),width = 6),
+                infoBoxOutput(NS(id, "percent_features_removed"), width = 6)
             )
         ),
         fluidRow(

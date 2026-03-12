@@ -158,7 +158,7 @@ server_module_features_filtering_tab <- function(id, step_number, step_rv, paren
             }
         )
         server_module_qc_metrics("psm_filtered", processed_assays)
-        output$Number_features_removed <- renderInfoBox({
+        output$number_features_removed <- renderInfoBox({
           nb_removed_features <- nrow(rbindRowData(parent_assays(),seq_along(parent_assays()))) - nrow(rbindRowData(processed_assays(),seq_along(processed_assays())))
           infoBox(
             "Number of features removed : ",
@@ -169,7 +169,7 @@ server_module_features_filtering_tab <- function(id, step_number, step_rv, paren
           )
         })
         
-        output$Percent_features_removed <- renderInfoBox({
+        output$percent_features_removed <- renderInfoBox({
           pct_removed_features <- round((nrow(rbindRowData(parent_assays(),seq_along(parent_assays()))) - nrow(rbindRowData(processed_assays(),seq_along(processed_assays())))) / nrow(rbindRowData(parent_assays(),seq_along(parent_assays()))) * 100, digits = 1)
           infoBox(
             "Percent of features removed : ",
