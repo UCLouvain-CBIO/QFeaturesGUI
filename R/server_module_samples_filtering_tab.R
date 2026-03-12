@@ -158,7 +158,7 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
 
         server_module_qc_metrics("psm_filtered", processed_assays)
         output$number_samples_removed <- renderInfoBox({
-            nb_removed_samples <- nrow(colData(parent_assays())) - nrow(colData(processed_assays()))
+            nb_removed_samples <- number_removed(parent_assays(),processed_assays(), type = "sammples")
             infoBox(
                 "Number of samples removed : ",
                 nb_removed_samples,
@@ -169,7 +169,7 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
         })
 
         output$percent_samples_removed <- renderInfoBox({
-            pct_removed_samples <- round((nrow(colData(parent_assays())) - nrow(colData(processed_assays()))) / nrow(colData(parent_assays())) * 100, digits = 1)
+            pct_removed_samples <- percent_removed(parent_assays(),processed_assays(), type = "samples")
             infoBox(
                 "Percent of samples removed : ",
                 paste(pct_removed_samples, "%"),

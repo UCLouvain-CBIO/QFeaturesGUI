@@ -946,3 +946,95 @@ unique_feature_boxplot <- function(assays_df, feature) {
 
     suppressWarnings(ggplotly(plot))
 }
+
+#' A function that will return the percentage of samples/features that have been removed
+#'
+#' @param qfeatures_before_filtering a qfeatures object that haven't been filtered.
+#' @param qfeatures_after_filtering  a qfeatures object that have been filtered. 
+#' @param type features or samples.
+#'
+#' @return a percentage
+#'
+#' @rdname INTERNAL_percent_removed
+#' @keywords internal
+#' @importFrom QFeatures rbindRowData
+#' @importFrom SummarizedExperiment colData
+
+percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
+  if(type == "features"){
+    pct_removed <- round(
+      (nrow(
+        rbindRowData(
+          qfeatures_before_filtering,
+          seq_along(qfeatures_before_filtering)
+          )
+        ) - nrow(
+          rbindRowData(
+            qfeatures_after_filtering,
+            seq_along(qfeatures_after_filtering))
+          )
+       ) / nrow(
+         rbindRowData(
+           qfeatures_before_filtering,
+           seq_along(qfeatures_before_filtering))
+         ) * 100, 
+      digits = 1
+      )
+  } else {
+    pct_removed <- round(
+      (nrow(
+        colData(
+          qfeatures_before_filtering)
+        ) - nrow(
+          colData(qfeatures_after_filtering)
+          )
+       ) / nrow(
+         colData(
+           qfeatures_before_filtering
+           )
+         ) * 100,
+      digits = 1)
+    
+  }
+  return(pct_removed)
+}
+
+#' A function that will return the number of samples/features that have been removed
+#'
+#' @param qfeatures_before_filtering a qfeatures object that haven't been filtered.
+#' @param qfeatures_after_filtering  a qfeatures object that have been filtered. 
+#' @param type features or samples.
+#'
+#' @return an integer
+#'
+#' @rdname INTERNAL_number_removed
+#' @keywords internal
+#' @importFrom QFeatures rbindRowData
+#' @importFrom SummarizedExperiment colData
+#' 
+
+number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
+  if(type == "features"){
+    nb_removed <- nrow(
+      rbindRowData(
+        qfeatures_before_filtering,
+        seq_along(qfeatures_before_filtering)
+                   )
+      ) - nrow(
+        rbindRowData(
+          qfeatures_after_filtering,
+          seq_along(qfeatures_after_filtering)
+          )
+        )
+  } else {
+    nb_removed <- nrow(
+      colData(
+        qfeatures_before_filtering
+      )
+    ) - nrow(
+        colData(
+          qfeatures_after_filtering
+        )
+    )  
+  }
+}
