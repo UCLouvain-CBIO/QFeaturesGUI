@@ -86,7 +86,7 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             })
         )
         condition <- reactive({
-            req(annotations_type)
+            req(annotations_type())
             if(annotations_type() %in% c("character","factor")){
               filter_value <- paste0("\"", input[[paste0("filter_ui_",type)]], "\"")
             }else{

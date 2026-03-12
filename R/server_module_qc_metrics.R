@@ -132,7 +132,7 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             req(pca_result())
             if(input$pca_color == 'NULL'){
               as.data.frame(
-                data.frame(scores(pca_result())),
+                data.frame(scores(pca_result()))
               )
             } else {
               req(color_data())
