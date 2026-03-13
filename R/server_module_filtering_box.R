@@ -58,9 +58,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
         output$filtering_ui <- renderUI({
           if(annotations_type() %in% c("character", "factor")){
             if(type == "samples"){
-              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = colData(assays_to_process())[[input$annotation_selection]])
+              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(colData(assays_to_process())[[input$annotation_selection]]))
             } else {
-              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = rowData(assays_to_process()[[1]])[[input$annotation_selection]])
+              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(rowData(assays_to_process()[[1]])[[input$annotation_selection]]))
             }
           } else {
             if(type == "samples"){
