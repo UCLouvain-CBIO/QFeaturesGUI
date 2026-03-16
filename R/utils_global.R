@@ -962,37 +962,37 @@ unique_feature_boxplot <- function(assays_df, feature) {
 
 percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
   if(type == "features"){
+    before_features_nrow <- nrow(
+      rbindRowData(
+        qfeatures_before_filtering,
+        seq_along(qfeatures_after_filtering)
+      )
+    )
+    after_features_nrow <- nrow(
+      rbindRowData(
+        qfeatures_after_filtering,
+        seq_along(qfeatures_after_filtering)
+      )
+    )
     pct_removed <- round(
-      (nrow(
-        rbindRowData(
-          qfeatures_before_filtering,
-          seq_along(qfeatures_before_filtering)
-          )
-        ) - nrow(
-          rbindRowData(
-            qfeatures_after_filtering,
-            seq_along(qfeatures_after_filtering))
-          )
-       ) / nrow(
-         rbindRowData(
-           qfeatures_before_filtering,
-           seq_along(qfeatures_before_filtering))
-         ) * 100, 
+      (before_features_nrow - after_features_nrow)
+      / before_features_nrow * 100, 
       digits = 1
       )
   } else {
+    ncol_before_filtering <- nrow(
+      colData(
+        qfeatures_before_filtering
+      )
+    )
+    ncol_after_filtering <- nrow(
+      colData(
+        qfeatures_after_filtering
+      )
+    )
     pct_removed <- round(
-      (nrow(
-        colData(
-          qfeatures_before_filtering)
-        ) - nrow(
-          colData(qfeatures_after_filtering)
-          )
-       ) / nrow(
-         colData(
-           qfeatures_before_filtering
-           )
-         ) * 100,
+      (ncol_before_filtering - ncol_after_filtering) 
+      / ncol_before_filtering * 100,
       digits = 1)
     
   }
