@@ -158,7 +158,7 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
 
         server_module_qc_metrics("psm_filtered", processed_assays)
         output$number_samples_removed <- renderInfoBox({
-            nb_removed_samples <- number_removed(parent_assays(),processed_assays(), type = "sammples")
+            nb_removed_samples <- number_removed(parent_assays(),processed_assays(), type = "samples")
             infoBox(
                 "Number of samples removed : ",
                 nb_removed_samples,
