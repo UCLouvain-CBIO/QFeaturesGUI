@@ -961,6 +961,7 @@ unique_feature_boxplot <- function(assays_df, feature) {
 #' @importFrom SummarizedExperiment colData
 
 percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
+  type <- match.arg(type, c("features", "samples"))
   if(type == "features"){
     before_features_nrow <- nrow(
       rbindRowData(
@@ -1014,6 +1015,7 @@ percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filterin
 #' 
 
 number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
+  type <- match.arg(type, c("features", "samples"))
   if(type == "features"){
     nb_removed <- nrow(
       rbindRowData(
