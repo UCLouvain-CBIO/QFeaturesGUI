@@ -28,7 +28,7 @@ build_process_ui <- function(initial_steps) {
                     tabName = "summary_tab"
                 )
             ),
-            width = 273,
+            width = 272,
             minified = FALSE
         ),
         body = dashboardBody(

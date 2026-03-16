@@ -27,11 +27,8 @@ interface_module_filtering_box <- function(id, box_title) {
             label = "Filtering Operator",
             choices = c("<", "<=", ">", ">=", "==", "!=")
         ),
-        textInput(
-            inputId = NS(id, "filter_value"),
-            label = "Filtering Value",
-            value = "",
-            placeholder = "A value that will be used in combinaison with the filter operator."
+        uiOutput(
+          NS(id, "filtering_ui")
         )
     )
 }

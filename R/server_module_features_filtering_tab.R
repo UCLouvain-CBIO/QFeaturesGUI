@@ -158,7 +158,27 @@ server_module_features_filtering_tab <- function(id, step_number, step_rv, paren
             }
         )
         server_module_qc_metrics("psm_filtered", processed_assays)
-
+        output$number_features_removed <- renderInfoBox({
+          nb_removed_features <- number_removed(parent_assays(), processed_assays(), "features")
+          infoBox(
+            "Number of features removed : ",
+            nb_removed_features,
+            fill = TRUE,
+            color = "light-blue",
+            icon = icon("filter")
+          )
+        })
+        
+        output$percent_features_removed <- renderInfoBox({
+          pct_removed_features <- percent_removed(parent_assays(), processed_assays(), type = "features")
+          infoBox(
+            "Percent of features removed : ",
+            paste(pct_removed_features, "%"),
+            fill = TRUE,
+            color = "light-blue",
+            icon = icon("filter")
+          )
+        })
         observeEvent(input$export, {
             req(processed_assays())
             loading(paste("Be aware that this operation",

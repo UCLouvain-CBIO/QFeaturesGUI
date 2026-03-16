@@ -155,7 +155,29 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
                 }
             }
         )
+
         server_module_qc_metrics("psm_filtered", processed_assays)
+        output$number_samples_removed <- renderInfoBox({
+            nb_removed_samples <- number_removed(parent_assays(),processed_assays(), type = "samples")
+            infoBox(
+                "Number of samples removed : ",
+                nb_removed_samples,
+                fill = TRUE,
+                color = "light-blue",
+                icon = icon("filter")
+            )
+        })
+
+        output$percent_samples_removed <- renderInfoBox({
+            pct_removed_samples <- percent_removed(parent_assays(),processed_assays(), type = "samples")
+            infoBox(
+                "Percent of samples removed : ",
+                paste(pct_removed_samples, "%"),
+                fill = TRUE,
+                color = "light-blue",
+                icon = icon("filter")
+            )
+        })
 
         observeEvent(input$export, {
             req(processed_assays())
