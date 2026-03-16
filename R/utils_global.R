@@ -555,11 +555,8 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
           "Set1"
         ))
       }
-      hoverText = paste(
-        "%{text}<br>",
-        paste0(color_name, ": %{customdata}<extra></extra>")
-      )
-      customizeData = as.formula(paste0("~", color_name))
+      hoverText = "%{text}<extra></extra>"
+      customizeData = NULL
     }
     plotly <- plot_ly(df,
         x = ~PC1,
@@ -961,6 +958,7 @@ unique_feature_boxplot <- function(assays_df, feature) {
 #' @importFrom SummarizedExperiment colData
 
 percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
+  type <- match.arg(type, choices = c("features", "samples"))
   if(type == "features"){
     before_features_nrow <- nrow(
       rbindRowData(
@@ -1014,6 +1012,7 @@ percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filterin
 #' 
 
 number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
+  type <- match.arg(type, choices = c("features", "samples"))
   if(type == "features"){
     nb_removed <- nrow(
       rbindRowData(
