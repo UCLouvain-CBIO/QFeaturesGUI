@@ -11,15 +11,6 @@
 #'
 interface_module_aggregation_tab <- function(id) {
   tagList(
-    shinyBS::bsTooltip(
-      id = NS(id, "reload"),
-      title = paste("Load the assays from the previous step.",
-                    "Click on this button the first time you visit this page",
-                    "or if you updated the assays from the previous steps.",
-                    sep = " "
-      ),
-      trigger = "hover"
-    ),
     box(
       title = "Aggregation",
       status = "primary",

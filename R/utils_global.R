@@ -1038,3 +1038,62 @@ number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering
     )  
   }
 }
+
+#' Internal function that return the available variables (column
+#' names) from the sample annotations (colData) or feature annotations
+#' (rowData) of a QFeatures object. The function is robust against
+#' empty QFeatures objects.
+#'
+#' @param x a QFeatures object
+#' @param what a character(1), either "rowData" or "colData" depending
+#'   on whether to fetch feature annotationes or sample annotations,
+#'   respectively.
+#'
+#' @return a vector of column names or an empty vector if no columns
+#'   are found.
+#'
+#' @rdname INTERNAL_annotation_cols
+#' @keywords internal
+annotation_cols <- function(x, what) {
+  if (length(x) == 0) {
+    character(0)
+  } else {
+    annot <- switch(
+      what,
+      rowData = rowData(x)[[1]],
+      colData = colData(x)
+    )
+    colnames(annot)
+  }
+}
+
+#' A function that will aggregate all the assays of a qfeatures
+#'
+#' @param qfeatures `QFeatures` object to aggregate
+#' @param fun `str` A function used for quantitative feature aggregation.
+#' @param fcol A character string naming a rowdata variable defining how to aggregate the features of the assay. This variable is either a character or a (possibly sparse) matrix.
+#' @return `QFeatures` object with the normalised assays
+#' @rdname INTERNAL_aggregation_qfeatures
+#' @keywords internal
+#' @importFrom QFeatures normalize QFeatures aggregateFeatures
+#' @importFrom SummarizedExperiment colData
+#'
+aggregation_qfeatures <- function(qfeatures, method,
+                                  fcol) {
+  el <- lapply(names(qfeatures), function(name) {
+    aggregateFeatures(
+      object = qfeatures[[name]],
+      fun = list(
+        robustSummary = MsCoreUtils::robustSummary,
+        medianPolish = MsCoreUtils::medianPolish,
+        colMeans = base::colMeans,
+        colMedians = matrixStats::colMedians,
+        colSums = base::colSums)[[method]],
+      fcol = fcol,
+      na.rm = TRUE
+    )
+  })
+  names(el) <- names(qfeatures)
+  QFeatures(el, colData = colData(qfeatures))
+}
+
