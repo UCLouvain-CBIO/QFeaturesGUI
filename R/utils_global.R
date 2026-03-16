@@ -1037,4 +1037,5 @@ number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering
         )
     )  
   }
+  return(nb_removed)
 }
