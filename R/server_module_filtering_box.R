@@ -16,6 +16,14 @@
 server_module_filtering_box <- function(id, assays_to_process, type, state) {
     is.reactive(assays_to_process)
     moduleServer(id, function(input, output, session) {
+        operator_labels <- c(
+            "<" = "is less than",
+            "<=" = "is less than or equal to",
+            ">" = "is greater than",
+            ">=" = "is greater than or equal to",
+            "==" = "is equal to",
+            "!=" = "is not equal to"
+        )
         annotations_names <- reactive({
             req(assays_to_process())
             if (type == "samples") {
@@ -99,9 +107,24 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 
             )
         })
+
+        condition_label <- reactive({
+            req(annotations_type())
+            req(input$filter_operator)
+            filter_value <- input[[paste0("filter_ui_", type)]]
+            if (annotations_type() %in% c("character", "factor")) {
+                filter_value <- paste0("\"", filter_value, "\"")
+            }
+            paste(
+                input$annotation_selection,
+                operator_labels[[input$filter_operator]],
+                filter_value
+            )
+        })
         
         return(list(
             condition = condition,
+            condition_label = condition_label,
             annotation_selection = reactive(input$annotation_selection),
             filter_operator = reactive(input$filter_operator),
             

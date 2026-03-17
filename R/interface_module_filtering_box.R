@@ -2,6 +2,8 @@
 #' @title Filtering Box
 #'
 #' @param id module id
+#' @param box_title title of the filtering box
+#' @param annotation_choices initial choices for the annotation selector
 #' @return A shiny module UI function that contains the filtering box
 #' @rdname INTERNAL_interface_module_filtering_box
 #' @keywords internal
@@ -9,7 +11,7 @@
 #' @importFrom shiny NS selectInput textInput
 #' @importFrom shinydashboardPlus box
 #'
-interface_module_filtering_box <- function(id, box_title) {
+interface_module_filtering_box <- function(id, box_title, annotation_choices = NULL) {
     box(
         title = box_title,
         status = "primary",
@@ -20,12 +22,19 @@ interface_module_filtering_box <- function(id, box_title) {
         selectInput(
             inputId = NS(id, "annotation_selection"),
             label = "Annotation to Filter",
-            choices = NULL
+            choices = annotation_choices
         ),
         selectInput(
             inputId = NS(id, "filter_operator"),
             label = "Filtering Operator",
-            choices = c("<", "<=", ">", ">=", "==", "!=")
+            choices = c(
+                "Less than" = "<",
+                "Less than or equal to" = "<=",
+                "Greater than" = ">",
+                "Greater than or equal to" = ">=",
+                "Equal to" = "==",
+                "Not equal to" = "!="
+            )
         ),
         uiOutput(
           NS(id, "filtering_ui")

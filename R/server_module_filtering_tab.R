@@ -9,7 +9,7 @@
 #' @rdname INTERNAL_server_module_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive req reactiveVal removeModal icon
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe NS reactive req reactiveVal removeModal icon
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
 #' @importFrom shinydashboard renderInfoBox infoBox
@@ -44,40 +44,54 @@ server_module_filtering_tab <- function(
         n_boxes <- reactiveVal(0)
 
         filtering_conditions <- reactiveValues()
+        filtering_condition_labels <- reactiveValues()
         boxes_states <- reactiveValues()
+
+        display_or_default <- function(value, default) {
+            if (is.null(value) || length(value) == 0 || !nzchar(as.character(value)[1])) {
+                return(default)
+            }
+            as.character(value)[1]
+        }
+
         observeEvent(input$add_box, {
             n_boxes(n_boxes() + 1)
         })
 
         observeEvent(input$remove_box, {
             if (n_boxes() > 0) {
-                n_boxes(n_boxes() - 1)
+                removed_index <- n_boxes()
+                n_boxes(removed_index - 1)
+                filtering_conditions[[paste0("condition_", removed_index)]] <- NULL
+                filtering_condition_labels[[paste0("condition_label_", removed_index)]] <- NULL
+                boxes_states[[paste0("box_", removed_index)]] <- NULL
             }
         })
 
         observeEvent(n_boxes(), {
             output$filtering_boxes <- renderUI({
-                if (n_boxes() > 0) {
-                    lapply(seq_len(n_boxes()), function(i) {
-                        interface_module_filtering_box(
-                            NS(id, paste0("filtering_", i)),
-                            box_title = paste0("Filtering Box #", i)
-                        )
-                    })
-                }
+                if (n_boxes() == 0) return(NULL)
+                lapply(seq_len(n_boxes()), function(i) {
+                    interface_module_filtering_box(
+                        NS(id, paste0("filtering_", i)),
+                        box_title = paste0("Filtering Box #", i)
+                    )
+                })
             })
+
             if (n_boxes() > 0) {
                 lapply(seq_len(n_boxes()), function(i) {
+                    key <- paste0("box_", i)
                     res <- server_module_filtering_box(
                         paste0("filtering_", i),
                         parent_assays,
                         type,
-                        boxes_states[[paste0("box_", i)]]
+                        boxes_states[[key]]
                     )
-
                     observe({
                         filtering_conditions[[paste0("condition_", i)]] <- res$condition()
-                        boxes_states[[paste0("box_", i)]] <- list(
+                        filtering_condition_labels[[paste0("condition_label_", i)]] <- res$condition_label()
+                        boxes_states[[key]] <- list(
                             annotation_selection = res$annotation_selection(),
                             filter_operator = res$filter_operator(),
                             filter_value = res$filter_value()
@@ -89,63 +103,86 @@ server_module_filtering_tab <- function(
             output$boxes_summary <- renderUI({
                 tags$div(
                     tags$p(tags$b(paste0("Number of boxes: ", n_boxes()))),
-                    tags$ul(
-                        lapply(seq_len(n_boxes()), function(i) {
-                            tags$li(
-                                style = "font-size: 20px;",
-                                class = "list-element",
-                                tags$span(
-                                    style = "font-size: 15px",
-                                    paste0("Filtering Box #", i, ":")
-                                ),
-                                tags$br(),
-                                tags$span(
-                                    style = "margin-left: 20px; font-size: 13px;",
-                                    paste0(
-                                        "Annotation Used: ",
-                                        boxes_states[[paste0("box_", i)]]$annotation_selection
+                    if (n_boxes() == 0) {
+                        tags$div(
+                            class = "alert alert-info",
+                            "Add a filtering box to configure your first condition."
+                        )
+                    } else {
+                        tags$div(
+                            class = "list-group",
+                            lapply(seq_len(n_boxes()), function(i) {
+                                box_state <- boxes_states[[paste0("box_", i)]]
+                                annotation_selection <- NULL
+                                if (!is.null(box_state)) {
+                                    annotation_selection <- box_state$annotation_selection
+                                }
+                                tags$div(
+                                    class = "list-group-item",
+                                    tags$div(
+                                        style = "font-weight: 600;",
+                                        paste0("Filtering Box #", i)
+                                    ),
+                                    tags$div(
+                                        style = "margin-top: 4px; font-size: 13px;",
+                                        paste0(
+                                            "Annotation: ",
+                                            display_or_default(annotation_selection, "Not selected yet")
+                                        )
                                     )
                                 )
-                            )
-                        }),
-                        class = "list-group"
-                    )
+                            })
+                        )
+                    }
                 )
             })
 
             output$filtering_summary <- renderUI({
-                if (n_boxes() > 0) {
-                    tags$ul(
-                        lapply(seq_len(n_boxes()), function(i) {
-                            tags$li(
-                                class = "list-element",
-                                style = "font-size: 20px;",
-                                tags$span(
-                                    style = "font-size: 14px;",
-                                    paste0("Filtering Condition #", i, ":"),
-                                    tags$br(),
-                                    tags$span(
-                                        style = "margin-left: 20px;",
-                                        tags$b(
-                                            filtering_conditions[[paste0("condition_", i)]]
-                                        )
-                                    )
-                                )
-                            )
-                        }),
-                        class = "list-group"
-                    )
+                if (n_boxes() == 0) {
+                    return(tags$div(
+                        class = "alert alert-info",
+                        "No filtering condition yet. Add at least one filtering box."
+                    ))
                 }
+
+                tags$div(
+                    class = "list-group",
+                    lapply(seq_len(n_boxes()), function(i) {
+                        condition_label <- display_or_default(
+                            filtering_condition_labels[[paste0("condition_label_", i)]],
+                            "Condition not configured yet."
+                        )
+                        tags$div(
+                            class = "list-group-item",
+                            tags$div(
+                                style = "font-weight: 600;",
+                                paste0("Condition #", i)
+                            ),
+                            tags$div(
+                                style = "margin-top: 6px;",
+                                tags$code(condition_label)
+                            ),
+                            if (i < n_boxes()) {
+                                tags$div(
+                                    style = "margin-top: 8px;",
+                                    tags$span(class = "label label-default", "AND")
+                                )
+                            }
+                        )
+                    })
+                )
             })
         })
+
         filtering_conditions_list <- reactive({
-            reactiveValuesToList(filtering_conditions)
+            conditions <- unlist(lapply(seq_len(n_boxes()), function(i) {
+                filtering_conditions[[paste0("condition_", i)]]
+            }), use.names = FALSE)
+            conditions <- as.character(conditions)
+            conditions[!is.na(conditions) & nzchar(conditions)]
         })
         entire_condition <- reactive({
-            res <- lapply(seq_len(n_boxes()), function(index) {
-                filtering_conditions_list()[[index]]
-            })
-            res <- unlist(res)
+            res <- filtering_conditions_list()
             if (length(res) == 0) {
                 return(NULL)
             }
