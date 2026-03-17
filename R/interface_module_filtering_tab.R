@@ -1,15 +1,24 @@
-#' sample quality control tab (section) ui builder
+#' @title Filtering tab (section) ui builder
 #'
-#' @return A shiny fluidRow object that contains the quality control tab UI components (sample QC)
-#' @rdname INTERNAL_interface_samples_filtering_tab
+#' @param id The module id
+#' @param type A character string specifying the type of filtering (`"samples"` or `"features"`)
+#'
+#' @return A shiny fluidRow object that contains the filtering tab UI components
+#' @rdname INTERNAL_interface_module_filtering_tab
 #' @keywords internal
 #'
 #' @importFrom shiny fluidRow NS actionButton icon uiOutput
+#' @importFrom shinydashboard infoBoxOutput
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList
 #' @importFrom shinyBS bsTooltip
 #'
-interface_module_samples_filtering_tab <- function(id) {
+interface_module_filtering_tab <- function(id, type = c("samples", "features")) {
+    type <- match.arg(type)
+
+    number_removed_id <- paste0("number_", type, "_removed")
+    percent_removed_id <- paste0("percent_", type, "_removed")
+
     tagList(
         fluidRow(
             box(
@@ -18,7 +27,7 @@ interface_module_samples_filtering_tab <- function(id) {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics(NS(id, "psm_pre"), "samples")
+                interface_module_qc_metrics(NS(id, "psm_pre"), type)
             )
         ),
         fluidRow(
@@ -53,8 +62,8 @@ interface_module_samples_filtering_tab <- function(id) {
                     width = "100%",
                     class = "load-button"
                 ),
-                infoBoxOutput(NS(id, "number_samples_removed"),width = 6),
-                infoBoxOutput(NS(id, "percent_samples_removed"), width = 6)
+                infoBoxOutput(NS(id, number_removed_id), width = 6),
+                infoBoxOutput(NS(id, percent_removed_id), width = 6)
             )
         ),
         fluidRow(
@@ -64,7 +73,7 @@ interface_module_samples_filtering_tab <- function(id) {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
-                interface_module_qc_metrics(NS(id, "psm_filtered"), "samples")
+                interface_module_qc_metrics(NS(id, "psm_filtered"), type)
             )
         ),
         actionButton(

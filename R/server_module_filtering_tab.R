@@ -1,15 +1,27 @@
-#' @title Server logic for the samples filtering tab
+#' @title Server logic for the filtering tab
 #' @param id The module id
 #' @param step_number The step number
+#' @param step_rv A reactiveVal used to signal when this step is saved
+#' @param parent_rv A reactiveVal used to gate this step until the parent step is saved
+#' @param type A character string specifying the type of the filtering (`"samples"` or `"features"`)
 #'
 #' @return The processed assays
-#' @rdname INTERNAL_server_module_samples_filtering_tab
+#' @rdname INTERNAL_server_module_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe reactiveValuesToList NS reactive req reactiveVal removeModal icon
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
-server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent_rv) {
+#' @importFrom shinydashboard renderInfoBox infoBox
+server_module_filtering_tab <- function(
+      id,
+      step_number,
+      step_rv,
+      parent_rv,
+      type = c("samples", "features")
+) {
+    type <- match.arg(type)
+
     moduleServer(id, function(input, output, session) {
         pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
 
@@ -26,6 +38,7 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
                 pattern = pattern
             )
         })
+
         server_module_qc_metrics("psm_pre", parent_assays)
 
         n_boxes <- reactiveVal(0)
@@ -46,7 +59,6 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
             output$filtering_boxes <- renderUI({
                 if (n_boxes() > 0) {
                     lapply(seq_len(n_boxes()), function(i) {
-                        # Call the server part of the filtering box module and store the output
                         interface_module_filtering_box(
                             NS(id, paste0("filtering_", i)),
                             box_title = paste0("Filtering Box #", i)
@@ -59,7 +71,7 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
                     res <- server_module_filtering_box(
                         paste0("filtering_", i),
                         parent_assays,
-                        "samples",
+                        type,
                         boxes_states[[paste0("box_", i)]]
                     )
 
@@ -131,48 +143,55 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
         })
         entire_condition <- reactive({
             res <- lapply(seq_len(n_boxes()), function(index) {
-                paste0("qfeatures$", filtering_conditions_list()[[index]])
+                filtering_conditions_list()[[index]]
             })
             res <- unlist(res)
-            if (length(filtering_conditions_list()) > 0) {
-                return(paste(res, collapse = " & "))
-            } else {
+            if (length(res) == 0) {
                 return(NULL)
             }
+            if (type == "samples") {
+                return(paste(paste0("qfeatures$", res), collapse = " & "))
+            }
+            as.formula(paste0("~", paste(res, collapse = " & ")))
         })
 
         processed_assays <- eventReactive(
             c(input$apply_filters, step_ready()),
             {
                 if (length(filtering_conditions_list()) > 0) {
-                    error_handler(sample_filtering,
-                        component_name = "Sample filtering",
-                        qfeatures = parent_assays(),
-                        conditions = entire_condition()
-                    )
-                } else {
-                    return(parent_assays())
+                    if (type == "samples") {
+                        return(error_handler(sample_filtering,
+                            component_name = "Sample filtering",
+                            qfeatures = parent_assays(),
+                            conditions = entire_condition()
+                        ))
+                    }
+                    return(error_handler(filterFeatures,
+                        component_name = "Filter features",
+                        object = parent_assays(),
+                        filter = entire_condition()
+                    ))
                 }
+                parent_assays()
             }
         )
-
         server_module_qc_metrics("psm_filtered", processed_assays)
-        output$number_samples_removed <- renderInfoBox({
-            nb_removed_samples <- number_removed(parent_assays(),processed_assays(), type = "samples")
+        output[[paste0("number_", type, "_removed")]] <- renderInfoBox({
+            nb_removed <- number_removed(parent_assays(), processed_assays(), type = type)
             infoBox(
-                "Number of samples removed : ",
-                nb_removed_samples,
+                paste0("Number of ", type, " removed : "),
+                nb_removed,
                 fill = TRUE,
                 color = "light-blue",
                 icon = icon("filter")
             )
         })
 
-        output$percent_samples_removed <- renderInfoBox({
-            pct_removed_samples <- percent_removed(parent_assays(),processed_assays(), type = "samples")
+        output[[paste0("percent_", type, "_removed")]] <- renderInfoBox({
+            pct_removed <- percent_removed(parent_assays(), processed_assays(), type = type)
             infoBox(
-                "Percent of samples removed : ",
-                paste(pct_removed_samples, "%"),
+                paste0("Percent of ", type, " removed : "),
+                paste(pct_removed, "%"),
                 fill = TRUE,
                 color = "light-blue",
                 icon = icon("filter")
@@ -190,7 +209,7 @@ server_module_samples_filtering_tab <- function(id, step_number, step_rv, parent
                 component_name = "Add assays to global_rv",
                 processed_qfeatures = processed_assays(),
                 step_number = step_number,
-                type = "samples_filtering"
+                type = paste0(type, "_filtering")
             )
             step_rv(step_rv() + 1L)
             removeModal()
