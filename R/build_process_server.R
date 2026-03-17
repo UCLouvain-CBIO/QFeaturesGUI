@@ -45,7 +45,9 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps) {
                     " step", if (n_steps != 1) "s" else "", "."
                 ) else ""
             ),
-            type = "success"
+            closeOnClickOutside = TRUE,
+            type = "success",
+            confirmButtonCol = "#3c8dbc"
         )
     }
 

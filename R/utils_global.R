@@ -654,7 +654,9 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
             n, " set", if (n != 1) "s" else "",
             " added to QFeatures."
         ),
-        type = "success"
+        closeOnClickOutside = TRUE,
+        type = "success",
+        confirmButtonCol = "#3c8dbc"
     )
 }
 

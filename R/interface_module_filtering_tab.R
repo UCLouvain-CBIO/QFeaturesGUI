@@ -31,40 +31,53 @@ interface_module_filtering_tab <- function(id, type = c("samples", "features")) 
             )
         ),
         fluidRow(
-            box(
-                title = "Filtering Boxes Configuration",
-                status = "primary",
-                width = 4,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                uiOutput(NS(id, "boxes_summary")),
-                style = "min-height: 200px;",
-                actionButton(NS(id, "add_box"), "Add Box",
-                    width = "100%",
-                    class = "load-button no-bottom-margin"
-                ),
-                actionButton(NS(id, "remove_box"), "Remove Last Box",
-                    width = "100%",
-                    class = "suppress-button"
+            column(2),
+            column(
+                8,
+                box(
+                    title = "Filtering Boxes Configuration",
+                    status = "primary",
+                    width = 12,
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    uiOutput(NS(id, "boxes_summary")),
+                    style = "min-height: 200px",
+                    actionButton(NS(id, "add_box"), "Add Box",
+                        width = "100%",
+                        class = "load-button no-bottom-margin"
+                    ),
+                    actionButton(NS(id, "remove_box"), "Remove Last Box",
+                        width = "100%",
+                        class = "suppress-button"
+                    )
                 )
             ),
+            column(2)
+        ),
+        fluidRow(
             uiOutput(NS(id, "filtering_boxes")),
-            box(
-                title = "Filtering Summary",
-                status = "primary",
-                width = 4,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                style = "min-height: 200px;",
-                uiOutput(NS(id, "filtering_summary")),
-                actionButton(NS(id, "apply_filters"),
-                    "Apply Filters",
-                    width = "100%",
-                    class = "load-button"
-                ),
-                infoBoxOutput(NS(id, number_removed_id), width = 6),
-                infoBoxOutput(NS(id, percent_removed_id), width = 6)
-            )
+            style = "margin-bottom: 4px;"
+        ),
+        fluidRow(
+            column(2),
+            column(
+                8,
+                box(
+                    title = "Filtering Summary",
+                    status = "primary",
+                    width = 12,
+                    solidHeader = TRUE,
+                    collapsible = TRUE,
+                    style = "min-height: 180px",
+                    uiOutput(NS(id, "filtering_summary")),
+                    actionButton(NS(id, "apply_filters"),
+                        "Apply Filters",
+                        width = "100%",
+                        class = "load-button"
+                    )
+                )
+            ),
+            column(2)
         ),
         fluidRow(
             box(
@@ -73,6 +86,10 @@ interface_module_filtering_tab <- function(id, type = c("samples", "features")) 
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
+                fluidRow(
+                    infoBoxOutput(NS(id, number_removed_id), width = 6),
+                    infoBoxOutput(NS(id, percent_removed_id), width = 6)
+                ),
                 interface_module_qc_metrics(NS(id, "psm_filtered"), type)
             )
         ),

@@ -61,7 +61,7 @@ server_module_filtering_tab <- function(
         observeEvent(input$remove_box, {
             if (n_boxes() > 0) {
                 removed_index <- n_boxes()
-                n_boxes(removed_index - 1)
+                n_boxes(removed_index - 1L)
                 filtering_conditions[[paste0("condition_", removed_index)]] <- NULL
                 filtering_condition_labels[[paste0("condition_label_", removed_index)]] <- NULL
                 boxes_states[[paste0("box_", removed_index)]] <- NULL
@@ -70,13 +70,22 @@ server_module_filtering_tab <- function(
 
         observeEvent(n_boxes(), {
             output$filtering_boxes <- renderUI({
-                if (n_boxes() == 0) return(NULL)
-                lapply(seq_len(n_boxes()), function(i) {
-                    interface_module_filtering_box(
-                        NS(id, paste0("filtering_", i)),
-                        box_title = paste0("Filtering Box #", i)
-                    )
-                })
+                if (n_boxes() == 0) {
+                    return(tags$div(
+                        class = "alert alert-warning",
+                        style = "text-align: center; max-width: 680px; margin: 10px auto;",
+                        "No filtering boxes yet. Add one from the configuration section."
+                    ))
+                }
+                tags$div(
+                    lapply(seq_len(n_boxes()), function(i) {
+                        interface_module_filtering_box(
+                            NS(id, paste0("filtering_", i)),
+                            box_title = paste0("Filtering Box #", i),
+                            width = 4
+                        )
+                    })
+                )
             })
 
             if (n_boxes() > 0) {
@@ -105,7 +114,8 @@ server_module_filtering_tab <- function(
                     tags$p(tags$b(paste0("Number of boxes: ", n_boxes()))),
                     if (n_boxes() == 0) {
                         tags$div(
-                            class = "alert alert-info",
+                            class = "alert alert-warning",
+                            style = "text-align: center; max-width: 680px; margin: 10px auto;",
                             "Add a filtering box to configure your first condition."
                         )
                     } else {
@@ -140,7 +150,8 @@ server_module_filtering_tab <- function(
             output$filtering_summary <- renderUI({
                 if (n_boxes() == 0) {
                     return(tags$div(
-                        class = "alert alert-info",
+                        class = "alert alert-warning",
+                        style = "text-align: center; max-width: 680px; margin: 10px auto;",
                         "No filtering condition yet. Add at least one filtering box."
                     ))
                 }

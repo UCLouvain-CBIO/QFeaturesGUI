@@ -4,6 +4,7 @@
 #' @param id module id
 #' @param box_title title of the filtering box
 #' @param annotation_choices initial choices for the annotation selector
+#' @param width width of the box in Bootstrap grid columns
 #' @return A shiny module UI function that contains the filtering box
 #' @rdname INTERNAL_interface_module_filtering_box
 #' @keywords internal
@@ -11,13 +12,14 @@
 #' @importFrom shiny NS selectInput textInput
 #' @importFrom shinydashboardPlus box
 #'
-interface_module_filtering_box <- function(id, box_title, annotation_choices = NULL) {
+interface_module_filtering_box <- function(id, box_title, annotation_choices = NULL, width = 4) {
     box(
         title = box_title,
         status = "primary",
-        width = 4,
+        width = width,
         solidHeader = TRUE,
         collapsible = TRUE,
+        style = "margin-bottom: 14px;",
         interface_module_annotation_plot(NS(id, "annotation_plot")),
         selectInput(
             inputId = NS(id, "annotation_selection"),
