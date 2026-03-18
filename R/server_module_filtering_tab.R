@@ -10,7 +10,6 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe NS reactive req reactiveVal removeModal icon
-#' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
 #' @importFrom shinydashboard renderInfoBox infoBox
 server_module_filtering_tab <- function(id,
@@ -41,8 +40,8 @@ server_module_filtering_tab <- function(id,
 
         n_boxes <- reactiveVal(0)
 
-        filtering_conditions <- reactiveValues()
         filtering_condition_labels <- reactiveValues()
+        filtering_condition_specs <- reactiveValues()
         boxes_states <- reactiveValues()
 
         display_or_default <- function(value, default) {
@@ -60,8 +59,8 @@ server_module_filtering_tab <- function(id,
             if (n_boxes() > 0) {
                 removed_index <- n_boxes()
                 n_boxes(removed_index - 1L)
-                filtering_conditions[[paste0("condition_", removed_index)]] <- NULL
                 filtering_condition_labels[[paste0("condition_label_", removed_index)]] <- NULL
+                filtering_condition_specs[[paste0("condition_spec_", removed_index)]] <- NULL
                 boxes_states[[paste0("box_", removed_index)]] <- NULL
             }
         })
@@ -96,8 +95,8 @@ server_module_filtering_tab <- function(id,
                         boxes_states[[key]]
                     )
                     observe({
-                        filtering_conditions[[paste0("condition_", i)]] <- res$condition()
                         filtering_condition_labels[[paste0("condition_label_", i)]] <- res$condition_label()
+                        filtering_condition_specs[[paste0("condition_spec_", i)]] <- res$condition_spec()
                         boxes_states[[key]] <- list(
                             annotation_selection = res$annotation_selection(),
                             filter_operator = res$filter_operator(),
@@ -183,39 +182,34 @@ server_module_filtering_tab <- function(id,
             })
         })
 
-        filtering_conditions_list <- reactive({
-            conditions <- unlist(lapply(seq_len(n_boxes()), function(i) {
-                filtering_conditions[[paste0("condition_", i)]]
-            }), use.names = FALSE)
-            conditions <- as.character(conditions)
-            conditions[!is.na(conditions) & nzchar(conditions)]
-        })
-        entire_condition <- reactive({
-            res <- filtering_conditions_list()
-            if (length(res) == 0) {
-                return(NULL)
-            }
-            if (type == "samples") {
-                return(paste(paste0("qfeatures$", res), collapse = " & "))
-            }
-            as.formula(paste0("~", paste(res, collapse = " & ")))
+        condition_specs_list <- reactive({
+            specs <- lapply(seq_len(n_boxes()), function(i) {
+                filtering_condition_specs[[paste0("condition_spec_", i)]]
+            })
+            specs <- Filter(function(spec) {
+                is.list(spec) &&
+                    !is.null(spec$annotation) &&
+                    !is.null(spec$operator) &&
+                    !is.null(spec$value)
+            }, specs)
+            specs
         })
 
         processed_assays <- eventReactive(
             c(input$apply_filters, step_ready()),
             {
-                if (length(filtering_conditions_list()) > 0) {
+                if (length(condition_specs_list()) > 0) {
                     if (type == "samples") {
                         return(error_handler(sample_filtering,
                             component_name = "Sample filtering",
                             qfeatures = parent_assays(),
-                            conditions = entire_condition()
+                            condition_specs = condition_specs_list()
                         ))
                     }
-                    return(error_handler(filterFeatures,
-                        component_name = "Filter features",
-                        object = parent_assays(),
-                        filter = entire_condition()
+                    return(error_handler(feature_filtering,
+                        component_name = "Feature filtering",
+                        qfeatures = parent_assays(),
+                        condition_specs = condition_specs_list()
                     ))
                 }
                 parent_assays()
@@ -270,12 +264,85 @@ server_module_filtering_tab <- function(id,
 #' @title sample filtering
 #'
 #' @param qfeatures A qfeatures object
-#' @param conditions A string with the conditions to filter the samples (chr)
+#' @param condition_specs A list of filtering condition specifications
 #'
 #' @return A qfeatures object with the filtered samples
 #' @rdname INTERNAL_sample_filtering
 #' @keywords internal
 #'
-sample_filtering <- function(qfeatures, conditions) {
-    qfeatures[, eval(parse(text = conditions)), ]
+sample_filtering <- function(qfeatures, condition_specs) {
+    sample_metadata <- as.data.frame(SummarizedExperiment::colData(qfeatures))
+    keep_mask <- rep(TRUE, nrow(sample_metadata))
+
+    for (spec in condition_specs) {
+        annotation <- as.character(spec$annotation)
+        if (!(annotation %in% colnames(sample_metadata))) {
+            stop(paste0("Unknown sample annotation column: ", annotation))
+        }
+        condition_mask <- apply_filter_operator(
+            values = sample_metadata[[annotation]],
+            operator = as.character(spec$operator),
+            target = spec$value
+        )
+        condition_mask[is.na(condition_mask)] <- FALSE
+        keep_mask <- keep_mask & condition_mask
+    }
+
+    qfeatures[, keep_mask, ]
+}
+
+
+#' @title feature filtering
+#'
+#' @param qfeatures A qfeatures object
+#' @param condition_specs A list of filtering condition specifications
+#'
+#' @return A qfeatures object with the filtered features
+#' @rdname INTERNAL_feature_filtering
+#' @keywords internal
+#'
+feature_filtering <- function(qfeatures, condition_specs) {
+    filtered_qfeatures <- qfeatures
+    for (assay_name in names(qfeatures)) {
+        assay_object <- qfeatures[[assay_name]]
+        feature_metadata <- as.data.frame(SummarizedExperiment::rowData(assay_object))
+        keep_mask <- rep(TRUE, nrow(feature_metadata))
+
+        for (spec in condition_specs) {
+            annotation <- as.character(spec$annotation)
+            if (!(annotation %in% colnames(feature_metadata))) {
+                stop(paste0(
+                    "Unknown feature annotation column: ",
+                    annotation,
+                    " in assay ",
+                    assay_name
+                ))
+            }
+            condition_mask <- apply_filter_operator(
+                values = feature_metadata[[annotation]],
+                operator = as.character(spec$operator),
+                target = spec$value
+            )
+            condition_mask[is.na(condition_mask)] <- FALSE
+            keep_mask <- keep_mask & condition_mask
+        }
+        filtered_qfeatures[[assay_name]] <- assay_object[keep_mask, , drop = FALSE]
+    }
+    filtered_qfeatures
+}
+
+
+apply_filter_operator <- function(values, operator, target) {
+    operator_functions <- list(
+        "==" = `==`,
+        "!=" = `!=`,
+        "<" = `<`,
+        "<=" = `<=`,
+        ">" = `>`,
+        ">=" = `>=`
+    )
+    if (!(operator %in% names(operator_functions))) {
+        stop(paste0("Unsupported filtering operator: ", operator))
+    }
+    operator_functions[[operator]](values, target)
 }

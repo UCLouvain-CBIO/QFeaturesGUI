@@ -64,17 +64,44 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
         })
 
         output$filtering_ui <- renderUI({
+            state_filter_value <- NULL
+            if (!is.null(state)) {
+                state_filter_value <- state$filter_value
+            }
             if (annotations_type() %in% c("character", "factor")) {
                 if (type == "samples") {
-                    selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(colData(assays_to_process())[[input$annotation_selection]]))
+                    choices <- unique(colData(assays_to_process())[[input$annotation_selection]])
                 } else {
-                    selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(rowData(assays_to_process()[[1]])[[input$annotation_selection]]))
+                    choices <- unique(rowData(assays_to_process()[[1]])[[input$annotation_selection]])
                 }
+                selected_value <- NULL
+                if (!is.null(state_filter_value)) {
+                    state_filter_value <- as.character(state_filter_value)[1]
+                    if (state_filter_value %in% as.character(choices)) {
+                        selected_value <- state_filter_value
+                    }
+                }
+                selectInput(
+                    session$ns(paste0("filter_ui_", type)),
+                    label = "Filtering Value",
+                    choices = choices,
+                    selected = selected_value
+                )
             } else {
+                numeric_value <- suppressWarnings(as.numeric(state_filter_value)[1])
+                if (is.na(numeric_value)) numeric_value <- 0
                 if (type == "samples") {
-                    numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
+                    numericInput(
+                        session$ns(paste0("filter_ui_", type)),
+                        label = "Filtering Value",
+                        value = numeric_value
+                    )
                 } else {
-                    numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
+                    numericInput(
+                        session$ns(paste0("filter_ui_", type)),
+                        label = "Filtering Value",
+                        value = numeric_value
+                    )
                 }
             }
         })
@@ -93,23 +120,10 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 input$filter_operator
             })
         )
-        condition <- reactive({
-            req(annotations_type())
-            if (annotations_type() %in% c("character", "factor")) {
-                filter_value <- paste0("\"", input[[paste0("filter_ui_", type)]], "\"")
-            } else {
-                filter_value <- input[[paste0("filter_ui_", type)]]
-            }
-            paste(
-                input$annotation_selection,
-                input$filter_operator,
-                filter_value
-            )
-        })
-
         condition_label <- reactive({
             req(annotations_type())
             req(input$filter_operator)
+            req(input$filter_operator %in% names(operator_labels))
             filter_value <- input[[paste0("filter_ui_", type)]]
             if (annotations_type() %in% c("character", "factor")) {
                 filter_value <- paste0("\"", filter_value, "\"")
@@ -121,9 +135,22 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             )
         })
 
+        condition_spec <- reactive({
+            req(input$annotation_selection)
+            req(input$filter_operator)
+            req(input$filter_operator %in% names(operator_labels))
+            filter_value <- input[[paste0("filter_ui_", type)]]
+            req(!is.null(filter_value))
+            list(
+                annotation = input$annotation_selection,
+                operator = input$filter_operator,
+                value = filter_value
+            )
+        })
+
         return(list(
-            condition = condition,
             condition_label = condition_label,
+            condition_spec = condition_spec,
             annotation_selection = reactive(input$annotation_selection),
             filter_operator = reactive(input$filter_operator),
             filter_value = reactive(input[[paste0("filter_ui_", type)]])
@@ -181,7 +208,17 @@ server_module_annotation_plot <- function(id,
         })
         filtered_annotation <- reactive({
             req(annotation_values())
-            operator <- get(filter_operator())
+            operator_functions <- list(
+                "==" = `==`,
+                "!=" = `!=`,
+                "<" = `<`,
+                "<=" = `<=`,
+                ">" = `>`,
+                ">=" = `>=`
+            )
+            selected_operator <- filter_operator()
+            req(selected_operator %in% names(operator_functions))
+            operator <- operator_functions[[selected_operator]]
             subset(
                 annotation_values(),
                 operator(
