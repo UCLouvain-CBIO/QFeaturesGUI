@@ -53,9 +53,9 @@ server_dynamic_workflow <- function(input, output, session) {
                         p(
                             style = "font-size: 1.1em; color: #777;",
                             paste0(
-                                'Please save Step ', i - 1,
-                                ' \u2014 ', global_rv$workflow_config[[i - 1]],
-                                ' \u2014 before proceeding to this step.'
+                                "Please save Step ", i - 1,
+                                " \u2014 ", global_rv$workflow_config[[i - 1]],
+                                " \u2014 before proceeding to this step."
                             )
                         )
                     )

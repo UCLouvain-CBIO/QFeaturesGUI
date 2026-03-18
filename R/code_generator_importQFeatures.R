@@ -28,26 +28,25 @@ code_generator_read_qfeatures <- function(input_table, sample_table, qfeatures, 
     } else {
         runCol <- "NULL"
     }
-    
-    if(!is.null(quantCols)){
-      quantColumns <- paste(sprintf('"%s"', quantCols), collapse = ",\n\t\t")
-      codeLines <- sprintf(
-        "\nqfeatures <- readQFeatures(\n\tassayData = input_table,\n\tcolData = %s,\n\trunCol = %s,\n\tquantCols = c(%s),\n\tremoveEmptyCols = %s,\n\tverbose = FALSE\n)",
-        colData,
-        runCol,
-        quantColumns,
-        removeEmptyCols
-      )
+
+    if (!is.null(quantCols)) {
+        quantColumns <- paste(sprintf('"%s"', quantCols), collapse = ",\n\t\t")
+        codeLines <- sprintf(
+            "\nqfeatures <- readQFeatures(\n\tassayData = input_table,\n\tcolData = %s,\n\trunCol = %s,\n\tquantCols = c(%s),\n\tremoveEmptyCols = %s,\n\tverbose = FALSE\n)",
+            colData,
+            runCol,
+            quantColumns,
+            removeEmptyCols
+        )
     } else {
-      
-      codeLines <- sprintf(
-        "\nqfeatures <- readQFeatures(\n\tassayData = input_table,\n\tcolData = %s,\n\trunCol = %s,\n\tquantCols = NULL,\n\tremoveEmptyCols = %s,\n\tverbose = FALSE\n)",
-        colData,
-        runCol,
-        removeEmptyCols
-      )
+        codeLines <- sprintf(
+            "\nqfeatures <- readQFeatures(\n\tassayData = input_table,\n\tcolData = %s,\n\trunCol = %s,\n\tquantCols = NULL,\n\tremoveEmptyCols = %s,\n\tverbose = FALSE\n)",
+            colData,
+            runCol,
+            removeEmptyCols
+        )
     }
-    
+
     if (zero_as_NA && length(qfeatures) > 0) {
         codeLines <- c(codeLines, "\nqfeatures <- zeroIsNA(\n\tobject = qfeatures,\n\ti = seq_along(qfeatures)\n)")
     }

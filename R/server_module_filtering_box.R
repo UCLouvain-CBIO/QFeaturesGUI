@@ -62,29 +62,29 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 typeof(rowData(assays_to_process()[[1]])[[input$annotation_selection]])
             }
         })
-      
+
         output$filtering_ui <- renderUI({
-          if(annotations_type() %in% c("character", "factor")){
-            if(type == "samples"){
-              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(colData(assays_to_process())[[input$annotation_selection]]))
+            if (annotations_type() %in% c("character", "factor")) {
+                if (type == "samples") {
+                    selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(colData(assays_to_process())[[input$annotation_selection]]))
+                } else {
+                    selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(rowData(assays_to_process()[[1]])[[input$annotation_selection]]))
+                }
             } else {
-              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(rowData(assays_to_process()[[1]])[[input$annotation_selection]]))
+                if (type == "samples") {
+                    numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
+                } else {
+                    numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
+                }
             }
-          } else {
-            if(type == "samples"){
-              numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
-            } else {
-              numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
-            }
-          }
         })
-        
+
         server_module_annotation_plot(
             "annotation_plot",
             assays_to_process,
             type,
             reactive({
-                input[[paste0("filter_ui_",type)]]
+                input[[paste0("filter_ui_", type)]]
             }),
             reactive({
                 input$annotation_selection
@@ -95,16 +95,15 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
         )
         condition <- reactive({
             req(annotations_type())
-            if(annotations_type() %in% c("character","factor")){
-              filter_value <- paste0("\"", input[[paste0("filter_ui_",type)]], "\"")
-            }else{
-              filter_value <- input[[paste0("filter_ui_",type)]]
+            if (annotations_type() %in% c("character", "factor")) {
+                filter_value <- paste0("\"", input[[paste0("filter_ui_", type)]], "\"")
+            } else {
+                filter_value <- input[[paste0("filter_ui_", type)]]
             }
             paste(
                 input$annotation_selection,
                 input$filter_operator,
                 filter_value
-                
             )
         })
 
@@ -121,14 +120,13 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 filter_value
             )
         })
-        
+
         return(list(
             condition = condition,
             condition_label = condition_label,
             annotation_selection = reactive(input$annotation_selection),
             filter_operator = reactive(input$filter_operator),
-            
-            filter_value = reactive(input[[paste0("filter_ui_",type)]])
+            filter_value = reactive(input[[paste0("filter_ui_", type)]])
         ))
     })
 }
@@ -151,14 +149,12 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
 #' @importFrom plotly plot_ly renderPlotly
 #' @importFrom shinyBS createAlert closeAlert
 #'
-server_module_annotation_plot <- function(
-      id,
-      assays_to_process,
-      type,
-      filter_value,
-      selected_annotation,
-      filter_operator
-) {
+server_module_annotation_plot <- function(id,
+    assays_to_process,
+    type,
+    filter_value,
+    selected_annotation,
+    filter_operator) {
     moduleServer(id, function(input, output, session) {
         observe({
             req(assays_to_process())
@@ -233,12 +229,10 @@ server_module_annotation_plot <- function(
 #'
 #' @importFrom plotly plot_ly config %>% add_histogram layout add_annotations
 #'
-annotation_plot_wrapper <- function(
-      annotation,
-      filtered_annotation,
-      assay_name,
-      annotation_name
-) {
+annotation_plot_wrapper <- function(annotation,
+    filtered_annotation,
+    assay_name,
+    annotation_name) {
     if (all(is.na(annotation))) {
         plot <- plot_ly(
             x = numeric(0),

@@ -91,29 +91,29 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             updateSelectInput(session,
                 "pca_color",
                 choices = annotation_names(),
-                 selected = "NULL"
+                selected = "NULL"
             )
         })
 
         color_data <- reactive({
             req(single_assay())
             req(input$pca_color)
-            if(input$pca_color != "NULL") {
-              if (id == "features") {
-                  df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
-              } else {
-                  df <- colData(single_assay())[, input$pca_color, drop = FALSE]
-              }
-              if (is.character(df[, 1])) {
-                  df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
-                      paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
-                  )
-              }
-              if (all(is.na(df))) {
-                  df[, 1] <- "NA"
-              }
-              colnames(df) <- input$pca_color
-              return(df)
+            if (input$pca_color != "NULL") {
+                if (id == "features") {
+                    df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
+                } else {
+                    df <- colData(single_assay())[, input$pca_color, drop = FALSE]
+                }
+                if (is.character(df[, 1])) {
+                    df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
+                        paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
+                    )
+                }
+                if (all(is.na(df))) {
+                    df[, 1] <- "NA"
+                }
+                colnames(df) <- input$pca_color
+                return(df)
             }
         })
 
@@ -130,22 +130,22 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
         })
         dataframe <- reactive({
             req(pca_result())
-            if(input$pca_color == 'NULL'){
-              as.data.frame(
-                data.frame(scores(pca_result()))
-              )
+            if (input$pca_color == "NULL") {
+                as.data.frame(
+                    data.frame(scores(pca_result()))
+                )
             } else {
-              req(color_data())
-              scores_df <- as.data.frame(data.frame(scores(pca_result())))
-              scores_df$.qfeaturesgui_row_id <- rownames(scores_df)
-              color_df <- as.data.frame(color_data())
-              color_df$.qfeaturesgui_row_id <- rownames(color_df)
-              as.data.frame(merge(
-                scores_df,
-                color_df,
-                by = ".qfeaturesgui_row_id",
-                sort = FALSE
-              ))
+                req(color_data())
+                scores_df <- as.data.frame(data.frame(scores(pca_result())))
+                scores_df$.qfeaturesgui_row_id <- rownames(scores_df)
+                color_df <- as.data.frame(color_data())
+                color_df$.qfeaturesgui_row_id <- rownames(color_df)
+                as.data.frame(merge(
+                    scores_df,
+                    color_df,
+                    by = ".qfeaturesgui_row_id",
+                    sort = FALSE
+                ))
             }
         })
 

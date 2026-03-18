@@ -13,13 +13,11 @@
 #' @importFrom QFeatures filterFeatures
 #' @importFrom htmltools tags
 #' @importFrom shinydashboard renderInfoBox infoBox
-server_module_filtering_tab <- function(
-      id,
-      step_number,
-      step_rv,
-      parent_rv,
-      type = c("samples", "features")
-) {
+server_module_filtering_tab <- function(id,
+    step_number,
+    step_rv,
+    parent_rv,
+    type = c("samples", "features")) {
     type <- match.arg(type)
 
     moduleServer(id, function(input, output, session) {
@@ -74,7 +72,7 @@ server_module_filtering_tab <- function(
                     return(tags$div(
                         class = "alert alert-warning",
                         style = "text-align: center; max-width: 680px; margin: 10px auto;",
-                        "No filtering boxes yet. Add one from the configuration section."
+                        "No filtering boxes yet. Add one with the 'Add Filtering Condition' button above."
                     ))
                 }
                 tags$div(
@@ -246,22 +244,25 @@ server_module_filtering_tab <- function(
             )
         })
 
-        observeEvent(input$export, {
-            req(processed_assays())
-            loading(paste("Be aware that this operation",
-                "can be quite time consuming for large data sets",
-                sep = " "
-            ))
-            error_handler(
-                add_assays_to_global_rv,
-                component_name = "Add assays to global_rv",
-                processed_qfeatures = processed_assays(),
-                step_number = step_number,
-                type = paste0(type, "_filtering")
-            )
-            step_rv(step_rv() + 1L)
-            removeModal()
-        }, ignoreInit = TRUE)
+        observeEvent(input$export,
+            {
+                req(processed_assays())
+                loading(paste("Be aware that this operation",
+                    "can be quite time consuming for large data sets",
+                    sep = " "
+                ))
+                error_handler(
+                    add_assays_to_global_rv,
+                    component_name = "Add assays to global_rv",
+                    processed_qfeatures = processed_assays(),
+                    step_number = step_number,
+                    type = paste0(type, "_filtering")
+                )
+                step_rv(step_rv() + 1L)
+                removeModal()
+            },
+            ignoreInit = TRUE
+        )
     })
 }
 

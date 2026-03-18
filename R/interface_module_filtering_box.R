@@ -39,7 +39,7 @@ interface_module_filtering_box <- function(id, box_title, annotation_choices = N
             )
         ),
         uiOutput(
-          NS(id, "filtering_ui")
+            NS(id, "filtering_ui")
         )
     )
 }

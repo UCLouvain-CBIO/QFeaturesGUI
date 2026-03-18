@@ -31,42 +31,33 @@ interface_module_filtering_tab <- function(id, type = c("samples", "features")) 
             )
         ),
         fluidRow(
-            column(2),
-            column(
-                8,
+            box(
+                title = "Filtering",
+                status = "primary",
+                width = 12,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                actionButton(NS(id, "add_box"), "Add Filtering Condition",
+                    width = "100%",
+                    class = "load-button no-bottom-margin"
+                ),
+                actionButton(NS(id, "remove_box"), "Remove Last Condition",
+                    width = "100%",
+                    class = "suppress-button"
+                ),
                 box(
-                    title = "Filtering Boxes Configuration",
+                    title = "Filtering Boxes",
                     status = "primary",
                     width = 12,
-                    solidHeader = TRUE,
+                    solidHeader = FALSE,
                     collapsible = TRUE,
-                    uiOutput(NS(id, "boxes_summary")),
-                    style = "min-height: 200px",
-                    actionButton(NS(id, "add_box"), "Add Box",
-                        width = "100%",
-                        class = "load-button no-bottom-margin"
-                    ),
-                    actionButton(NS(id, "remove_box"), "Remove Last Box",
-                        width = "100%",
-                        class = "suppress-button"
-                    )
-                )
-            ),
-            column(2)
-        ),
-        fluidRow(
-            uiOutput(NS(id, "filtering_boxes")),
-            style = "margin-bottom: 4px;"
-        ),
-        fluidRow(
-            column(2),
-            column(
-                8,
+                    uiOutput(NS(id, "filtering_boxes"))
+                ),
                 box(
                     title = "Filtering Summary",
                     status = "primary",
                     width = 12,
-                    solidHeader = TRUE,
+                    solidHeader = FALSE,
                     collapsible = TRUE,
                     style = "min-height: 180px",
                     uiOutput(NS(id, "filtering_summary")),
@@ -76,8 +67,7 @@ interface_module_filtering_tab <- function(id, type = c("samples", "features")) 
                         class = "load-button"
                     )
                 )
-            ),
-            column(2)
+            )
         ),
         fluidRow(
             box(
