@@ -136,10 +136,15 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
               )
             } else {
               req(color_data())
+              scores_df <- as.data.frame(data.frame(scores(pca_result())))
+              scores_df$.qfeaturesgui_row_id <- rownames(scores_df)
+              color_df <- as.data.frame(color_data())
+              color_df$.qfeaturesgui_row_id <- rownames(color_df)
               as.data.frame(merge(
-                data.frame(scores(pca_result())),
-                color_data(),
-                by = "row.names"
+                scores_df,
+                color_df,
+                by = ".qfeaturesgui_row_id",
+                sort = FALSE
               ))
             }
         })

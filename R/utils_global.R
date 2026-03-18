@@ -546,7 +546,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
       
     } else {
       colorFormula <- as.formula(paste0("~", color_name))
-      text <- ~Row.names
+      text <- ~.qfeaturesgui_row_id
       colorPalette = if (is.numeric(df[[color_name]])) {
         viridisLite::viridis(10)
       } else {
@@ -885,20 +885,23 @@ plotlyridges <- function(
 #'
 
 summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NULL) {
-    combined_df <- data.frame(PSM = character(), intensity = numeric(), sample = character())
+    combined_df <- data.frame()
     for (assayName in names(qfeatures)) {
         assayData <- as.data.frame(assay(qfeatures[[assayName]]))
-
-        assayData <- pivot_longer(assayData, everything(), names_to = "sample", values_to = "intensity")
         assayData$PSM <- rownames(assayData)
+        assayData <- pivot_longer(
+            assayData,
+            cols = -PSM,
+            names_to = "sample",
+            values_to = "intensity"
+        )
 
         matched_indices <- match(assayData$sample, rownames(colData(qfeatures)))
-        length(matched_indices)
-        assayData$sample_type <- colData(qfeatures)[matched_indices, sample_column]
+        assayData$sample_type <- as.vector(colData(qfeatures)[matched_indices, sample_column])
 
         if (!is.null(feature_column)) {
             matched_indices <- match(assayData$PSM, rownames(rowData(qfeatures[[assayName]])))
-            assayData$feature_type <- rowData(qfeatures[[assayName]])[matched_indices, feature_column]
+            assayData$feature_type <- as.vector(rowData(qfeatures[[assayName]])[matched_indices, feature_column])
         }
         combined_df <- rbind(combined_df, assayData)
     }
@@ -943,9 +946,30 @@ features_boxplot <- function(assays_df) {
 #'
 
 unique_feature_boxplot <- function(assays_df, feature) {
-    plot <- ggplot(assays_df[assays_df$feature_type == feature, , drop = FALSE], aes(x = sample_type, y = intensity, colour = sample_type)) +
+    df <- assays_df[assays_df$feature_type == feature, , drop = FALSE]
+    if (nrow(df) == 0) {
+        return(plot_ly(
+            x = numeric(0),
+            y = numeric(0),
+            type = "scatter",
+            mode = "markers"
+        ) %>%
+            add_annotations(
+                text = "No values available for this feature.",
+                xref = "paper",
+                yref = "paper",
+                x = 0.5,
+                y = 0.5,
+                showarrow = FALSE
+            ) %>%
+            layout(
+                showlegend = FALSE,
+                xaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE),
+                yaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE)
+            ))
+    }
+    plot <- ggplot(df, aes(x = sample_type, y = intensity, colour = sample_type)) +
         geom_boxplot()
-
     suppressWarnings(ggplotly(plot))
 }
 
