@@ -18,16 +18,9 @@ interface_module_aggregation_tab <- function(id) {
       solidHeader = TRUE,
       collapsible = FALSE,
       fluidRow(
-        box(
-          title = "",
-          status = "primary",
-          width = 9,
-          solidHeader = FALSE,
-          collapsible = TRUE,
-          withSpinner(plotlyOutput(outputId = NS(id, "density_plot")),
-                      type = 6,
-                      color = "#3c8dbc"
-          )
+        interface_module_boxplot_box(
+          NS(id,"aggregation_boxplot"),
+          title = "Aggregation boxplot"
         ),
         box(
           title = "Settings",
@@ -52,7 +45,13 @@ interface_module_aggregation_tab <- function(id) {
             inputId = NS(id, "fcol"),
             "rowData variable defining the features of the assay to aggregate",
             choices = NULL,
-            multiple = TRUE
+            multiple = TRUE,
+          ),
+          br(),
+          selectizeInput(
+            inputId = NS(id, "features"),
+            "Features to plot",
+            choices =  NULL
           ),
           br(),
           h4("Plot options"),
@@ -60,6 +59,12 @@ interface_module_aggregation_tab <- function(id) {
             inputId = NS(id, "color"),
             label = "Color by",
             choices = NULL
+          ),
+          actionButton(
+            inputId = NS(id, "aggregate"),
+            label = "Aggregate",
+            width = "100%",
+            class = "load-button" 
           )
         )
       )
@@ -79,6 +84,20 @@ interface_module_aggregation_tab <- function(id) {
       ),
       trigger = "hover",
       placement = "top"
+    )
+  )
+}
+
+interface_module_boxplot_box <- function(id, title) {
+  box(
+    title = title,
+    status = "primary",
+    width = 9,
+    solidHeader = TRUE,
+    collapsible = FALSE,
+    withSpinner(plotOutput(outputId = NS(id, "boxplot")),
+      type = 6,
+      color = "#3c8dbc"
     )
   )
 }
