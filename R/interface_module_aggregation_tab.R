@@ -44,8 +44,7 @@ interface_module_aggregation_tab <- function(id) {
           selectInput(
             inputId = NS(id, "fcol"),
             "rowData variable defining the features of the assay to aggregate",
-            choices = NULL,
-            multiple = TRUE,
+            choices = NULL
           ),
           br(),
           selectizeInput(

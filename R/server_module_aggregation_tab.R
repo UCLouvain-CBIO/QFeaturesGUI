@@ -61,8 +61,18 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    processed_assays <- eventReactive(input$fcol, {
+    observe({
       req(parent_assays())
+      updateSelectInput(session,
+                        "color",
+                        choices = colnames(colData(parent_assays()))
+      )
+    })
+    
+    
+    processed_assays <- eventReactive(input$aggregate, {
+      req(parent_assays())
+      req(input$fcol)
       error_handler(
         aggregation_qfeatures,
         component_name = "aggregation",
@@ -72,13 +82,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    observe({
-      req(parent_assays())
-      updateSelectInput(session,
-                        "color",
-                        choices = colnames(colData(parent_assays()))
-      )
-    })
+    
     # output$density_plot <- renderPlotly({
     #   req(processed_assays())
     #   density_by_sample_plotly(
@@ -89,6 +93,8 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     observe({
       req(processed_assays())
       req(input$color)
+      req(input$fcol)
+      req(input$features)
       server_module_boxplot_box(
         id = "aggregation_boxplot",
         qf = parent_assays(),
@@ -116,6 +122,19 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     })
   })
 }
+
+#' Server for the module boxplot box
+#'
+#' @param id module id
+#' @return The server logic for the aggregation tab
+#' @rdname INTERNAL_server_module_aggregation_tab
+#' @keywords internal
+#'
+#' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
+#' @importFrom ggplot2 geom_boxplot geom_point ggplot theme xlab ylab
+#' @importFrom dplyr mutate
+#' @importFrom tibble rownames_to_column
+#'
 
 server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color) {
   moduleServer(id, function(input, output, session){
