@@ -343,6 +343,13 @@ feature_filtering <- function(qfeatures, condition_specs) {
 
 
 apply_filter_operator <- function(values, operator, target) {
+    if (operator %in% c("==", "!=") && length(target) > 1) {
+        target_values <- as.character(target)
+        if (operator == "==") {
+            return(values %in% target_values)
+        }
+        return(!(values %in% target_values))
+    }
     operator_functions <- list(
         "==" = `==`,
         "!=" = `!=`,

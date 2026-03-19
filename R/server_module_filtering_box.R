@@ -108,7 +108,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             if (!is.null(state)) {
                 state_filter_value <- state$filter_value
             }
-            if (annotations_type() %in% c("character", "factor")) {
+            is_categorical <- annotations_type() %in% c("character", "factor")
+            is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            if (is_categorical) {
                 if (type == "samples") {
                     choices <- unique(combined_samples_annotations()[[input$annotation_selection]])
                 } else {
@@ -116,15 +118,21 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 }
                 selected_value <- NULL
                 if (!is.null(state_filter_value)) {
-                    state_filter_value <- as.character(state_filter_value)[1]
-                    if (state_filter_value %in% as.character(choices)) {
-                        selected_value <- state_filter_value
+                    if (is_equality_operator) {
+                        state_filter_value <- as.character(state_filter_value)
+                        selected_value <- intersect(as.character(choices), state_filter_value)
+                    } else {
+                        state_filter_value <- as.character(state_filter_value)[1]
+                        if (state_filter_value %in% as.character(choices)) {
+                            selected_value <- state_filter_value
+                        }
                     }
                 }
                 selectInput(
                     session$ns(paste0("filter_ui_", type)),
                     label = "Filtering Value",
                     choices = choices,
+                    multiple = is_equality_operator,
                     selected = selected_value
                 )
             } else {
@@ -169,14 +177,27 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             } else {
                 input$annotation_selection
             }
-            filter_value <- input[[paste0("filter_ui_", type)]]
-            if (annotations_type() %in% c("character", "factor")) {
-                filter_value <- paste0("\"", filter_value, "\"")
+            if (annotations_type() %in% c("character", "factor") &&
+                input$filter_operator %in% c("==", "!=")) {
+                selected_values <- as.character(input[[paste0("filter_ui_", type)]])
+                quoted_values <- sprintf("\"%s\"", selected_values)
+                if (length(quoted_values) == 0) {
+                    filter_value_label <- "\"\""
+                } else {
+                    filter_value_label <- paste(quoted_values, collapse = " or ")
+                }
+            } else {
+                filter_value <- input[[paste0("filter_ui_", type)]]
+                if (annotations_type() %in% c("character", "factor")) {
+                    filter_value_label <- paste0("\"", filter_value, "\"")
+                } else {
+                    filter_value_label <- as.character(filter_value)
+                }
             }
             paste(
                 annotation_label,
                 operator_labels[[input$filter_operator]],
-                filter_value
+                filter_value_label
             )
         })
 
@@ -263,24 +284,15 @@ server_module_annotation_plot <- function(id,
         })
         filtered_annotation <- reactive({
             req(annotation_values())
-            operator_functions <- list(
-                "==" = `==`,
-                "!=" = `!=`,
-                "<" = `<`,
-                "<=" = `<=`,
-                ">" = `>`,
-                ">=" = `>=`
-            )
             selected_operator <- filter_operator()
-            req(selected_operator %in% names(operator_functions))
-            operator <- operator_functions[[selected_operator]]
-            subset(
-                annotation_values(),
-                operator(
-                    annotation_values(),
-                    filter_value()
-                )
+            req(selected_operator)
+            condition_mask <- apply_filter_operator(
+                values = annotation_values(),
+                operator = selected_operator,
+                target = filter_value()
             )
+            condition_mask[is.na(condition_mask)] <- FALSE
+            annotation_values()[condition_mask]
         })
         observe({
             req(annotation_values())

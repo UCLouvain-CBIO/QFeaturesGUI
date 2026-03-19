@@ -985,21 +985,21 @@ unique_feature_boxplot <- function(assays_df, feature) {
 #' @importFrom QFeatures rbindRowData
 #' @importFrom SummarizedExperiment colData
 
+count_features_rows <- function(qfeatures) {
+    sum(vapply(seq_along(qfeatures), function(i) {
+        nrow(qfeatures[[i]])
+    }, integer(1)))
+}
+
+
 percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type) {
     type <- match.arg(type, c("features", "samples"))
     if (type == "features") {
-        before_features_nrow <- nrow(
-            rbindRowData(
-                qfeatures_before_filtering,
-                seq_along(qfeatures_after_filtering)
-            )
-        )
-        after_features_nrow <- nrow(
-            rbindRowData(
-                qfeatures_after_filtering,
-                seq_along(qfeatures_after_filtering)
-            )
-        )
+        before_features_nrow <- count_features_rows(qfeatures_before_filtering)
+        after_features_nrow <- count_features_rows(qfeatures_after_filtering)
+        if (before_features_nrow == 0L) {
+            return(0)
+        }
         pct_removed <- round(
             (before_features_nrow - after_features_nrow)
             / before_features_nrow * 100,
@@ -1042,17 +1042,8 @@ percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filterin
 number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type) {
     type <- match.arg(type, c("features", "samples"))
     if (type == "features") {
-        nb_removed <- nrow(
-            rbindRowData(
-                qfeatures_before_filtering,
-                seq_along(qfeatures_before_filtering)
-            )
-        ) - nrow(
-            rbindRowData(
-                qfeatures_after_filtering,
-                seq_along(qfeatures_after_filtering)
-            )
-        )
+        nb_removed <- count_features_rows(qfeatures_before_filtering) -
+            count_features_rows(qfeatures_after_filtering)
     } else {
         nb_removed <- nrow(
             colData(
