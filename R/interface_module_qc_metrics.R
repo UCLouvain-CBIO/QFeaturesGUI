@@ -56,6 +56,7 @@ interface_module_qc_metrics <- function(id, type) {
                 width = 12,
                 solidHeader = TRUE,
                 collapsible = TRUE,
+                collapsed = TRUE,
                 interface_module_viz_box(NS(id, "viz_box"))
             )
         )

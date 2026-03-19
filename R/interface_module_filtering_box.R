@@ -65,15 +65,6 @@ interface_module_annotation_plot <- function(id) {
         solidHeader = TRUE,
         collapsible = TRUE,
         collapsed = TRUE,
-        sidebar = boxSidebar(
-            id = NS(id, "sidebar"),
-            width = 100,
-            selectInput(
-                inputId = NS(id, "selected_assay"),
-                label = "Select Assay",
-                choices = NULL
-            )
-        ),
         withSpinner(plotlyOutput(NS(id, "plot")),
             type = 6,
             color = "#3c8dbc"

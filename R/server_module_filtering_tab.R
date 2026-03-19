@@ -124,6 +124,12 @@ server_module_filtering_tab <- function(id,
                                 if (!is.null(box_state)) {
                                     annotation_selection <- box_state$annotation_selection
                                 }
+                                annotation_label <- if (!is.null(annotation_selection) &&
+                                    annotation_selection == ".qfeaturesgui_rowname") {
+                                    "Rowname"
+                                } else {
+                                    annotation_selection
+                                }
                                 tags$div(
                                     class = "list-group-item",
                                     tags$div(
@@ -134,7 +140,7 @@ server_module_filtering_tab <- function(id,
                                         style = "margin-top: 4px; font-size: 13px;",
                                         paste0(
                                             "Annotation: ",
-                                            display_or_default(annotation_selection, "Not selected yet")
+                                            display_or_default(annotation_label, "Not selected yet")
                                         )
                                     )
                                 )
@@ -271,7 +277,9 @@ server_module_filtering_tab <- function(id,
 #' @keywords internal
 #'
 sample_filtering <- function(qfeatures, condition_specs) {
+    rowname_selector_key <- ".qfeaturesgui_rowname"
     sample_metadata <- as.data.frame(SummarizedExperiment::colData(qfeatures))
+    sample_metadata[[rowname_selector_key]] <- rownames(SummarizedExperiment::colData(qfeatures))
     keep_mask <- rep(TRUE, nrow(sample_metadata))
 
     for (spec in condition_specs) {
@@ -302,10 +310,12 @@ sample_filtering <- function(qfeatures, condition_specs) {
 #' @keywords internal
 #'
 feature_filtering <- function(qfeatures, condition_specs) {
+    rowname_selector_key <- ".qfeaturesgui_rowname"
     filtered_qfeatures <- qfeatures
     for (assay_name in names(qfeatures)) {
         assay_object <- qfeatures[[assay_name]]
         feature_metadata <- as.data.frame(SummarizedExperiment::rowData(assay_object))
+        feature_metadata[[rowname_selector_key]] <- rownames(SummarizedExperiment::rowData(assay_object))
         keep_mask <- rep(TRUE, nrow(feature_metadata))
 
         for (spec in condition_specs) {
