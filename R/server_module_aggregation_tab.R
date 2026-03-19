@@ -164,13 +164,18 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
     
     data_final$aggregation <- factor(data_final$aggregation, levels = unique(data_final$aggregation))
     
-    output$boxplot <- renderPlot({
-      ggplot(data_final, aes(x = aggregation, y = intensity))+geom_boxplot(aes(colour = condition)) +
-        geom_point(position = position_dodge(0.75), aes(colour = condition))+
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))+
-        xlab("Features name")+
-        ylab("Intensity (log2)")
-      
+    output$boxplot <- renderPlotly({
+      plot_ly(
+        data = data_final,
+        x = ~aggregation,
+        y = ~intensity,
+        color = ~condition,
+        type = "box",
+        boxpoints = "all",
+        jitter = 0.3,
+        pointpos = 0
+      ) %>%
+        layout(boxmode = "group")
     })
   }) 
 }

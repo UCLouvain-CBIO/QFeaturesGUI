@@ -94,7 +94,7 @@ interface_module_boxplot_box <- function(id, title) {
     width = 9,
     solidHeader = TRUE,
     collapsible = FALSE,
-    withSpinner(plotOutput(outputId = NS(id, "boxplot")),
+    withSpinner(plotlyOutput(outputId = NS(id, "boxplot")),
       type = 6,
       color = "#3c8dbc"
     )
