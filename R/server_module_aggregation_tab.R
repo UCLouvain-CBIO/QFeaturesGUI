@@ -81,15 +81,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         fcol = input$fcol
       )
     })
-    
-    
-    # output$density_plot <- renderPlotly({
-    #   req(processed_assays())
-    #   density_by_sample_plotly(
-    #     qfeatures = processed_assays(),
-    #     color = input$color
-    #   )
-    # })
+
     observe({
       req(processed_assays())
       req(input$color)
@@ -101,7 +93,8 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         qf_aggregate = processed_assays(),
         aggregateBy = input$fcol,
         feature = input$features,
-        color = input$color
+        color = input$color, 
+        showPoints = reactive(input$addPoints)
       )
     })
     
@@ -134,9 +127,10 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' @importFrom ggplot2 geom_boxplot geom_point ggplot theme xlab ylab
 #' @importFrom dplyr mutate
 #' @importFrom tibble rownames_to_column
+#' @importFrom QFeatures aggregateFeatures
 #'
 
-server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color) {
+server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color, showPoints) {
   moduleServer(id, function(input, output, session){
     df_qf_list <- list()
     df_qf_aggregate_list <- list()
@@ -164,18 +158,38 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
     
     data_final$aggregation <- factor(data_final$aggregation, levels = unique(data_final$aggregation))
     
+    
     output$boxplot <- renderPlotly({
+      if(showPoints()) {
+        pointHover = paste0(
+          "<b>%{text}</b><br>",
+          "<extra></extra>"
+        )
+        boxHover = "none"
+        boxpoints = "all"
+        jitter = 0.3
+        pointpos = 0
+      } else {
+        boxHover = "y"
+        pointHover = "none"
+        boxpoints = "suspectedoutliers"
+        jitter = 0
+        pointpos = 0
+      }
       plot_ly(
         data = data_final,
         x = ~aggregation,
         y = ~intensity,
         color = ~condition,
+        text = ~sample,
         type = "box",
-        boxpoints = "all",
-        jitter = 0.3,
-        pointpos = 0
+        boxpoints = boxpoints,
+        jitter = jitter,
+        pointpos = pointpos,
+        hoverinfo = boxHover,
+        hovertemplate = pointHover
       ) %>%
         layout(boxmode = "group")
-    })
+    }) 
   }) 
 }

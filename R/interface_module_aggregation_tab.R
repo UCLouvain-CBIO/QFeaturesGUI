@@ -59,6 +59,11 @@ interface_module_aggregation_tab <- function(id) {
             label = "Color by",
             choices = NULL
           ),
+          checkboxInput(
+            inputId = NS(id, "addPoints"),
+            label = "Show points",
+            value = TRUE
+          ),
           actionButton(
             inputId = NS(id, "aggregate"),
             label = "Aggregate",
