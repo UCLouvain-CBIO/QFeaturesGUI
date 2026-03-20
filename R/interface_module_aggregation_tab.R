@@ -92,6 +92,16 @@ interface_module_aggregation_tab <- function(id) {
   )
 }
 
+#' boxplot box (section) ui builder
+#'
+#' @return A shiny tagList object that contains the boxplot box UI components
+#' @rdname INTERNAL_interface_module_boxplot_box
+#' @keywords internal
+#'
+#' @importFrom shiny fluidRow NS actionButton icon uiOutput
+#' @importFrom shinydashboardPlus box
+#'
+
 interface_module_boxplot_box <- function(id, title) {
   box(
     title = title,

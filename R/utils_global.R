@@ -1097,4 +1097,3 @@ aggregation_qfeatures <- function(qfeatures, method,
   names(el) <- names(qfeatures)
   QFeatures(el, colData = colData(qfeatures))
 }
-

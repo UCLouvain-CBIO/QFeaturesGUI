@@ -42,7 +42,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         inputId = "fun"
       )
     })
-    ### pass unique features into utils.r
+    
     unique_features <- reactive({
       req(parent_assays())
       req(input$fcol)
@@ -52,6 +52,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       features_vector <- unlist(features_list)
       unique(features_vector)
     })
+    
     observe({
       req(unique_features())
       updateSelectizeInput(
@@ -123,8 +124,8 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' Server for the module boxplot box
 #'
 #' @param id module id
-#' @return The server logic for the aggregation tab
-#' @rdname INTERNAL_server_module_aggregation_tab
+#' @return The server logic for the boxplot box
+#' @rdname INTERNAL_server_module_boxplot_box
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
