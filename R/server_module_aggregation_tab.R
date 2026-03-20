@@ -69,7 +69,6 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    
     processed_assays <- eventReactive(input$aggregate, {
       req(parent_assays())
       req(input$fcol)
@@ -81,11 +80,19 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         fcol = input$fcol
       )
     })
-
+    
+    observeEvent(input$aggregate,{
+      shinycssloaders::showPageSpinner(
+        type = "6",
+        caption = "The aggregation step can be quite time consuming for large datasets"
+      )
+      req(processed_assays())
+      shinycssloaders::hidePageSpinner()
+    })
+    
     observe({
       req(processed_assays())
       req(input$color)
-      req(input$fcol)
       req(input$features)
       server_module_boxplot_box(
         id = "aggregation_boxplot",
@@ -97,9 +104,6 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         showPoints = reactive(input$addPoints)
       )
     })
-    
-    
-    
     
     observeEvent(input$export, {
       req(processed_assays())
@@ -161,17 +165,10 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
     
     output$boxplot <- renderPlotly({
       if(showPoints()) {
-        pointHover = paste0(
-          "<b>%{text}</b><br>",
-          "<extra></extra>"
-        )
-        boxHover = "none"
         boxpoints = "all"
         jitter = 0.3
         pointpos = 0
       } else {
-        boxHover = "y"
-        pointHover = "none"
         boxpoints = "suspectedoutliers"
         jitter = 0
         pointpos = 0
@@ -186,8 +183,11 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
         boxpoints = boxpoints,
         jitter = jitter,
         pointpos = pointpos,
-        hoverinfo = boxHover,
-        hovertemplate = pointHover
+        hoveron = if(showPoints()) "points" else "boxes",
+        hovertemplate = paste0(
+          "<b>%{text}</b><br>",
+          "<extra></extra>"
+        )
       ) %>%
         layout(boxmode = "group")
     }) 
