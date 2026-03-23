@@ -619,6 +619,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #'   `.qf$qfeatures`. Each assay is renamed with a step-number suffix following
 #'   the `_(QFeaturesGUI#<step_number>)_<type>_<step_number>` convention, and
 #'   an assay link from the parent assay is recorded.
+#'   Empty assays are skipped and not added.
 #' @param step_number `int` the workflow step number, used to construct the new
 #'   assay names and links
 #' @param type `character(1)` label describing the processing type (e.g.
@@ -632,29 +633,59 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 
+#' Check whether an assay set is empty
+#'
+#' @param assay_object a SummarizedExperiment-like assay object
+#'
+#' @return a logical scalar
+#' @rdname INTERNAL_is_empty_set
+#' @keywords internal
+is_empty_set <- function(assay_object) {
+    nrow(assay_object) == 0L
+}
+
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
+    n_added <- 0L
+    n_skipped_empty <- 0L
     for (name in names(processed_qfeatures)) {
+        assay_to_add <- processed_qfeatures[[name]]
+        if (is_empty_set(assay_to_add)) {
+            n_skipped_empty <- n_skipped_empty + 1L
+            next
+        }
+
         new_name <- paste0(
             strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
             "_(QFeaturesGUI#", step_number, ")",
             "_", type, "_", step_number
         )
 
-        .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+        .qf$qfeatures[[new_name]] <- assay_to_add
 
         .qf$qfeatures <- addAssayLink(
             .qf$qfeatures,
             from = name,
             to = new_name
         )
+        n_added <- n_added + 1L
     }
-    n <- length(processed_qfeatures)
+
+    alert_text <- paste0(
+        n_added, " set", if (n_added != 1L) "s" else "",
+        " added to QFeatures."
+    )
+    if (n_skipped_empty > 0L) {
+        alert_text <- paste0(
+            alert_text, " ",
+            n_skipped_empty, " empty set",
+            if (n_skipped_empty != 1L) "s were" else " was",
+            " skipped."
+        )
+    }
+
     shinyalert(
         title = "Step saved",
-        text = paste0(
-            n, " set", if (n != 1) "s" else "",
-            " added to QFeatures."
-        ),
+        text = alert_text,
         closeOnClickOutside = TRUE,
         type = "success",
         confirmButtonCol = "#3c8dbc"
