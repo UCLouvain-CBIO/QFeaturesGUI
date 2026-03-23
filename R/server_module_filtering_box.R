@@ -103,6 +103,18 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             }
         })
 
+        is_empty_categorical_multiselect <- reactive({
+            req(annotations_type())
+            req(input$filter_operator)
+            is_categorical <- annotations_type() %in% c("character", "factor")
+            is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            if (!(is_categorical && is_equality_operator)) {
+                return(FALSE)
+            }
+            filter_value <- input[[paste0("filter_ui_", type)]]
+            !is.null(filter_value) && length(filter_value) == 0
+        })
+
         output$filtering_ui <- renderUI({
             state_filter_value <- NULL
             if (!is.null(state)) {
@@ -152,6 +164,14 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                     )
                 }
             }
+        })
+
+        observe({
+            feedbackDanger(
+                inputId = paste0("filter_ui_", type),
+                show = is_empty_categorical_multiselect(),
+                text = "Select at least one value for this condition."
+            )
         })
 
         server_module_annotation_plot(
@@ -206,7 +226,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$filter_operator)
             req(input$filter_operator %in% names(operator_labels))
             filter_value <- input[[paste0("filter_ui_", type)]]
-            req(!is.null(filter_value))
+            if (is.null(filter_value) || is_empty_categorical_multiselect()) {
+                return(NULL)
+            }
             list(
                 annotation = input$annotation_selection,
                 operator = input$filter_operator,

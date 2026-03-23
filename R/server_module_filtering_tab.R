@@ -106,50 +106,6 @@ server_module_filtering_tab <- function(id,
                 })
             }
 
-            output$boxes_summary <- renderUI({
-                tags$div(
-                    tags$p(tags$b(paste0("Number of boxes: ", n_boxes()))),
-                    if (n_boxes() == 0) {
-                        tags$div(
-                            class = "alert alert-warning",
-                            style = "text-align: center; max-width: 680px; margin: 10px auto;",
-                            "Add a filtering box to configure your first condition."
-                        )
-                    } else {
-                        tags$div(
-                            class = "list-group",
-                            lapply(seq_len(n_boxes()), function(i) {
-                                box_state <- boxes_states[[paste0("box_", i)]]
-                                annotation_selection <- NULL
-                                if (!is.null(box_state)) {
-                                    annotation_selection <- box_state$annotation_selection
-                                }
-                                annotation_label <- if (!is.null(annotation_selection) &&
-                                    annotation_selection == ".qfeaturesgui_rowname") {
-                                    "Rowname"
-                                } else {
-                                    annotation_selection
-                                }
-                                tags$div(
-                                    class = "list-group-item",
-                                    tags$div(
-                                        style = "font-weight: 600;",
-                                        paste0("Filtering Box #", i)
-                                    ),
-                                    tags$div(
-                                        style = "margin-top: 4px; font-size: 13px;",
-                                        paste0(
-                                            "Annotation: ",
-                                            display_or_default(annotation_label, "Not selected yet")
-                                        )
-                                    )
-                                )
-                            })
-                        )
-                    }
-                )
-            })
-
             output$filtering_summary <- renderUI({
                 if (n_boxes() == 0) {
                     return(tags$div(
@@ -196,7 +152,8 @@ server_module_filtering_tab <- function(id,
                 is.list(spec) &&
                     !is.null(spec$annotation) &&
                     !is.null(spec$operator) &&
-                    !is.null(spec$value)
+                    !is.null(spec$value) &&
+                    length(spec$value) > 0
             }, specs)
             specs
         })
@@ -343,6 +300,9 @@ feature_filtering <- function(qfeatures, condition_specs) {
 
 
 apply_filter_operator <- function(values, operator, target) {
+    if (length(target) == 0) {
+        return(rep(FALSE, length(values)))
+    }
     if (operator %in% c("==", "!=") && length(target) > 1) {
         target_values <- as.character(target)
         if (operator == "==") {

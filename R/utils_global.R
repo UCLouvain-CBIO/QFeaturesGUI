@@ -884,10 +884,22 @@ plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolo
 #'
 
 summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NULL) {
-    combined_df <- data.frame()
+    combined_df <- data.frame(
+        PSM = character(0),
+        sample = character(0),
+        intensity = numeric(0),
+        sample_type = character(0),
+        stringsAsFactors = FALSE
+    )
+    if (!is.null(feature_column)) {
+        combined_df$feature_type <- character(0)
+    }
     for (assayName in names(qfeatures)) {
         assayData <- as.data.frame(assay(qfeatures[[assayName]]))
         assayData$PSM <- rownames(assayData)
+        if (ncol(assayData) <= 1L) {
+            next
+        }
         assayData <- pivot_longer(
             assayData,
             cols = -PSM,
@@ -1016,6 +1028,9 @@ percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filterin
                 qfeatures_after_filtering
             )
         )
+        if (ncol_before_filtering == 0L) {
+            return(0)
+        }
         pct_removed <- round(
             (ncol_before_filtering - ncol_after_filtering)
             / ncol_before_filtering * 100,

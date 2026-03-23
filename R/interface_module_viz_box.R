@@ -16,7 +16,7 @@ interface_module_viz_box <- function(id) {
             box(
                 title = "Parameters",
                 status = "primary",
-                soldHeader = FALSE,
+                solidHeader = FALSE,
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
