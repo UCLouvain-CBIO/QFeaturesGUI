@@ -117,6 +117,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         varTo = input$fcol,
         varFrom = input$fcol
       )
+      step_rv(step_rv() + 1L)
     })
   })
 }

@@ -624,6 +624,8 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @param type `character(1)` label describing the processing type (e.g.
 #'   `"samples_filtering"`, `"log_transformation"`), embedded in the new assay
 #'   names
+#' @param varFrom see [QFeatures::addAssayLink].
+#' @param varTo see [QFeatures::addAssayLink].
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
@@ -632,7 +634,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 
-add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
+add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varFrom = NULL, varTo = NULL) {
     for (name in names(processed_qfeatures)) {
         new_name <- paste0(
             strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
@@ -641,12 +643,22 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
         )
 
         .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
-
-        .qf$qfeatures <- addAssayLink(
+        if (is.null(varFrom) || is.null(varTo)) {
+          .qf$qfeatures <- addAssayLink(
             .qf$qfeatures,
             from = name,
             to = new_name
-        )
+          )
+        } else {
+          .qf$qfeatures <- addAssayLink(
+            .qf$qfeatures,
+            from = name,
+            to = new_name,
+            varFrom = varFrom,
+            varTo = varTo
+          )
+        }
+        
     }
     n <- length(processed_qfeatures)
     shinyalert(
