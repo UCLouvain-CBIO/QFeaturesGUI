@@ -36,7 +36,10 @@ Imports:
     tidyr,
     shinyjs,
     rmarkdown,
-    shinyalert
+    shinyalert,
+    tibble,
+    dplyr,
+    tidyr
 Depends:
     shinyBS,
     R (>= 4.3.0)

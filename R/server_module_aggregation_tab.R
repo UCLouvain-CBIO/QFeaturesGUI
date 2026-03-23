@@ -124,7 +124,13 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' Server for the module boxplot box
 #'
 #' @param id module id
-#' @return The server logic for the boxplot box
+#' @param qf qfeatures object before aggregation
+#' @param qf_aggregate qfeatures object after aggregation
+#' @param aggregateBy data to aggregate QFeatures object on
+#' @param feature feature to plot
+#' @param color variable to use for the color
+#' @param showPoints logical for hide/show points on boxplot
+#' @return a boxplot
 #' @rdname INTERNAL_server_module_boxplot_box
 #' @keywords internal
 #'
