@@ -140,7 +140,6 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' @importFrom tibble rownames_to_column
 #' @importFrom QFeatures aggregateFeatures
 #' @importFrom stats na.exclude
-#' @importFrom base as.data.frame
 #'
 
 server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color, showPoints) {
