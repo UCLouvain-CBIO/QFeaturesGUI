@@ -140,12 +140,12 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                         }
                     }
                 }
-                selectInput(
+                selectizeInput(
                     session$ns(paste0("filter_ui_", type)),
                     label = "Filtering Value",
-                    choices = choices,
+                    choices = NULL,
                     multiple = is_equality_operator,
-                    selected = selected_value
+                    selected = NULL
                 )
             } else {
                 numeric_value <- suppressWarnings(as.numeric(state_filter_value)[1])
@@ -164,6 +164,46 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                     )
                 }
             }
+        })
+
+        observe({
+            req(input$annotation_selection)
+            req(input$filter_operator)
+            req(annotations_type())
+            is_categorical <- annotations_type() %in% c("character", "factor")
+            if (!is_categorical) {
+                return()
+            }
+            if (type == "samples") {
+                choices <- unique(combined_samples_annotations()[[input$annotation_selection]])
+            } else {
+                choices <- unique(combined_features_annotations()[[input$annotation_selection]])
+            }
+
+            state_filter_value <- NULL
+            if (!is.null(state)) {
+                state_filter_value <- state$filter_value
+            }
+            is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            selected_value <- NULL
+            if (!is.null(state_filter_value)) {
+                if (is_equality_operator) {
+                    state_filter_value <- as.character(state_filter_value)
+                    selected_value <- intersect(as.character(choices), state_filter_value)
+                } else {
+                    state_filter_value <- as.character(state_filter_value)[1]
+                    if (state_filter_value %in% as.character(choices)) {
+                        selected_value <- state_filter_value
+                    }
+                }
+            }
+            updateSelectizeInput(
+                session,
+                inputId = paste0("filter_ui_", type),
+                choices = choices,
+                selected = selected_value,
+                server = TRUE
+            )
         })
 
         observe({
