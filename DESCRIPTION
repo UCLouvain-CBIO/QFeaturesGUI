@@ -39,7 +39,9 @@ Imports:
     shinyalert,
     tibble,
     dplyr,
-    tidyr
+    tidyr,
+    matrixStats,
+    MsCoreUtils
 Depends:
     shinyBS,
     R (>= 4.3.0)

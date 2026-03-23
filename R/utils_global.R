@@ -1078,6 +1078,8 @@ annotation_cols <- function(x, what) {
 #' @keywords internal
 #' @importFrom QFeatures normalize QFeatures aggregateFeatures
 #' @importFrom SummarizedExperiment colData
+#' @importFrom matrixStats colMedians
+#' @importFrom MsCoreUtils robustSummary medianPolish
 #'
 aggregation_qfeatures <- function(qfeatures, method,
                                   fcol) {
