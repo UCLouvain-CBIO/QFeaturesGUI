@@ -108,6 +108,10 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     
     observeEvent(input$export, {
       req(processed_assays())
+      shinycssloaders::showPageSpinner(
+        type = "6",
+        caption = "The aggregation step can be quite time consuming for large datasets"
+      )
       error_handler(
         add_assays_to_global_rv,
         component_name = "Add assays to global_rv",
@@ -118,6 +122,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         varFrom = input$fcol
       )
       step_rv(step_rv() + 1L)
+      shinycssloaders::hidePageSpinner()
     })
   })
 }
