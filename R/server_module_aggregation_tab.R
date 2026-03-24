@@ -102,7 +102,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         qf_aggregate = processed_assays(),
         aggregateBy = input$fcol,
         feature = input$features,
-        color = input$color, 
+        color = input$color,
         showPoints = reactive(input$addPoints)
       )
     })
@@ -189,34 +189,56 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
     
     data_final$aggregation <- factor(data_final$aggregation, levels = unique(data_final$aggregation))
     
-    
     output$boxplot <- renderPlotly({
-      if(showPoints()) {
-        boxpoints = "all"
-        jitter = 0.3
-        pointpos = 0
-      } else {
-        boxpoints = "suspectedoutliers"
-        jitter = 0
-        pointpos = 0
-      }
-      plot_ly(
+      error_handler(
+        create_boxplot,
+        component_name = "boxplot generation",
         data = data_final,
-        x = ~aggregation,
-        y = ~intensity,
-        color = if (color == "NULL") { NULL } else { ~condition },
-        text = ~sample,
-        type = "box",
-        boxpoints = boxpoints,
-        jitter = jitter,
-        pointpos = pointpos,
-        hoveron = if(showPoints()) "points" else "boxes",
-        hovertemplate = paste0(
-          "<b>%{text}</b><br>",
-          "<extra></extra>"
-        )
-      ) %>%
-        layout(boxmode = "group")
+        color = color,
+        showPoints = showPoints()
+      )
     }) 
   }) 
+}
+
+#' Function that generate a boxplot
+#'
+#' @param data a dataset containing intensity values pre and post aggregation
+#' @param color variable to use for the color
+#' @param showPoints logical for hide/show points on boxplot
+#' @return a boxplot
+#' @rdname INTERNAL_create_boxplot
+#' @keywords internal
+#'
+#' @importFrom plotly plotly_build
+#'
+
+create_boxplot<- function(data, color, showPoints){
+  if(showPoints) {
+    boxpoints = "all"
+    jitter = 0.3
+    pointpos = 0
+  } else {
+    boxpoints = "suspectedoutliers"
+    jitter = 0
+    pointpos = 0
+  }
+  p <-plot_ly(
+    data = data,
+    x = ~aggregation,
+    y = ~intensity,
+    color = if (color == "NULL") NULL else ~condition,
+    text = ~sample,
+    type = "box",
+    boxpoints = boxpoints,
+    jitter = jitter,
+    pointpos = pointpos,
+    hoveron = if(showPoints) "points" else "boxes",
+    hovertemplate = paste0(
+      "<b>%{text}</b><br>",
+      "<extra></extra>"
+    )
+  ) %>%
+    layout(boxmode = "group")
+  plotly_build(p)
 }
