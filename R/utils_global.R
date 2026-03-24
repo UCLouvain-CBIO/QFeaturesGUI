@@ -641,7 +641,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @rdname INTERNAL_is_empty_set
 #' @keywords internal
 is_empty_set <- function(assay_object) {
-    nrow(assay_object) == 0L
+    nrow(assay_object) == 0L || ncol(assay_object) == 0L
 }
 
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {

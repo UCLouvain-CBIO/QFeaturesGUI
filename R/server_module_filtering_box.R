@@ -8,7 +8,7 @@
 #' @rdname INTERNAL_server_module_filtering_box
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req updateTextInput updateSelectInput
+#' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req updateTextInput updateSelectInput selectizeInput numericInput updateSelectizeInput
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom shinyFeedback feedbackDanger
 #' @importFrom QFeatures filterFeatures
@@ -25,6 +25,18 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             ">=" = "is greater than or equal to",
             "==" = "is equal to",
             "!=" = "is not equal to"
+        )
+        operator_choices_all <- c(
+            "Less than" = "<",
+            "Less than or equal to" = "<=",
+            "Greater than" = ">",
+            "Greater than or equal to" = ">=",
+            "Equal to" = "==",
+            "Not equal to" = "!="
+        )
+        operator_choices_categorical <- c(
+            "Equal to" = "==",
+            "Not equal to" = "!="
         )
 
         combined_samples_annotations <- reactive({
@@ -97,10 +109,32 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(assays_to_process())
             if (type == "samples") {
-                typeof(combined_samples_annotations()[[input$annotation_selection]])
+                class(combined_samples_annotations()[[input$annotation_selection]])[[1]]
             } else if (type == "features") {
-                typeof(combined_features_annotations()[[input$annotation_selection]])
+                class(combined_features_annotations()[[input$annotation_selection]])[[1]]
             }
+        })
+
+        operator_choices <- reactive({
+            req(annotations_type())
+            if (annotations_type() %in% c("character", "factor")) {
+                return(operator_choices_categorical)
+            }
+            operator_choices_all
+        })
+
+        observe({
+            req(operator_choices())
+            selected_operator <- input$filter_operator
+            if (!(selected_operator %in% unname(operator_choices()))) {
+                selected_operator <- unname(operator_choices())[[1]]
+            }
+            updateSelectInput(
+                session,
+                inputId = "filter_operator",
+                choices = operator_choices(),
+                selected = selected_operator
+            )
         })
 
         is_empty_categorical_multiselect <- reactive({
@@ -116,8 +150,8 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
         })
 
         output$filtering_ui <- renderUI({
-            state_filter_value <- NULL
-            if (!is.null(state)) {
+            state_filter_value <- shiny::isolate(input[[paste0("filter_ui_", type)]])
+            if (is.null(state_filter_value) && !is.null(state)) {
                 state_filter_value <- state$filter_value
             }
             is_categorical <- annotations_type() %in% c("character", "factor")
@@ -149,7 +183,7 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 )
             } else {
                 numeric_value <- suppressWarnings(as.numeric(state_filter_value)[1])
-                if (is.na(numeric_value)) numeric_value <- 0
+                if (is.na(numeric_value)) numeric_value <- NA_real_
                 if (type == "samples") {
                     numericInput(
                         session$ns(paste0("filter_ui_", type)),
@@ -180,8 +214,8 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 choices <- unique(combined_features_annotations()[[input$annotation_selection]])
             }
 
-            state_filter_value <- NULL
-            if (!is.null(state)) {
+            state_filter_value <- shiny::isolate(input[[paste0("filter_ui_", type)]])
+            if (is.null(state_filter_value) && !is.null(state)) {
                 state_filter_value <- state$filter_value
             }
             is_equality_operator <- input$filter_operator %in% c("==", "!=")
@@ -267,6 +301,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$filter_operator %in% names(operator_labels))
             filter_value <- input[[paste0("filter_ui_", type)]]
             if (is.null(filter_value) || is_empty_categorical_multiselect()) {
+                return(NULL)
+            }
+            if (all(is.na(filter_value))) {
                 return(NULL)
             }
             list(

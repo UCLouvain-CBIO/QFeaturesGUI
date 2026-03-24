@@ -153,7 +153,8 @@ server_module_filtering_tab <- function(id,
                     !is.null(spec$annotation) &&
                     !is.null(spec$operator) &&
                     !is.null(spec$value) &&
-                    length(spec$value) > 0
+                    length(spec$value) > 0 &&
+                    !all(is.na(spec$value))
             }, specs)
             specs
         })
@@ -272,7 +273,15 @@ feature_filtering <- function(qfeatures, condition_specs) {
     for (assay_name in names(qfeatures)) {
         assay_object <- qfeatures[[assay_name]]
         feature_metadata <- as.data.frame(SummarizedExperiment::rowData(assay_object))
-        feature_metadata[[rowname_selector_key]] <- rownames(SummarizedExperiment::rowData(assay_object))
+        row_ids <- NULL
+        if ("rowname" %in% colnames(feature_metadata)) {
+            row_ids <- feature_metadata[["rowname"]]
+        } else if ("name" %in% colnames(feature_metadata)) {
+            row_ids <- feature_metadata[["name"]]
+        } else {
+            row_ids <- rownames(SummarizedExperiment::rowData(assay_object))
+        }
+        feature_metadata[[rowname_selector_key]] <- as.character(row_ids)
         keep_mask <- rep(TRUE, nrow(feature_metadata))
 
         for (spec in condition_specs) {

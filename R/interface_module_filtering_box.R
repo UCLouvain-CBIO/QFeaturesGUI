@@ -29,14 +29,7 @@ interface_module_filtering_box <- function(id, box_title, annotation_choices = N
         selectInput(
             inputId = NS(id, "filter_operator"),
             label = "Filtering Operator",
-            choices = c(
-                "Less than" = "<",
-                "Less than or equal to" = "<=",
-                "Greater than" = ">",
-                "Greater than or equal to" = ">=",
-                "Equal to" = "==",
-                "Not equal to" = "!="
-            )
+            choices = NULL
         ),
         uiOutput(
             NS(id, "filtering_ui")
