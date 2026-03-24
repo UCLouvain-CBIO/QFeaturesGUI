@@ -1153,7 +1153,7 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 #'
-add_joined_assay_to_global_rv <- function(processed_qfeatures, fcol, step_number, type) {
+add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, type) {
   for (name in names(processed_qfeatures)) {
     new_name <- paste0(
       strsplit(name, "_QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
@@ -1166,21 +1166,12 @@ add_joined_assay_to_global_rv <- function(processed_qfeatures, fcol, step_number
   
   from_pattern <- paste0("QFeaturesGUI#", step_number - 1, "\\)")
   from_names <- grep(from_pattern, names(.qf$qfeatures), value = TRUE)
-  if (fcol == "(row names)") {
-    .qf$qfeatures <- addAssayLink(
-      .qf$qfeatures,
-      from = from_names,
-      to = new_name
-    )
-  } else {
-    .qf$qfeatures <- addAssayLink(
-      .qf$qfeatures,
-      from = from_names,
-      to = new_name,
-      varFrom = rep(fcol, length(from_names)),
-      varTo = fcol
-    )
-  }
+  .qf$qfeatures <- addAssayLink(
+    .qf$qfeatures,
+    from = from_names,
+    to = new_name
+  )
+  
   n <- length(processed_qfeatures)
   shinyalert(
     title = "Step saved",
