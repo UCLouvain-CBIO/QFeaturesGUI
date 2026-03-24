@@ -67,7 +67,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       req(parent_assays())
       updateSelectInput(session,
                         "color",
-                        choices = colnames(colData(parent_assays()))
+                        choices = c("NULL",colnames(colData(parent_assays())))
       )
     })
     
@@ -153,22 +153,34 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
   moduleServer(id, function(input, output, session){
     df_qf_list <- list()
     df_qf_aggregate_list <- list()
-    
     for(i in names(qf)){
       set_qf <- qf[[i]][rowData(qf[[i]])[[aggregateBy]] == feature,]
       set_qf_aggregate <- qf_aggregate[[i]][rowData(qf_aggregate[[i]])[[aggregateBy]] == feature,]
-      df_qf_list[[i]] <- assay(set_qf) |>
-        as.data.frame() |>
-        rownames_to_column(var = "aggregation") |>
-        tidyr::gather(sample,intensity, -aggregation) |>
-        mutate(condition = colData(qf)[sample,color]) |>
-        na.exclude()
-      df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
-        as.data.frame()|>
-        rownames_to_column(var = "aggregation") |>
-        tidyr::gather(sample,intensity,-aggregation) |>
-        mutate(condition = colData(qf_aggregate)[sample,color]) |>
-        na.exclude()
+      if (color == "NULL"){
+        df_qf_list[[i]] <- assay(set_qf) |>
+          as.data.frame() |>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity, -aggregation) |>
+          na.exclude()
+        df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
+          as.data.frame()|>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity,-aggregation) |>
+          na.exclude()
+      } else {
+        df_qf_list[[i]] <- assay(set_qf) |>
+          as.data.frame() |>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity, -aggregation) |>
+          mutate(condition = colData(qf)[sample,color]) |>
+          na.exclude()
+        df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
+          as.data.frame()|>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity,-aggregation) |>
+          mutate(condition = colData(qf_aggregate)[sample,color]) |>
+          na.exclude()
+      }
     }
     
     df_qf <- dplyr::bind_rows(df_qf_list)
@@ -192,7 +204,7 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
         data = data_final,
         x = ~aggregation,
         y = ~intensity,
-        color = ~condition,
+        color = if (color == "NULL") { NULL } else { ~condition },
         text = ~sample,
         type = "box",
         boxpoints = boxpoints,
