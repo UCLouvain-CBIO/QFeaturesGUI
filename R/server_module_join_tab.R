@@ -7,15 +7,23 @@
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
+#' @importFrom shinycssloaders hidePageSpinner showPageSpinner
 #'
 server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
   moduleServer(id, function(input, output, session) {
-    assays_to_process <- eventReactive(input$reload, {
+    pattern <- paste0("_(QFeaturesGUI#", step_number - 1, ")")
+    
+    step_ready <- reactive({
+      if (!is.null(parent_rv)) req(parent_rv() > 0L)
+      TRUE
+    })
+    
+    assays_to_process <- reactive({
       error_handler(
         page_assays_subset,
         component_name = "Page assays subset",
-        qfeatures = global_rv$qfeatures,
-        step_number = step_number - 1
+        qfeatures = .qf$qfeatures,
+        pattern = pattern
       )
     })
     
@@ -82,6 +90,10 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
     
     processed_assays <- reactiveVal()
     observeEvent(input$join, {
+      shinycssloaders::showPageSpinner(
+        type = 6,
+        caption = "Be aware that joining can be quite time consuming for large data sets"
+      )
       req(assays_to_process())
       req(input$fcol_join)
       req(input$fcol2_join)
@@ -99,14 +111,15 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
         fcol = fcol,
         fcol2 = fcol2
       ))
+      shinycssloaders::hidePageSpinner()
     })
     
     observeEvent(input$export, {
       req(processed_assays())
-      loading(paste("Be aware that this operation",
-                    "can be quite time consuming for large data sets",
-                    sep = " "
-      ))
+      shinycssloaders::showPageSpinner(
+        type = 6,
+        caption = "Be aware that joining can be quite time consuming for large data sets"
+      )
       error_handler(
         add_joined_assay_to_global_rv,
         component_name = "Add assays to global_rv",
@@ -115,7 +128,8 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
         step_number = step_number,
         type = "join"
       )
-      removeModal()
+      step_rv(step_rv() + 1L)
+      shinycssloaders::hidePageSpinner()
     })
   })
 }
