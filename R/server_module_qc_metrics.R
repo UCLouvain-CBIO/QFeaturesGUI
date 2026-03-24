@@ -120,6 +120,8 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
 
         pca_result <- reactive({
             req(single_assay())
+            req(!is_empty_set(single_assay()))
+            req(ncol(single_assay()) > 0L)
             pcaMethods_wrapper(
                 single_assay(),
                 method = method,
@@ -129,6 +131,9 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             )
         })
         dataframe <- reactive({
+            req(single_assay())
+            req(!is_empty_set(single_assay()))
+            req(ncol(single_assay()) > 0L)
             req(pca_result())
             if (input$pca_color == "NULL") {
                 as.data.frame(
@@ -150,6 +155,38 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
         })
 
         output$pca <- renderPlotly({
+            req(single_assay())
+            if (is_empty_set(single_assay()) || ncol(single_assay()) == 0L) {
+                message_text <- paste0(
+                    "PCA cannot be computed for this set (",
+                    nrow(single_assay()), " row", if (nrow(single_assay()) != 1L) "s" else "",
+                    ", ",
+                    ncol(single_assay()), " column", if (ncol(single_assay()) != 1L) "s" else "",
+                    ")."
+                )
+                empty_plot <- plot_ly(
+                    x = numeric(0),
+                    y = numeric(0),
+                    type = "scatter",
+                    mode = "markers"
+                )
+                empty_plot <- plotly::add_annotations(
+                    empty_plot,
+                    text = message_text,
+                    xref = "paper",
+                    yref = "paper",
+                    x = 0.5,
+                    y = 0.5,
+                    showarrow = FALSE
+                )
+                empty_plot <- layout(
+                    empty_plot,
+                    showlegend = FALSE,
+                    xaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE),
+                    yaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE)
+                )
+                return(empty_plot)
+            }
             req(dataframe())
             req(pca_result())
             # TODO: Add a table with the selected points.

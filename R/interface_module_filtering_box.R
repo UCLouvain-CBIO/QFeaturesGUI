@@ -64,7 +64,7 @@ interface_module_annotation_plot <- function(id) {
         width = 12,
         solidHeader = TRUE,
         collapsible = TRUE,
-        collapsed = TRUE,
+        collapsed = FALSE,
         withSpinner(plotlyOutput(NS(id, "plot")),
             type = 6,
             color = "#3c8dbc"
