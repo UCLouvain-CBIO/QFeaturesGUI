@@ -6,6 +6,7 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
+#' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
