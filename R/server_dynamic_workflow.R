@@ -54,16 +54,16 @@ server_dynamic_workflow <- function(input, output, session) {
                         p(
                             style = "font-size: 1.1em; color: #777;",
                             paste0(
-                                'Please save Step ', i - 1,
-                                ' \u2014 ', global_rv$workflow_config[[i - 1]],
-                                ' \u2014 before proceeding to this step.'
+                                "Please save Step ", i - 1,
+                                " \u2014 ", global_rv$workflow_config[[i - 1]],
+                                " \u2014 before proceeding to this step."
                             )
                         )
                     )
                 } else {
                     switch(global_rv$workflow_config[[i]],
-                        "Sample Filtering"          = interface_module_samples_filtering_tab(module_id),
-                        "Feature Filtering"         = interface_module_features_filtering_tab(module_id),
+                        "Sample Filtering"          = interface_module_filtering_tab(module_id, type = "samples"),
+                        "Feature Filtering"         = interface_module_filtering_tab(module_id, type = "features"),
                         "Log Transformation"        = interface_module_log_transform_tab(module_id),
                         "Normalisation"             = interface_module_normalisation_tab(module_id),
                         "Filtering NAs by Features" = interface_module_missing_values_tab(module_id, type = "features"),
@@ -79,8 +79,8 @@ server_dynamic_workflow <- function(input, output, session) {
 
             # Call the corresponding server module
             switch(global_rv$workflow_config[[i]],
-                "Sample Filtering"          = server_module_samples_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Feature Filtering"         = server_module_features_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Sample Filtering"          = server_module_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, type = "samples"),
+                "Feature Filtering"         = server_module_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, type = "features"),
                 "Log Transformation"        = server_module_log_transform_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
                 "Normalisation"             = server_module_normalisation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
                 "Filtering NAs by Features" = server_module_missing_values_tab(module_id, step_number = i, type = "features", step_rv = step_rvs[[i]], parent_rv = parent_rv),

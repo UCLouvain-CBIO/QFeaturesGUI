@@ -40,12 +40,18 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps) {
             text = paste0(
                 "Loaded QFeatures with ", n_sets,
                 " initial set", if (n_sets != 1) "s" else "", ".",
-                if (n_steps > 0) paste0(
-                    "\nWorkflow pre-configured with ", n_steps,
-                    " step", if (n_steps != 1) "s" else "", "."
-                ) else ""
+                if (n_steps > 0) {
+                    paste0(
+                        "\nWorkflow pre-configured with ", n_steps,
+                        " step", if (n_steps != 1) "s" else "", "."
+                    )
+                } else {
+                    ""
+                }
             ),
-            type = "success"
+            closeOnClickOutside = TRUE,
+            type = "success",
+            confirmButtonCol = "#3c8dbc"
         )
     }
 

@@ -158,10 +158,12 @@ clickableMessageItem <- function(id, title, time, type = c("error", "warning")) 
 #' @importFrom htmltools HTML div
 #'
 #' @rdname INTERNAL_show_exception_notification
-show_exception_notification <- function(component_name,
-    type = c("error", "warning"),
-    time,
-    duration = 30) {
+show_exception_notification <- function(
+      component_name,
+      type = c("error", "warning"),
+      time,
+      duration = 30
+) {
     type <- match.arg(type)
 
     title <- paste0(
@@ -534,33 +536,32 @@ page_assays_subset <- function(qfeatures, pattern) {
 #' @importFrom viridisLite viridis
 #'
 pca_plotly <- function(df, pca_result, color_name, show_legend) {
-  stopifnot(is.data.frame(df))
-    if (color_name == "NULL"){
-      colorFormula = NULL
-      text <- row.names(df)
-      colorPalette = suppressWarnings(RColorBrewer::brewer.pal(1,"Set1"))
-      hoverText = paste(
-        "%{text}<br>",
-        "%{customdata}<extra></extra>"
-      )
-      customizeData = "NULL"
-      
+    stopifnot(is.data.frame(df))
+    if (color_name == "NULL") {
+        colorFormula <- NULL
+        text <- row.names(df)
+        colorPalette <- suppressWarnings(RColorBrewer::brewer.pal(1, "Set1"))
+        hoverText <- paste(
+            "%{text}<br>",
+            "%{customdata}<extra></extra>"
+        )
+        customizeData <- "NULL"
     } else {
-      colorFormula <- as.formula(paste0("~", color_name))
-      text <- ~Row.names
-      colorPalette = if (is.numeric(df[[color_name]])) {
-        viridisLite::viridis(10)
-      } else {
-        suppressWarnings(RColorBrewer::brewer.pal(
-          length(unique(df[[color_name]])),
-          "Set1"
-        ))
-      }
-      hoverText = paste(
-        "%{text}<br>",
-        paste0(color_name, ": %{customdata}<extra></extra>")
-      )
-      customizeData = as.formula(paste0("~", color_name))
+        colorFormula <- as.formula(paste0("~", color_name))
+        text <- ~.qfeaturesgui_row_id
+        colorPalette <- if (is.numeric(df[[color_name]])) {
+            viridisLite::viridis(10)
+        } else {
+            suppressWarnings(RColorBrewer::brewer.pal(
+                length(unique(df[[color_name]])),
+                "Set1"
+            ))
+        }
+        hoverText <- paste(
+            "%{text}<br>",
+            paste0(color_name, ": %{customdata}<extra></extra>")
+        )
+        customizeData <- as.formula(paste0("~", color_name))
     }
     plotly <- plot_ly(df,
         x = ~PC1,
@@ -571,7 +572,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         mode = "markers",
         colors = colorPalette,
         hovertemplate = hoverText,
-        customdata = customizeData 
+        customdata = customizeData
     ) %>%
         layout(
             xaxis = list(title = paste(
@@ -651,9 +652,10 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varF
     for (name in names(processed_qfeatures)) {
         assay_to_add <- processed_qfeatures[[name]]
         if (is_empty_set(assay_to_add)) {
-          n_skipped_empty <- n_skipped_empty + 1L
-          next
+            n_skipped_empty <- n_skipped_empty + 1L
+            next
         }
+
         new_name <- paste0(
             strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
             "_(QFeaturesGUI#", step_number, ")",
@@ -808,11 +810,9 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #' @keywords internal
 #' @importFrom plotly plot_ly add_trace layout
 #'
-plotlyridges <- function(
-      data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
-      height = NULL,
-      width = NULL
-) {
+plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
+    height = NULL,
+    width = NULL) {
     data <- subset(data, !is.na(data[, vardens]))
 
     r <- range(data[, vardens])
@@ -925,20 +925,35 @@ plotlyridges <- function(
 #'
 
 summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NULL) {
-    combined_df <- data.frame(PSM = character(), intensity = numeric(), sample = character())
+    combined_df <- data.frame(
+        PSM = character(0),
+        sample = character(0),
+        intensity = numeric(0),
+        sample_type = character(0),
+        stringsAsFactors = FALSE
+    )
+    if (!is.null(feature_column)) {
+        combined_df$feature_type <- character(0)
+    }
     for (assayName in names(qfeatures)) {
         assayData <- as.data.frame(assay(qfeatures[[assayName]]))
-
-        assayData <- pivot_longer(assayData, everything(), names_to = "sample", values_to = "intensity")
         assayData$PSM <- rownames(assayData)
+        if (ncol(assayData) <= 1L) {
+            next
+        }
+        assayData <- pivot_longer(
+            assayData,
+            cols = -PSM,
+            names_to = "sample",
+            values_to = "intensity"
+        )
 
         matched_indices <- match(assayData$sample, rownames(colData(qfeatures)))
-        length(matched_indices)
-        assayData$sample_type <- colData(qfeatures)[matched_indices, sample_column]
+        assayData$sample_type <- as.vector(colData(qfeatures)[matched_indices, sample_column])
 
         if (!is.null(feature_column)) {
             matched_indices <- match(assayData$PSM, rownames(rowData(qfeatures[[assayName]])))
-            assayData$feature_type <- rowData(qfeatures[[assayName]])[matched_indices, feature_column]
+            assayData$feature_type <- as.vector(rowData(qfeatures[[assayName]])[matched_indices, feature_column])
         }
         combined_df <- rbind(combined_df, assayData)
     }
@@ -983,16 +998,37 @@ features_boxplot <- function(assays_df) {
 #'
 
 unique_feature_boxplot <- function(assays_df, feature) {
-    plot <- ggplot(assays_df[assays_df$feature_type == feature, , drop = FALSE], aes(x = sample_type, y = intensity, colour = sample_type)) +
+    df <- assays_df[assays_df$feature_type == feature, , drop = FALSE]
+    if (nrow(df) == 0) {
+        return(plot_ly(
+            x = numeric(0),
+            y = numeric(0),
+            type = "scatter",
+            mode = "markers"
+        ) %>%
+            add_annotations(
+                text = "No values available for this feature.",
+                xref = "paper",
+                yref = "paper",
+                x = 0.5,
+                y = 0.5,
+                showarrow = FALSE
+            ) %>%
+            layout(
+                showlegend = FALSE,
+                xaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE),
+                yaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE)
+            ))
+    }
+    plot <- ggplot(df, aes(x = sample_type, y = intensity, colour = sample_type)) +
         geom_boxplot()
-
     suppressWarnings(ggplotly(plot))
 }
 
 #' A function that will return the percentage of samples/features that have been removed
 #'
 #' @param qfeatures_before_filtering a qfeatures object that haven't been filtered.
-#' @param qfeatures_after_filtering  a qfeatures object that have been filtered. 
+#' @param qfeatures_after_filtering  a qfeatures object that have been filtered.
 #' @param type features or samples.
 #'
 #' @return a percentage
@@ -1002,49 +1038,53 @@ unique_feature_boxplot <- function(assays_df, feature) {
 #' @importFrom QFeatures rbindRowData
 #' @importFrom SummarizedExperiment colData
 
-percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
-  if(type == "features"){
-    pct_removed <- round(
-      (nrow(
-        rbindRowData(
-          qfeatures_before_filtering,
-          seq_along(qfeatures_before_filtering)
-          )
-        ) - nrow(
-          rbindRowData(
-            qfeatures_after_filtering,
-            seq_along(qfeatures_after_filtering))
-          )
-       ) / nrow(
-         rbindRowData(
-           qfeatures_before_filtering,
-           seq_along(qfeatures_before_filtering))
-         ) * 100, 
-      digits = 1
-      )
-  } else {
-    pct_removed <- round(
-      (nrow(
-        colData(
-          qfeatures_before_filtering)
-        ) - nrow(
-          colData(qfeatures_after_filtering)
-          )
-       ) / nrow(
-         colData(
-           qfeatures_before_filtering
-           )
-         ) * 100,
-      digits = 1)
-    
-  }
-  return(pct_removed)
+count_features_rows <- function(qfeatures) {
+    sum(vapply(seq_along(qfeatures), function(i) {
+        nrow(qfeatures[[i]])
+    }, integer(1)))
+}
+
+
+percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type) {
+    type <- match.arg(type, c("features", "samples"))
+    if (type == "features") {
+        before_features_nrow <- count_features_rows(qfeatures_before_filtering)
+        after_features_nrow <- count_features_rows(qfeatures_after_filtering)
+        if (before_features_nrow == 0L) {
+            return(0)
+        }
+        pct_removed <- round(
+            (before_features_nrow - after_features_nrow)
+            / before_features_nrow * 100,
+            digits = 1
+        )
+    } else {
+        ncol_before_filtering <- nrow(
+            colData(
+                qfeatures_before_filtering
+            )
+        )
+        ncol_after_filtering <- nrow(
+            colData(
+                qfeatures_after_filtering
+            )
+        )
+        if (ncol_before_filtering == 0L) {
+            return(0)
+        }
+        pct_removed <- round(
+            (ncol_before_filtering - ncol_after_filtering)
+            / ncol_before_filtering * 100,
+            digits = 1
+        )
+    }
+    return(pct_removed)
 }
 
 #' A function that will return the number of samples/features that have been removed
 #'
 #' @param qfeatures_before_filtering a qfeatures object that haven't been filtered.
-#' @param qfeatures_after_filtering  a qfeatures object that have been filtered. 
+#' @param qfeatures_after_filtering  a qfeatures object that have been filtered.
 #' @param type features or samples.
 #'
 #' @return an integer
@@ -1053,32 +1093,25 @@ percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filterin
 #' @keywords internal
 #' @importFrom QFeatures rbindRowData
 #' @importFrom SummarizedExperiment colData
-#' 
+#'
 
-number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type){
-  if(type == "features"){
-    nb_removed <- nrow(
-      rbindRowData(
-        qfeatures_before_filtering,
-        seq_along(qfeatures_before_filtering)
-                   )
-      ) - nrow(
-        rbindRowData(
-          qfeatures_after_filtering,
-          seq_along(qfeatures_after_filtering)
-          )
+number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type) {
+    type <- match.arg(type, c("features", "samples"))
+    if (type == "features") {
+        nb_removed <- count_features_rows(qfeatures_before_filtering) -
+            count_features_rows(qfeatures_after_filtering)
+    } else {
+        nb_removed <- nrow(
+            colData(
+                qfeatures_before_filtering
+            )
+        ) - nrow(
+            colData(
+                qfeatures_after_filtering
+            )
         )
-  } else {
-    nb_removed <- nrow(
-      colData(
-        qfeatures_before_filtering
-      )
-    ) - nrow(
-        colData(
-          qfeatures_after_filtering
-        )
-    )  
-  }
+    }
+    return(nb_removed)
 }
 
 #' Internal function that return the available variables (column

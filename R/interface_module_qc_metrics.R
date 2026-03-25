@@ -16,8 +16,8 @@ interface_module_qc_metrics <- function(id, type) {
             box(
                 title = "PCA",
                 status = "primary",
-                width = 8,
-                solidHeader = FALSE,
+                width = 12,
+                solidHeader = TRUE,
                 collapsible = TRUE,
                 fluidRow(
                     column(
@@ -47,13 +47,16 @@ interface_module_qc_metrics <- function(id, type) {
                         title = "Samples PCA"
                     )
                 )
-            ),
+            )
+        ),
+        fluidRow(
             box(
                 title = "Single Feature Visualisation",
                 status = "primary",
-                width = 4,
-                solidHeader = FALSE,
+                width = 12,
+                solidHeader = TRUE,
                 collapsible = TRUE,
+                collapsed = FALSE,
                 interface_module_viz_box(NS(id, "viz_box"))
             )
         )
@@ -78,7 +81,7 @@ interface_module_pca_box <- function(id, title) {
         title = title,
         status = "primary",
         width = 6,
-        solidHeader = TRUE,
+        solidHeader = FALSE,
         collapsible = FALSE,
         sidebar = boxSidebar(
             id = NS(id, "pca_sidebar"),

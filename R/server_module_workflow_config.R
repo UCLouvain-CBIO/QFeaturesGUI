@@ -55,7 +55,9 @@ server_module_workflow_config <- function(id) {
                         n, " step", if (n != 1) "s" else "",
                         " successfully configured."
                     ),
-                    type = "success"
+                    closeOnClickOutside = TRUE,
+                    type = "success",
+                    confirmButtonCol = "#3c8dbc"
                 )
             }
         })
@@ -82,7 +84,9 @@ server_module_workflow_config <- function(id) {
                     n, " step", if (n != 1) "s" else "",
                     " successfully configured."
                 ),
-                type = "success"
+                closeOnClickOutside = TRUE,
+                type = "success",
+                confirmButtonCol = "#3c8dbc"
             )
         })
     })
