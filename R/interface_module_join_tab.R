@@ -11,6 +11,9 @@
 #'
 interface_module_join_tab <- function(id) {
   tagList(
+    uiOutput(
+      NS(id, "joinAvailability")
+    ),
     actionButton(
       NS(id, "export"),
       "Join and save the processed assays",
