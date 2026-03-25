@@ -641,8 +641,6 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @return a logical scalar
 #' @rdname INTERNAL_is_empty_set
 #' @keywords internal
-#'
- 
 is_empty_set <- function(assay_object) {
     nrow(assay_object) == 0L || ncol(assay_object) == 0L
 }
