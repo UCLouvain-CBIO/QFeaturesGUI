@@ -8,7 +8,7 @@
 #' @rdname INTERNAL_server_module_filtering_box
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req updateTextInput updateSelectInput
+#' @importFrom shiny moduleServer updateSelectInput reactive observe is.reactive req updateTextInput updateSelectInput selectizeInput numericInput updateSelectizeInput
 #' @importFrom SummarizedExperiment colData rowData
 #' @importFrom shinyFeedback feedbackDanger
 #' @importFrom QFeatures filterFeatures
@@ -16,18 +16,78 @@
 server_module_filtering_box <- function(id, assays_to_process, type, state) {
     is.reactive(assays_to_process)
     moduleServer(id, function(input, output, session) {
-        annotations_names <- reactive({
+        rowname_selector_key <- ".qfeaturesgui_rowname"
+
+        operator_labels <- c(
+            "<" = "is less than",
+            "<=" = "is less than or equal to",
+            ">" = "is greater than",
+            ">=" = "is greater than or equal to",
+            "==" = "is equal to",
+            "!=" = "is not equal to"
+        )
+        operator_choices_all <- c(
+            "Less than" = "<",
+            "Less than or equal to" = "<=",
+            "Greater than" = ">",
+            "Greater than or equal to" = ">=",
+            "Equal to" = "==",
+            "Not equal to" = "!="
+        )
+        operator_choices_categorical <- c(
+            "Equal to" = "==",
+            "Not equal to" = "!="
+        )
+
+        combined_samples_annotations <- reactive({
+            req(assays_to_process())
+            sample_metadata <- as.data.frame(colData(assays_to_process()))
+            sample_metadata[[rowname_selector_key]] <- rownames(colData(assays_to_process()))
+            sample_metadata
+        })
+
+        combined_features_annotations <- reactive({
+            req(assays_to_process())
+            feature_metadata <- as.data.frame(rbindRowData(assays_to_process(), seq_along(assays_to_process())))
+            row_ids <- NULL
+            if ("rowname" %in% colnames(feature_metadata)) {
+                row_ids <- feature_metadata[["rowname"]]
+            } else if ("name" %in% colnames(feature_metadata)) {
+                row_ids <- feature_metadata[["name"]]
+            } else {
+                row_ids <- rownames(feature_metadata)
+            }
+            feature_metadata[[rowname_selector_key]] <- as.character(row_ids)
+            feature_metadata
+        })
+
+        sample_annotation_choices <- reactive({
+            req(combined_samples_annotations())
+            available_columns <- setdiff(colnames(combined_samples_annotations()), rowname_selector_key)
+            c("Rowname" = rowname_selector_key, stats::setNames(available_columns, available_columns))
+        })
+
+        feature_annotation_choices <- reactive({
+            req(combined_features_annotations())
+            available_columns <- setdiff(
+                colnames(combined_features_annotations()),
+                c("assay", "rowname", "name", rowname_selector_key)
+            )
+            c("Rowname" = rowname_selector_key, stats::setNames(available_columns, available_columns))
+        })
+
+        annotation_choices <- reactive({
             req(assays_to_process())
             if (type == "samples") {
-                colnames(colData(assays_to_process()))
+                sample_annotation_choices()
             } else if (type == "features") {
-                colnames(rowData(assays_to_process()[[1]]))
+                feature_annotation_choices()
             }
         })
         observe({
             updateSelectInput(
                 inputId = "annotation_selection",
-                choices = as.character(annotations_names())
+                choices = annotation_choices()
             )
         })
         if (!is.null(state)) {
@@ -38,7 +98,7 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             observe({
                 updateSelectInput(
                     inputId = "annotation_selection",
-                    choices = as.character(annotations_names()),
+                    choices = annotation_choices(),
                     selected = state$annotation_selection
                 )
             })
@@ -49,34 +109,151 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(assays_to_process())
             if (type == "samples") {
-                typeof(colData(assays_to_process())[[input$annotation_selection]])
+                class(combined_samples_annotations()[[input$annotation_selection]])[[1]]
             } else if (type == "features") {
-                typeof(rowData(assays_to_process()[[1]])[[input$annotation_selection]])
+                class(combined_features_annotations()[[input$annotation_selection]])[[1]]
             }
         })
-      
+
+        operator_choices <- reactive({
+            req(annotations_type())
+            if (annotations_type() %in% c("character", "factor")) {
+                return(operator_choices_categorical)
+            }
+            operator_choices_all
+        })
+
+        observe({
+            req(operator_choices())
+            selected_operator <- input$filter_operator
+            if (!(selected_operator %in% unname(operator_choices()))) {
+                selected_operator <- unname(operator_choices())[[1]]
+            }
+            updateSelectInput(
+                session,
+                inputId = "filter_operator",
+                choices = operator_choices(),
+                selected = selected_operator
+            )
+        })
+
+        is_empty_categorical_multiselect <- reactive({
+            req(annotations_type())
+            req(input$filter_operator)
+            is_categorical <- annotations_type() %in% c("character", "factor")
+            is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            if (!(is_categorical && is_equality_operator)) {
+                return(FALSE)
+            }
+            filter_value <- input[[paste0("filter_ui_", type)]]
+            !is.null(filter_value) && length(filter_value) == 0
+        })
+
         output$filtering_ui <- renderUI({
-          if(annotations_type() %in% c("character", "factor")){
-            if(type == "samples"){
-              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(colData(assays_to_process())[[input$annotation_selection]]))
-            } else {
-              selectInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", choices = unique(rowData(assays_to_process()[[1]])[[input$annotation_selection]]))
+            state_filter_value <- shiny::isolate(input[[paste0("filter_ui_", type)]])
+            if (is.null(state_filter_value) && !is.null(state)) {
+                state_filter_value <- state$filter_value
             }
-          } else {
-            if(type == "samples"){
-              numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
+            is_categorical <- annotations_type() %in% c("character", "factor")
+            is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            if (is_categorical) {
+                if (type == "samples") {
+                    choices <- unique(combined_samples_annotations()[[input$annotation_selection]])
+                } else {
+                    choices <- unique(combined_features_annotations()[[input$annotation_selection]])
+                }
+                selected_value <- NULL
+                if (!is.null(state_filter_value)) {
+                    if (is_equality_operator) {
+                        state_filter_value <- as.character(state_filter_value)
+                        selected_value <- intersect(as.character(choices), state_filter_value)
+                    } else {
+                        state_filter_value <- as.character(state_filter_value)[1]
+                        if (state_filter_value %in% as.character(choices)) {
+                            selected_value <- state_filter_value
+                        }
+                    }
+                }
+                selectizeInput(
+                    session$ns(paste0("filter_ui_", type)),
+                    label = "Filtering Value",
+                    choices = NULL,
+                    multiple = is_equality_operator,
+                    selected = NULL
+                )
             } else {
-              numericInput(session$ns(paste0("filter_ui_", type)), label = "Filtering Value", value = 0)
+                numeric_value <- suppressWarnings(as.numeric(state_filter_value)[1])
+                if (is.na(numeric_value)) numeric_value <- NA_real_
+                if (type == "samples") {
+                    numericInput(
+                        session$ns(paste0("filter_ui_", type)),
+                        label = "Filtering Value",
+                        value = numeric_value
+                    )
+                } else {
+                    numericInput(
+                        session$ns(paste0("filter_ui_", type)),
+                        label = "Filtering Value",
+                        value = numeric_value
+                    )
+                }
             }
-          }
         })
-        
+
+        observe({
+            req(input$annotation_selection)
+            req(input$filter_operator)
+            req(annotations_type())
+            is_categorical <- annotations_type() %in% c("character", "factor")
+            if (!is_categorical) {
+                return()
+            }
+            if (type == "samples") {
+                choices <- unique(combined_samples_annotations()[[input$annotation_selection]])
+            } else {
+                choices <- unique(combined_features_annotations()[[input$annotation_selection]])
+            }
+
+            state_filter_value <- shiny::isolate(input[[paste0("filter_ui_", type)]])
+            if (is.null(state_filter_value) && !is.null(state)) {
+                state_filter_value <- state$filter_value
+            }
+            is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            selected_value <- NULL
+            if (!is.null(state_filter_value)) {
+                if (is_equality_operator) {
+                    state_filter_value <- as.character(state_filter_value)
+                    selected_value <- intersect(as.character(choices), state_filter_value)
+                } else {
+                    state_filter_value <- as.character(state_filter_value)[1]
+                    if (state_filter_value %in% as.character(choices)) {
+                        selected_value <- state_filter_value
+                    }
+                }
+            }
+            updateSelectizeInput(
+                session,
+                inputId = paste0("filter_ui_", type),
+                choices = choices,
+                selected = selected_value,
+                server = TRUE
+            )
+        })
+
+        observe({
+            feedbackDanger(
+                inputId = paste0("filter_ui_", type),
+                show = is_empty_categorical_multiselect(),
+                text = "Select at least one value for this condition."
+            )
+        })
+
         server_module_annotation_plot(
             "annotation_plot",
             assays_to_process,
             type,
             reactive({
-                input[[paste0("filter_ui_",type)]]
+                input[[paste0("filter_ui_", type)]]
             }),
             reactive({
                 input$annotation_selection
@@ -85,27 +262,63 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
                 input$filter_operator
             })
         )
-        condition <- reactive({
+        condition_label <- reactive({
             req(annotations_type())
-            if(annotations_type() %in% c("character","factor")){
-              filter_value <- paste0("\"", input[[paste0("filter_ui_",type)]], "\"")
-            }else{
-              filter_value <- input[[paste0("filter_ui_",type)]]
+            req(input$filter_operator)
+            req(input$filter_operator %in% names(operator_labels))
+            annotation_label <- if (input$annotation_selection == rowname_selector_key) {
+                "Rowname"
+            } else {
+                input$annotation_selection
+            }
+            if (annotations_type() %in% c("character", "factor") &&
+                input$filter_operator %in% c("==", "!=")) {
+                selected_values <- as.character(input[[paste0("filter_ui_", type)]])
+                quoted_values <- sprintf("\"%s\"", selected_values)
+                if (length(quoted_values) == 0) {
+                    filter_value_label <- "\"\""
+                } else {
+                    filter_value_label <- paste(quoted_values, collapse = " or ")
+                }
+            } else {
+                filter_value <- input[[paste0("filter_ui_", type)]]
+                if (annotations_type() %in% c("character", "factor")) {
+                    filter_value_label <- paste0("\"", filter_value, "\"")
+                } else {
+                    filter_value_label <- as.character(filter_value)
+                }
             }
             paste(
-                input$annotation_selection,
-                input$filter_operator,
-                filter_value
-                
+                annotation_label,
+                operator_labels[[input$filter_operator]],
+                filter_value_label
             )
         })
-        
+
+        condition_spec <- reactive({
+            req(input$annotation_selection)
+            req(input$filter_operator)
+            req(input$filter_operator %in% names(operator_labels))
+            filter_value <- input[[paste0("filter_ui_", type)]]
+            if (is.null(filter_value) || is_empty_categorical_multiselect()) {
+                return(NULL)
+            }
+            if (all(is.na(filter_value))) {
+                return(NULL)
+            }
+            list(
+                annotation = input$annotation_selection,
+                operator = input$filter_operator,
+                value = filter_value
+            )
+        })
+
         return(list(
-            condition = condition,
+            condition_label = condition_label,
+            condition_spec = condition_spec,
             annotation_selection = reactive(input$annotation_selection),
             filter_operator = reactive(input$filter_operator),
-            
-            filter_value = reactive(input[[paste0("filter_ui_",type)]])
+            filter_value = reactive(input[[paste0("filter_ui_", type)]])
         ))
     })
 }
@@ -128,48 +341,57 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
 #' @importFrom plotly plot_ly renderPlotly
 #' @importFrom shinyBS createAlert closeAlert
 #'
-server_module_annotation_plot <- function(
-      id,
-      assays_to_process,
-      type,
-      filter_value,
-      selected_annotation,
-      filter_operator
-) {
+server_module_annotation_plot <- function(id,
+    assays_to_process,
+    type,
+    filter_value,
+    selected_annotation,
+    filter_operator) {
     moduleServer(id, function(input, output, session) {
-        observe({
+        rowname_selector_key <- ".qfeaturesgui_rowname"
+
+        combined_samples_annotations <- reactive({
             req(assays_to_process())
-            updateSelectInput(
-                inputId = "selected_assay",
-                choices = names(assays_to_process())
-            )
+            sample_metadata <- as.data.frame(colData(assays_to_process()))
+            sample_metadata[[rowname_selector_key]] <- rownames(colData(assays_to_process()))
+            sample_metadata
         })
-        single_assay <- reactive({
+
+        combined_features_annotations <- reactive({
             req(assays_to_process())
-            req(input$selected_assay)
-            # Warning appears here
-            # Warning message: 'experiments' dropped; see 'drops()'
-            # see with Chris
-            getWithColData(assays_to_process(), input$selected_assay)
+            feature_metadata <- as.data.frame(rbindRowData(assays_to_process(), seq_along(assays_to_process())))
+            row_ids <- NULL
+            if ("rowname" %in% colnames(feature_metadata)) {
+                row_ids <- feature_metadata[["rowname"]]
+            } else if ("name" %in% colnames(feature_metadata)) {
+                row_ids <- feature_metadata[["name"]]
+            } else {
+                row_ids <- rownames(feature_metadata)
+            }
+            feature_metadata[[rowname_selector_key]] <- as.character(row_ids)
+            feature_metadata
         })
+
         annotation_values <- reactive({
-            req(single_assay())
+            req(assays_to_process())
+            req(selected_annotation())
             if (type == "samples") {
-                as.data.frame(colData(single_assay()))[[selected_annotation()]]
+                combined_samples_annotations()[[selected_annotation()]]
             } else if (type == "features") {
-                as.data.frame(rowData(single_assay()))[[selected_annotation()]]
+                combined_features_annotations()[[selected_annotation()]]
             }
         })
         filtered_annotation <- reactive({
             req(annotation_values())
-            operator <- get(filter_operator())
-            subset(
-                annotation_values(),
-                operator(
-                    annotation_values(),
-                    filter_value()
-                )
+            selected_operator <- filter_operator()
+            req(selected_operator)
+            condition_mask <- apply_filter_operator(
+                values = annotation_values(),
+                operator = selected_operator,
+                target = filter_value()
             )
+            condition_mask[is.na(condition_mask)] <- FALSE
+            annotation_values()[condition_mask]
         })
         observe({
             req(annotation_values())
@@ -178,7 +400,7 @@ server_module_annotation_plot <- function(
                     anchorId = "alert",
                     alertId = "alert_filter",
                     title = "Warning",
-                    content = "With the selected filtering parameters, no data will be remaining in this assay.",
+                    content = "With the selected filtering parameters, no data will be remaining across all sets.",
                     append = FALSE,
                     style = "warning"
                 )
@@ -186,12 +408,22 @@ server_module_annotation_plot <- function(
                 closeAlert(session, "alert_filter")
             }
             output$plot <- renderPlotly({
+                plot_title <- if (type == "samples") {
+                    "All samples across sets"
+                } else {
+                    "All features across sets"
+                }
+                annotation_label <- if (selected_annotation() == rowname_selector_key) {
+                    "Rowname"
+                } else {
+                    selected_annotation()
+                }
                 error_handler(annotation_plot_wrapper,
                     "annotation_plot (filtering_box)",
                     annotation = annotation_values(),
                     filtered_annotation = filtered_annotation(),
-                    assay_name = input$selected_assay,
-                    annotation_name = selected_annotation()
+                    assay_name = plot_title,
+                    annotation_name = annotation_label
                 )
             })
         })
@@ -210,12 +442,10 @@ server_module_annotation_plot <- function(
 #'
 #' @importFrom plotly plot_ly config %>% add_histogram layout add_annotations
 #'
-annotation_plot_wrapper <- function(
-      annotation,
-      filtered_annotation,
-      assay_name,
-      annotation_name
-) {
+annotation_plot_wrapper <- function(annotation,
+    filtered_annotation,
+    assay_name,
+    annotation_name) {
     if (all(is.na(annotation))) {
         plot <- plot_ly(
             x = numeric(0),

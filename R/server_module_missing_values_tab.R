@@ -131,29 +131,32 @@ server_module_missing_values_tab <- function(id, step_number, type, step_rv, par
                 )
         })
 
-        observeEvent(input$export, {
-            req(tableMetadataNA())
-            shinycssloaders::showPageSpinner(
-                type = "6",
-                caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
-            )
-            if (type == "features") {
-                processed_assays <- QFeatures::filterNA(parent_assays(),
-                    i = seq_along(parent_assays()),
-                    pNA = input[[paste0("threshold_", type)]]
+        observeEvent(input$export,
+            {
+                req(tableMetadataNA())
+                shinycssloaders::showPageSpinner(
+                    type = "6",
+                    caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
                 )
-            } else {
-                processed_assays <- parent_assays()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
-            }
-            error_handler(
-                add_assays_to_global_rv,
-                component_name = "Add assays to global_rv",
-                processed_qfeatures = processed_assays,
-                step_number = step_number,
-                type = paste0("missing_values", type)
-            )
-            step_rv(step_rv() + 1L)
-            shinycssloaders::hidePageSpinner()
-        }, ignoreInit = TRUE)
+                if (type == "features") {
+                    processed_assays <- QFeatures::filterNA(parent_assays(),
+                        i = seq_along(parent_assays()),
+                        pNA = input[[paste0("threshold_", type)]]
+                    )
+                } else {
+                    processed_assays <- parent_assays()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
+                }
+                error_handler(
+                    add_assays_to_global_rv,
+                    component_name = "Add assays to global_rv",
+                    processed_qfeatures = processed_assays,
+                    step_number = step_number,
+                    type = paste0("missing_values", type)
+                )
+                step_rv(step_rv() + 1L)
+                shinycssloaders::hidePageSpinner()
+            },
+            ignoreInit = TRUE
+        )
     })
 }

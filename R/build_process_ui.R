@@ -70,7 +70,8 @@ build_process_ui <- function(initial_steps) {
                 tabItem(tabName = "step_20", uiOutput("dynamic_step_ui_20"))
             )
         ),
-        title = "importQFeatures"
+        title = "importQFeatures",
+        scrollToTop = TRUE
     )
 
     return(ui)

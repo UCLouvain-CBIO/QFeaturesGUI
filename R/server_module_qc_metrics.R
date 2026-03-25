@@ -91,35 +91,37 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             updateSelectInput(session,
                 "pca_color",
                 choices = annotation_names(),
-                 selected = "NULL"
+                selected = "NULL"
             )
         })
 
         color_data <- reactive({
             req(single_assay())
             req(input$pca_color)
-            if(input$pca_color != "NULL") {
-              if (id == "features") {
-                  df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
-              } else {
-                  df <- colData(single_assay())[, input$pca_color, drop = FALSE]
-              }
-              if (is.character(df[, 1])) {
-                  df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
-                      paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
-                  )
-              }
-              if (all(is.na(df))) {
-                  df[, 1] <- "NA"
-              }
-              colnames(df) <- input$pca_color
-              return(df)
+            if (input$pca_color != "NULL") {
+                if (id == "features") {
+                    df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
+                } else {
+                    df <- colData(single_assay())[, input$pca_color, drop = FALSE]
+                }
+                if (is.character(df[, 1])) {
+                    df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
+                        paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
+                    )
+                }
+                if (all(is.na(df))) {
+                    df[, 1] <- "NA"
+                }
+                colnames(df) <- input$pca_color
+                return(df)
             }
         })
 
 
         pca_result <- reactive({
             req(single_assay())
+            req(!is_empty_set(single_assay()))
+            req(ncol(single_assay()) > 0L)
             pcaMethods_wrapper(
                 single_assay(),
                 method = method,
@@ -129,22 +131,62 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             )
         })
         dataframe <- reactive({
+            req(single_assay())
+            req(!is_empty_set(single_assay()))
+            req(ncol(single_assay()) > 0L)
             req(pca_result())
-            if(input$pca_color == 'NULL'){
-              as.data.frame(
-                data.frame(scores(pca_result()))
-              )
+            if (input$pca_color == "NULL") {
+                as.data.frame(
+                    data.frame(scores(pca_result()))
+                )
             } else {
-              req(color_data())
-              as.data.frame(merge(
-                data.frame(scores(pca_result())),
-                color_data(),
-                by = "row.names"
-              ))
+                req(color_data())
+                scores_df <- as.data.frame(data.frame(scores(pca_result())))
+                scores_df$.qfeaturesgui_row_id <- rownames(scores_df)
+                color_df <- as.data.frame(color_data())
+                color_df$.qfeaturesgui_row_id <- rownames(color_df)
+                as.data.frame(merge(
+                    scores_df,
+                    color_df,
+                    by = ".qfeaturesgui_row_id",
+                    sort = FALSE
+                ))
             }
         })
 
         output$pca <- renderPlotly({
+            req(single_assay())
+            if (is_empty_set(single_assay()) || ncol(single_assay()) == 0L) {
+                message_text <- paste0(
+                    "PCA cannot be computed for this set (",
+                    nrow(single_assay()), " row", if (nrow(single_assay()) != 1L) "s" else "",
+                    ", ",
+                    ncol(single_assay()), " column", if (ncol(single_assay()) != 1L) "s" else "",
+                    ")."
+                )
+                empty_plot <- plot_ly(
+                    x = numeric(0),
+                    y = numeric(0),
+                    type = "scatter",
+                    mode = "markers"
+                )
+                empty_plot <- plotly::add_annotations(
+                    empty_plot,
+                    text = message_text,
+                    xref = "paper",
+                    yref = "paper",
+                    x = 0.5,
+                    y = 0.5,
+                    showarrow = FALSE
+                )
+                empty_plot <- layout(
+                    empty_plot,
+                    showlegend = FALSE,
+                    xaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE),
+                    yaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE)
+                )
+                return(empty_plot)
+            }
             req(dataframe())
             req(pca_result())
             # TODO: Add a table with the selected points.
