@@ -1154,10 +1154,27 @@ annotation_cols <- function(x, what) {
 #' @importFrom SummarizedExperiment colData
 #' @importFrom matrixStats colMedians
 #' @importFrom MsCoreUtils robustSummary medianPolish
+#' @importFrom waiter Waiter spin_fading_circles
 #'
 aggregation_qfeatures <- function(qfeatures, method,
                                   fcol) {
-  el <- lapply(names(qfeatures), function(name) {
+  n <- length(qfeatures)
+  waiter <- waiter::Waiter$new(
+    html = tagList(
+      waiter::spin_fading_circles(),
+      h4(paste0("Aggregation of 1/", n, " sets")),
+    )
+  )
+
+  waiter$show()
+  el <- lapply(seq_along(qfeatures), function(i) {
+    name <- names(qfeatures)[i]
+    waiter$update(
+      html = tagList(
+        waiter::spin_fading_circles(),
+        h4(paste0("Aggregation of ", i, "/", n, " sets")),
+      )
+    )
     aggregateFeatures(
       object = qfeatures[[name]],
       fun = list(
@@ -1165,11 +1182,13 @@ aggregation_qfeatures <- function(qfeatures, method,
         medianPolish = MsCoreUtils::medianPolish,
         colMeans = base::colMeans,
         colMedians = matrixStats::colMedians,
-        colSums = base::colSums)[[method]],
+        colSums = base::colSums
+      )[[method]],
       fcol = fcol,
       na.rm = TRUE
-    )
+    )  
   })
+  waiter$hide()
   names(el) <- names(qfeatures)
   QFeatures(el, colData = colData(qfeatures))
 }

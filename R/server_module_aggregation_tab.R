@@ -38,20 +38,14 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    observe({
-      updateSelectInput(
-        inputId = "fun"
-      )
-    })
+    updateSelectInput(
+      inputId = "fun"
+    )
     
     unique_features <- reactive({
       req(parent_assays())
       req(input$fcol)
-      features_list <- lapply(seq_along(parent_assays()), function(i) {
-        rowData(parent_assays()[[i]])[, input$fcol]
-      })
-      features_vector <- unlist(features_list)
-      unique(features_vector)
+      unique(rbindRowData(parent_assays(), seq_along(parent_assays))[[input$fcol]])
     })
     
     observe({
@@ -71,6 +65,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
+    
     processed_assays <- eventReactive(input$aggregate, {
       req(parent_assays())
       req(input$fcol)
@@ -83,15 +78,16 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    observeEvent(input$aggregate,{
-      shinycssloaders::showPageSpinner(
-        type = "6",
-        caption = "The aggregation step can be quite time consuming for large datasets"
-      )
-      req(processed_assays())
-      shinycssloaders::hidePageSpinner()
-    })
-    
+    # observeEvent(input$aggregate,{
+    #   # shinycssloaders::showPageSpinner(
+    #   #   type = "6",
+    #   #   caption = "The aggregation step can be quite time consuming for large datasets"
+    #   # )
+    #   # req(processed_assays())
+    #   # shinycssloaders::hidePageSpinner()
+    #   
+    # })
+
     observe({
       req(processed_assays())
       req(input$color)
@@ -111,7 +107,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       req(processed_assays())
       shinycssloaders::showPageSpinner(
         type = "6",
-        caption = "The aggregation step can be quite time consuming for large datasets"
+        caption = "Saving sets in QFeatures object"
       )
       error_handler(
         add_assays_to_global_rv,
@@ -147,6 +143,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' @importFrom tibble rownames_to_column
 #' @importFrom QFeatures aggregateFeatures
 #' @importFrom stats na.exclude
+#' @importFrom tidyr gather
 #'
 
 server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color, showPoints) {
