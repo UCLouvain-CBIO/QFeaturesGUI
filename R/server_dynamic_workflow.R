@@ -38,7 +38,8 @@ server_dynamic_workflow <- function(input, output, session) {
                 "Log Transformation"        = paste0("log_transform_", i, "_v", v),
                 "Normalisation"             = paste0("normalisation_", i, "_v", v),
                 "Filtering NAs by Features" = paste0("missing_values_features_", i, "_v", v),
-                "Filtering NAs by Samples"  = paste0("missing_values_samples_", i, "_v", v)
+                "Filtering NAs by Samples"  = paste0("missing_values_samples_", i, "_v", v),
+                "Aggregation"               = paste0("aggregation_",i,"_v",v)
             )
 
             output[[paste0("dynamic_step_ui_", i)]] <- renderUI({
@@ -66,7 +67,8 @@ server_dynamic_workflow <- function(input, output, session) {
                         "Log Transformation"        = interface_module_log_transform_tab(module_id),
                         "Normalisation"             = interface_module_normalisation_tab(module_id),
                         "Filtering NAs by Features" = interface_module_missing_values_tab(module_id, type = "features"),
-                        "Filtering NAs by Samples"  = interface_module_missing_values_tab(module_id, type = "samples")
+                        "Filtering NAs by Samples"  = interface_module_missing_values_tab(module_id, type = "samples"),
+                        "Aggregation"               = interface_module_aggregation_tab(module_id)
                     )
                 }
             })
@@ -82,7 +84,8 @@ server_dynamic_workflow <- function(input, output, session) {
                 "Log Transformation"        = server_module_log_transform_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
                 "Normalisation"             = server_module_normalisation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),
                 "Filtering NAs by Features" = server_module_missing_values_tab(module_id, step_number = i, type = "features", step_rv = step_rvs[[i]], parent_rv = parent_rv),
-                "Filtering NAs by Samples"  = server_module_missing_values_tab(module_id, step_number = i, type = "samples", step_rv = step_rvs[[i]], parent_rv = parent_rv)
+                "Filtering NAs by Samples"  = server_module_missing_values_tab(module_id, step_number = i, type = "samples", step_rv = step_rvs[[i]], parent_rv = parent_rv),
+                "Aggregation"               = server_module_aggregation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv)
             )
         })
     })

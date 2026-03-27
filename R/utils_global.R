@@ -416,7 +416,8 @@ check_prefilled_steps <- function(prefilledSteps) {
         normalisation = "Normalisation",
         feature_filtering = "Feature Filtering",
         missing_values_features = "Filtering NAs by Features",
-        missing_values_samples = "Filtering NAs by Samples"
+        missing_values_samples = "Filtering NAs by Samples",
+        aggregation = "Aggregation"
     )
 
     unknown_steps <- setdiff(prefilledSteps, names(valid_steps))
@@ -612,7 +613,6 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     return(plotly)
 }
 
-
 #' A function that adds processed assays to the non-reactive global QFeatures store
 #'
 #' @param processed_qfeatures `QFeatures` object whose assays will be added to
@@ -625,6 +625,8 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @param type `character(1)` label describing the processing type (e.g.
 #'   `"samples_filtering"`, `"log_transformation"`), embedded in the new assay
 #'   names
+#' @param varFrom see [QFeatures::addAssayLink].
+#' @param varTo see [QFeatures::addAssayLink].
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
@@ -644,7 +646,7 @@ is_empty_set <- function(assay_object) {
     nrow(assay_object) == 0L || ncol(assay_object) == 0L
 }
 
-add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
+add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varFrom = NULL, varTo = NULL) {
     n_added <- 0L
     n_skipped_empty <- 0L
     for (name in names(processed_qfeatures)) {
@@ -661,34 +663,43 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type) {
         )
 
         .qf$qfeatures[[new_name]] <- assay_to_add
-
-        .qf$qfeatures <- addAssayLink(
+        if (is.null(varFrom) || is.null(varTo)) {
+          .qf$qfeatures <- addAssayLink(
             .qf$qfeatures,
             from = name,
             to = new_name
-        )
-        n_added <- n_added + 1L
+          )
+          n_added <- n_added + 1L
+        } else {
+          .qf$qfeatures <- addAssayLink(
+            .qf$qfeatures,
+            from = name,
+            to = new_name,
+            varFrom = varFrom,
+            varTo = varTo
+          )
+          n_added <- n_added + 1L
+        }
+        
     }
-
     alert_text <- paste0(
-        n_added, " set", if (n_added != 1L) "s" else "",
-        " added to QFeatures."
+      n_added, " set", if (n_added != 1L) "s" else "",
+      " added to QFeatures."
     )
     if (n_skipped_empty > 0L) {
-        alert_text <- paste0(
-            alert_text, " ",
-            n_skipped_empty, " empty set",
-            if (n_skipped_empty != 1L) "s were" else " was",
-            " skipped."
-        )
+      alert_text <- paste0(
+        alert_text, " ",
+        n_skipped_empty, " empty set",
+        if (n_skipped_empty != 1L) "s were" else " was",
+        " skipped."
+      )
     }
-
     shinyalert(
         title = "Step saved",
         text = alert_text,
-        closeOnClickOutside = TRUE,
         type = "success",
-        confirmButtonCol = "#3c8dbc"
+        confirmButtonCol = "#3c8dbc",
+        closeOnClickOutside = TRUE
     )
 }
 
@@ -1102,4 +1113,86 @@ number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering
         )
     }
     return(nb_removed)
+}
+
+#' Internal function that return the available variables (column
+#' names) from the sample annotations (colData) or feature annotations
+#' (rowData) of a QFeatures object. The function is robust against
+#' empty QFeatures objects.
+#'
+#' @param x a QFeatures object
+#' @param what a character(1), either "rowData" or "colData" depending
+#'   on whether to fetch feature annotations or sample annotations,
+#'   respectively.
+#'
+#' @return a vector of column names or an empty vector if no columns
+#'   are found.
+#'
+#' @rdname INTERNAL_annotation_cols
+#' @keywords internal
+annotation_cols <- function(x, what) {
+  if (length(x) == 0) {
+    character(0)
+  } else {
+    annot <- switch(
+      what,
+      rowData = rowData(x)[[1]],
+      colData = colData(x)
+    )
+    colnames(annot)
+  }
+}
+
+#' A function that will aggregate all the assays of a qfeatures
+#'
+#' @param qfeatures `QFeatures` object to aggregate.
+#' @param method `character(1)` naming the aggregation function to use. Must be one of
+#'   `"robustSummary"`, `"medianPolish"`, `"colMeans"`, `"colMedians"`, or `"colSums"`.
+#' @param fcol `character(1)` naming a `rowData` variable that defines how to aggregate
+#'   the features within each assay. This variable is either a character or a (possibly
+#'   sparse) matrix.
+#' @return A `QFeatures` object with assays aggregated according to `fcol` using the
+#'   selected `method`.
+#' @rdname INTERNAL_aggregation_qfeatures
+#' @keywords internal
+#' @importFrom QFeatures normalize QFeatures aggregateFeatures
+#' @importFrom SummarizedExperiment colData
+#' @importFrom matrixStats colMedians
+#' @importFrom MsCoreUtils robustSummary medianPolish
+#' @importFrom waiter Waiter spin_fading_circles
+#'
+aggregation_qfeatures <- function(qfeatures, method,
+                                  fcol) {
+  n <- length(qfeatures)
+  waiter <- waiter::Waiter$new(
+    html = tagList(
+      waiter::spin_fading_circles(),
+      h4(paste0("Aggregation of 1/", n, " sets"))
+    )
+  )
+  waiter$show()
+  el <- lapply(seq_along(qfeatures), function(i) {
+    name <- names(qfeatures)[i]
+    waiter$update(
+      html = tagList(
+        waiter::spin_fading_circles(),
+        h4(paste0("Aggregation of ", i, "/", n, " sets"))
+      )
+    )
+    aggregateFeatures(
+      object = qfeatures[[name]],
+      fun = list(
+        robustSummary = MsCoreUtils::robustSummary,
+        medianPolish = MsCoreUtils::medianPolish,
+        colMeans = base::colMeans,
+        colMedians = matrixStats::colMedians,
+        colSums = base::colSums
+      )[[method]],
+      fcol = fcol,
+      na.rm = TRUE
+    )  
+  })
+  waiter$hide()
+  names(el) <- names(qfeatures)
+  QFeatures(el, colData = colData(qfeatures))
 }
