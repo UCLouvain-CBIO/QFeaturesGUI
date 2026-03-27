@@ -613,7 +613,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     return(plotly)
 }
 
-#' #' A function that adds processed assays to the non-reactive global QFeatures store
+#' A function that adds processed assays to the non-reactive global QFeatures store
 #'
 #' @param processed_qfeatures `QFeatures` object whose assays will be added to
 #'   `.qf$qfeatures`. Each assay is renamed with a step-number suffix following
@@ -698,7 +698,8 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varF
         title = "Step saved",
         text = alert_text,
         type = "success",
-        confirmButtonCol = "#3c8dbc"
+        confirmButtonCol = "#3c8dbc",
+        closeOnClickOutside = TRUE
     )
 }
 
@@ -1121,7 +1122,7 @@ number_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering
 #'
 #' @param x a QFeatures object
 #' @param what a character(1), either "rowData" or "colData" depending
-#'   on whether to fetch feature annotationes or sample annotations,
+#'   on whether to fetch feature annotations or sample annotations,
 #'   respectively.
 #'
 #' @return a vector of column names or an empty vector if no columns
@@ -1144,10 +1145,14 @@ annotation_cols <- function(x, what) {
 
 #' A function that will aggregate all the assays of a qfeatures
 #'
-#' @param qfeatures `QFeatures` object to aggregate
-#' @param fun `str` A function used for quantitative feature aggregation.
-#' @param fcol A character string naming a rowdata variable defining how to aggregate the features of the assay. This variable is either a character or a (possibly sparse) matrix.
-#' @return `QFeatures` object with the normalised assays
+#' @param qfeatures `QFeatures` object to aggregate.
+#' @param method `character(1)` naming the aggregation function to use. Must be one of
+#'   `"robustSummary"`, `"medianPolish"`, `"colMeans"`, `"colMedians"`, or `"colSums"`.
+#' @param fcol `character(1)` naming a `rowData` variable that defines how to aggregate
+#'   the features within each assay. This variable is either a character or a (possibly
+#'   sparse) matrix.
+#' @return A `QFeatures` object with assays aggregated according to `fcol` using the
+#'   selected `method`.
 #' @rdname INTERNAL_aggregation_qfeatures
 #' @keywords internal
 #' @importFrom QFeatures normalize QFeatures aggregateFeatures

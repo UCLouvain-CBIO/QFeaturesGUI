@@ -38,10 +38,6 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    updateSelectInput(
-      inputId = "fun"
-    )
-    
     unique_features <- reactive({
       req(parent_assays())
       req(input$fcol)
@@ -70,7 +66,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     })
     output$pre_boxplot <- renderText({
       if(!clicked()) {
-        "The graph will be display once you have done the aggregation."
+        "The graph will be displayed once you have done the aggregation."
       } else {
         
       }
@@ -89,7 +85,8 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    
+    #TO DO 
+    # extract server module from observer
     observe({
       req(processed_assays())
       req(input$color)
@@ -104,6 +101,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         showPoints = reactive(input$addPoints)
       )
     })
+    
     
     observeEvent(input$export, {
       req(processed_assays())
@@ -140,7 +138,6 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
-#' @importFrom ggplot2 geom_boxplot geom_point ggplot theme xlab ylab
 #' @importFrom dplyr mutate
 #' @importFrom tibble rownames_to_column
 #' @importFrom QFeatures aggregateFeatures
@@ -171,13 +168,13 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
           as.data.frame() |>
           rownames_to_column(var = "aggregation") |>
           tidyr::gather(sample,intensity, -aggregation) |>
-          mutate(condition = colData(qf)[sample,color]) |>
+          mutate(condition = as.vector(colData(qf)[sample, color])) |>
           na.exclude()
         df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
           as.data.frame()|>
           rownames_to_column(var = "aggregation") |>
           tidyr::gather(sample,intensity,-aggregation) |>
-          mutate(condition = colData(qf_aggregate)[sample,color]) |>
+          mutate(condition = as.vector(colData(qf_aggregate)[sample, color])) |>
           na.exclude()
       }
     }

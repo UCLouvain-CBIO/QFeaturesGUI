@@ -36,10 +36,8 @@ Imports:
     tidyr,
     shinyjs,
     rmarkdown,
-    shinyalert,
     tibble,
     dplyr,
-    tidyr,
     matrixStats,
     MsCoreUtils,
     waiter

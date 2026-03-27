@@ -4,7 +4,7 @@
 #' @rdname INTERNAL_interface_module_aggregation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow NS actionButton icon uiOutput
+#' @importFrom shiny fluidRow NS actionButton icon uiOutput textOutput
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList h2
 #' @importFrom shinyBS bsTooltip
@@ -68,7 +68,7 @@ interface_module_aggregation_tab <- function(id) {
           choices =  NULL
         ),
         br(),
-        h4("Plot options"),
+        tags$h4("Plot options"),
         selectInput(
           inputId = NS(id, "color"),
           label = "Color by",
