@@ -64,6 +64,17 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
                         choices = c("NULL",colnames(colData(parent_assays())))
       )
     })
+    clicked <- reactiveVal(FALSE)
+    observeEvent(input$aggregate, {
+      clicked(TRUE)
+    })
+    output$pre_boxplot <- renderText({
+      if(!clicked()) {
+        "The graph will be display once you have done the aggregation."
+      } else {
+        
+      }
+    })
     
     
     processed_assays <- eventReactive(input$aggregate, {
@@ -78,16 +89,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    # observeEvent(input$aggregate,{
-    #   # shinycssloaders::showPageSpinner(
-    #   #   type = "6",
-    #   #   caption = "The aggregation step can be quite time consuming for large datasets"
-    #   # )
-    #   # req(processed_assays())
-    #   # shinycssloaders::hidePageSpinner()
-    #   
-    # })
-
+    
     observe({
       req(processed_assays())
       req(input$color)

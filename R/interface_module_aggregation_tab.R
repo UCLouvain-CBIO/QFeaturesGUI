@@ -29,6 +29,7 @@ interface_module_aggregation_tab <- function(id) {
         width = 9,
         solidHeader = TRUE,
         collapsible = FALSE,
+        textOutput(NS(id,"pre_boxplot")),
         interface_module_feature_levels_boxplot(
           NS(id, "aggregation_boxplot")
         )
