@@ -36,12 +36,11 @@ Imports:
     tidyr,
     shinyjs,
     rmarkdown,
-    shinyalert,
     tibble,
     dplyr,
-    tidyr,
     matrixStats,
-    MsCoreUtils
+    MsCoreUtils,
+    waiter
 Depends:
     shinyBS,
     R (>= 4.3.0)

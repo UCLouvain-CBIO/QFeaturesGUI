@@ -4,72 +4,86 @@
 #' @rdname INTERNAL_interface_module_aggregation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow NS actionButton icon uiOutput
+#' @importFrom shiny fluidRow NS actionButton icon uiOutput textOutput
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList h2
 #' @importFrom shinyBS bsTooltip
+#' @importFrom waiter use_waiter
 #'
 interface_module_aggregation_tab <- function(id) {
   tagList(
-    box(
-      title = "Aggregation",
-      status = "primary",
-      width = 12,
-      solidHeader = TRUE,
-      collapsible = FALSE,
-      fluidRow(
-        interface_module_boxplot_box(
-          NS(id,"aggregation_boxplot"),
-          title = "Aggregation boxplot"
+    fluidRow(
+      waiter::useWaiter(),
+      tags$head(
+        tags$style(HTML("
+          .waiter-overlay {
+            background-color: rgba(0, 0, 0, 0.3)  !important;
+            backdrop-filter: blur(4px);
+          }
+        ")
+        )
+      ),
+      box(
+        title = "Aggregation boxplot",
+        status = "primary",
+        width = 9,
+        solidHeader = TRUE,
+        collapsible = FALSE,
+        div(
+          style = "text-align: center; font-size: 16px; color: #777;",
+          textOutput(NS(id,"pre_boxplot"))
         ),
-        box(
-          title = "Settings",
-          status = "primary",
-          width = 3,
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          selectInput(
-            inputId = NS(id, "method"),
-            label = "function to aggregate",
-            choices = c(
-              "robustSummary",
-              "medianPolish",
-              "colMeans",
-              "colMedians",
-              "colSums"
-            ),
-            selected = "medianPolish"
+        interface_module_feature_levels_boxplot(
+          NS(id, "aggregation_boxplot")
+        )
+      ),
+      box(
+        title = "Settings",
+        status = "primary",
+        width = 3,
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        selectInput(
+          inputId = NS(id, "method"),
+          label = "function to aggregate",
+          choices = c(
+            "robustSummary",
+            "medianPolish",
+            "colMeans",
+            "colMedians",
+            "colSums"
           ),
-          br(),
-          selectInput(
-            inputId = NS(id, "fcol"),
-            "rowData variable defining the features of the assay to aggregate",
-            choices = NULL
-          ),
-          br(),
-          selectizeInput(
-            inputId = NS(id, "features"),
-            "Features to plot",
-            choices =  NULL
-          ),
-          br(),
-          h4("Plot options"),
-          selectInput(
-            inputId = NS(id, "color"),
-            label = "Color by",
-            choices = NULL
-          ),
-          checkboxInput(
-            inputId = NS(id, "addPoints"),
-            label = "Show points",
-            value = TRUE
-          ),
-          actionButton(
-            inputId = NS(id, "aggregate"),
-            label = "Aggregate",
-            width = "100%",
-            class = "load-button" 
-          )
+          selected = "medianPolish"
+        ),
+        br(),
+        selectInput(
+          inputId = NS(id, "fcol"),
+          "rowData variable defining the features of the assay to aggregate",
+          choices = NULL
+        ),
+        br(),
+        selectizeInput(
+          inputId = NS(id, "features"),
+          "Features to plot",
+          choices =  NULL
+        ),
+        br(),
+        tags$h4("Plot options"),
+        selectInput(
+          inputId = NS(id, "color"),
+          label = "Color by",
+          choices = NULL
+        ),
+        checkboxInput(
+          inputId = NS(id, "addPoints"),
+          label = "Show points",
+          value = TRUE
+        ),
+        actionButton(
+          inputId = NS(id, "aggregate"),
+          label = "Aggregate",
+          width = "100%",
+          class = "load-button" 
         )
       )
     ),
@@ -95,20 +109,13 @@ interface_module_aggregation_tab <- function(id) {
 #' boxplot box (section) ui builder
 #'
 #' @return A shiny tagList object that contains the boxplot box UI components
-#' @rdname INTERNAL_interface_module_boxplot_box
+#' @rdname INTERNAL_interface_module_feature_levels_boxplot
 #' @keywords internal
 #'
 #' @importFrom shiny fluidRow NS actionButton icon uiOutput
 #' @importFrom shinydashboardPlus box
 #'
 
-interface_module_boxplot_box <- function(id, title) {
-  box(
-    title = title,
-    status = "primary",
-    width = 9,
-    solidHeader = TRUE,
-    collapsible = FALSE,
-    plotlyOutput(outputId = NS(id, "boxplot"))
-  )
+interface_module_feature_levels_boxplot <- function(id) {
+  plotlyOutput(outputId = NS(id, "boxplot"))
 }

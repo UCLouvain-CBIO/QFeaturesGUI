@@ -6,6 +6,7 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
+#' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
@@ -37,20 +38,10 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    observe({
-      updateSelectInput(
-        inputId = "fun"
-      )
-    })
-    
     unique_features <- reactive({
       req(parent_assays())
       req(input$fcol)
-      features_list <- lapply(seq_along(parent_assays()), function(i) {
-        rowData(parent_assays()[[i]])[, input$fcol]
-      })
-      features_vector <- unlist(features_list)
-      unique(features_vector)
+      unique(rbindRowData(parent_assays(), seq_along(parent_assays))[[input$fcol]])
     })
     
     observe({
@@ -66,9 +57,21 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       req(parent_assays())
       updateSelectInput(session,
                         "color",
-                        choices = colnames(colData(parent_assays()))
+                        choices = c("NULL",colnames(colData(parent_assays())))
       )
     })
+    clicked <- reactiveVal(FALSE)
+    observeEvent(input$aggregate, {
+      clicked(TRUE)
+    })
+    output$pre_boxplot <- renderText({
+      if(!clicked()) {
+        "The graph will be displayed once you have done the aggregation."
+      } else {
+        
+      }
+    })
+    
     
     processed_assays <- eventReactive(input$aggregate, {
       req(parent_assays())
@@ -82,15 +85,8 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     
-    observeEvent(input$aggregate,{
-      shinycssloaders::showPageSpinner(
-        type = "6",
-        caption = "The aggregation step can be quite time consuming for large datasets"
-      )
-      req(processed_assays())
-      shinycssloaders::hidePageSpinner()
-    })
-    
+    #TO DO 
+    # extract server module from observer
     observe({
       req(processed_assays())
       req(input$color)
@@ -101,13 +97,18 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         qf_aggregate = processed_assays(),
         aggregateBy = input$fcol,
         feature = input$features,
-        color = input$color, 
+        color = input$color,
         showPoints = reactive(input$addPoints)
       )
     })
     
+    
     observeEvent(input$export, {
       req(processed_assays())
+      shinycssloaders::showPageSpinner(
+        type = "6",
+        caption = "Saving sets in QFeatures object"
+      )
       error_handler(
         add_assays_to_global_rv,
         component_name = "Add assays to global_rv",
@@ -118,6 +119,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         varFrom = input$fcol
       )
       step_rv(step_rv() + 1L)
+      shinycssloaders::hidePageSpinner()
     })
   })
 }
@@ -136,33 +138,45 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
-#' @importFrom ggplot2 geom_boxplot geom_point ggplot theme xlab ylab
 #' @importFrom dplyr mutate
 #' @importFrom tibble rownames_to_column
 #' @importFrom QFeatures aggregateFeatures
 #' @importFrom stats na.exclude
+#' @importFrom tidyr gather
 #'
 
 server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color, showPoints) {
   moduleServer(id, function(input, output, session){
     df_qf_list <- list()
     df_qf_aggregate_list <- list()
-    
     for(i in names(qf)){
       set_qf <- qf[[i]][rowData(qf[[i]])[[aggregateBy]] == feature,]
       set_qf_aggregate <- qf_aggregate[[i]][rowData(qf_aggregate[[i]])[[aggregateBy]] == feature,]
-      df_qf_list[[i]] <- assay(set_qf) |>
-        as.data.frame() |>
-        rownames_to_column(var = "aggregation") |>
-        tidyr::gather(sample,intensity, -aggregation) |>
-        mutate(condition = colData(qf)[sample,color]) |>
-        na.exclude()
-      df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
-        as.data.frame()|>
-        rownames_to_column(var = "aggregation") |>
-        tidyr::gather(sample,intensity,-aggregation) |>
-        mutate(condition = colData(qf_aggregate)[sample,color]) |>
-        na.exclude()
+      if (color == "NULL"){
+        df_qf_list[[i]] <- assay(set_qf) |>
+          as.data.frame() |>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity, -aggregation) |>
+          na.exclude()
+        df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
+          as.data.frame()|>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity,-aggregation) |>
+          na.exclude()
+      } else {
+        df_qf_list[[i]] <- assay(set_qf) |>
+          as.data.frame() |>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity, -aggregation) |>
+          mutate(condition = as.vector(colData(qf)[sample, color])) |>
+          na.exclude()
+        df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
+          as.data.frame()|>
+          rownames_to_column(var = "aggregation") |>
+          tidyr::gather(sample,intensity,-aggregation) |>
+          mutate(condition = as.vector(colData(qf_aggregate)[sample, color])) |>
+          na.exclude()
+      }
     }
     
     df_qf <- dplyr::bind_rows(df_qf_list)
@@ -171,34 +185,56 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
     
     data_final$aggregation <- factor(data_final$aggregation, levels = unique(data_final$aggregation))
     
-    
     output$boxplot <- renderPlotly({
-      if(showPoints()) {
-        boxpoints = "all"
-        jitter = 0.3
-        pointpos = 0
-      } else {
-        boxpoints = "suspectedoutliers"
-        jitter = 0
-        pointpos = 0
-      }
-      plot_ly(
+      error_handler(
+        create_boxplot,
+        component_name = "boxplot generation",
         data = data_final,
-        x = ~aggregation,
-        y = ~intensity,
-        color = ~condition,
-        text = ~sample,
-        type = "box",
-        boxpoints = boxpoints,
-        jitter = jitter,
-        pointpos = pointpos,
-        hoveron = if(showPoints()) "points" else "boxes",
-        hovertemplate = paste0(
-          "<b>%{text}</b><br>",
-          "<extra></extra>"
-        )
-      ) %>%
-        layout(boxmode = "group")
+        color = color,
+        showPoints = showPoints()
+      )
     }) 
   }) 
+}
+
+#' Function that generate a boxplot
+#'
+#' @param data a dataset containing intensity values pre and post aggregation
+#' @param color variable to use for the color
+#' @param showPoints logical for hide/show points on boxplot
+#' @return a boxplot
+#' @rdname INTERNAL_create_boxplot
+#' @keywords internal
+#'
+#' @importFrom plotly plotly_build
+#'
+
+create_boxplot<- function(data, color, showPoints){
+  if(showPoints) {
+    boxpoints = "all"
+    jitter = 0.3
+    pointpos = 0
+  } else {
+    boxpoints = "suspectedoutliers"
+    jitter = 0
+    pointpos = 0
+  }
+  p <-plot_ly(
+    data = data,
+    x = ~aggregation,
+    y = ~intensity,
+    color = if (color == "NULL") NULL else ~condition,
+    text = ~sample,
+    type = "box",
+    boxpoints = boxpoints,
+    jitter = jitter,
+    pointpos = pointpos,
+    hoveron = if(showPoints) "points" else "boxes",
+    hovertemplate = paste0(
+      "<b>%{text}</b><br>",
+      "<extra></extra>"
+    )
+  ) %>%
+    layout(boxmode = "group")
+  plotly_build(p)
 }

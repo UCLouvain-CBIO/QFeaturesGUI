@@ -11,26 +11,40 @@
 
 interface_module_viz_box <- function(id) {
     tagList(
-        selectizeInput(NS(id, "feature"),
-            "Feature Selection",
-            choices = NULL
+        column(
+            4,
+            box(
+                title = "Parameters",
+                status = "primary",
+                solidHeader = FALSE,
+                collapsible = TRUE,
+                collapsed = FALSE,
+                width = 12,
+                selectInput(NS(id, "feature_type_column"),
+                    "Feature Annotation Column",
+                    choices = NULL
+                ),
+                selectInput(NS(id, "sample_type_column"),
+                    "Sample Annotation Column",
+                    choices = NULL
+                ),
+                selectizeInput(NS(id, "feature"),
+                    "Feature Selection",
+                    choices = NULL
+                )
+            )
         ),
-        selectInput(NS(id, "sample_type_column"),
-            "Sample Annotation Column",
-            choices = NULL
-        ),
-        selectInput(NS(id, "feature_type_column"),
-            "Feature Annotation Column",
-            choices = NULL
-        ),
-        box(
-            title = "Box Plot",
-            status = "primary",
-            solidHeader = FALSE,
-            collapsible = TRUE,
-            collapsed = TRUE,
-            width = 12,
-            plotlyOutput(NS(id, "plot"))
+        column(
+            8,
+            box(
+                title = "Box Plot",
+                status = "primary",
+                solidHeader = FALSE,
+                collapsible = TRUE,
+                collapsed = FALSE,
+                width = 12,
+                plotlyOutput(NS(id, "plot"))
+            )
         )
     )
 }
