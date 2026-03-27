@@ -1162,17 +1162,16 @@ aggregation_qfeatures <- function(qfeatures, method,
   waiter <- waiter::Waiter$new(
     html = tagList(
       waiter::spin_fading_circles(),
-      h4(paste0("Aggregation of 1/", n, " sets")),
+      h4(paste0("Aggregation of 1/", n, " sets"))
     )
   )
-
   waiter$show()
   el <- lapply(seq_along(qfeatures), function(i) {
     name <- names(qfeatures)[i]
     waiter$update(
       html = tagList(
         waiter::spin_fading_circles(),
-        h4(paste0("Aggregation of ", i, "/", n, " sets")),
+        h4(paste0("Aggregation of ", i, "/", n, " sets"))
       )
     )
     aggregateFeatures(

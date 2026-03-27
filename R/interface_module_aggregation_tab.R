@@ -13,7 +13,7 @@
 interface_module_aggregation_tab <- function(id) {
   tagList(
     fluidRow(
-      waiter::use_waiter(),
+      waiter::useWaiter(),
       tags$head(
         tags$style(HTML("
           .waiter-overlay {
@@ -29,7 +29,10 @@ interface_module_aggregation_tab <- function(id) {
         width = 9,
         solidHeader = TRUE,
         collapsible = FALSE,
-        textOutput(NS(id,"pre_boxplot")),
+        div(
+          style = "text-align: center; font-size: 16px; color: #777;",
+          textOutput(NS(id,"pre_boxplot"))
+        ),
         interface_module_feature_levels_boxplot(
           NS(id, "aggregation_boxplot")
         )
