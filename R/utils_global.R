@@ -1200,11 +1200,11 @@ aggregation_qfeatures <- function(qfeatures, method,
 
 #' A function that will join all the assays of a qfeatures
 #'
-#' @param qfeatures `QFeatures` object to aggregate
+#' @param qfeatures `QFeatures` object to join
 #'
 #' @return `QFeatures` object with the joined assays
 #'
-#' @rdname INTERNAL_aggregation_qfeatures
+#' @rdname INTERNAL_join_qfeatures
 #'
 #' @keywords internal
 #'
@@ -1223,18 +1223,20 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
   suppressMessages(suppressWarnings(qf[, , "joinedAssay"]))
 }
 
-#' A function that will add the assays to the global_rv qfeatures
+#' A function that will add the assays to the package-level `.qf$qfeatures`
 #' object when performing a joining step, where multiple parent assays
 #' are linked to one child assay.
 #'
-#' @param processed_qfeatures `QFeatures` object to add to the global_rv qfeatures object
+#' @param processed_qfeatures `QFeatures` object whose assays will be added to
+#'   the package-level `.qf$qfeatures` object
 #' @param step_number `int` number of the step
 #' @param type A `character(1)` providing the name of the step.
 #'
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
 #'
-#' @return (NULL) does not return anything but will add the assays to the global_rv qfeatures object
+#' @return (NULL) does not return anything but will add the assays to the
+#'   package-level `.qf$qfeatures` object
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 #'
