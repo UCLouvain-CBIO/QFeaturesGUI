@@ -26,8 +26,23 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
             )
         })
 
-        processed_assays <- reactive({
+        clicked <- reactiveVal(FALSE)
+        observeEvent(input$apply_normalisation, {
+            clicked(TRUE)
+        })
+
+        output$pre_density_post <- renderText({
+            if (!clicked()) {
+                "The post-normalisation plot will be displayed once you apply normalisation."
+            } else {
+                ""
+            }
+        })
+
+        processed_assays <- eventReactive(input$apply_normalisation, {
             req(parent_assays())
+            loading("Applying normalisation and generating post-normalisation densities")
+            on.exit(removeModal(), add = TRUE)
             error_handler(
                 normalisation_qfeatures,
                 component_name = "Normalisation",

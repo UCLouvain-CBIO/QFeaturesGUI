@@ -36,6 +36,10 @@ interface_module_normalisation_tab <- function(id) {
                         column(
                             6,
                             tags$h4("Post-normalisation"),
+                            div(
+                                style = "text-align: center; font-size: 16px; color: #777;",
+                                textOutput(NS(id, "pre_density_post"))
+                            ),
                             withSpinner(plotlyOutput(outputId = NS(id, "density_plot_post")),
                                 type = 6,
                                 color = "#3c8dbc"
@@ -67,6 +71,13 @@ interface_module_normalisation_tab <- function(id) {
                         selected = "center.median"
                     ),
                     br(),
+                    actionButton(
+                        inputId = NS(id, "apply_normalisation"),
+                        label = "Apply normalisation",
+                        width = "100%",
+                        class = "load-button"
+                    ),
+                    br(), br(),
                     tags$h4("Plot options"),
                     selectInput(
                         inputId = NS(id, "color"),
