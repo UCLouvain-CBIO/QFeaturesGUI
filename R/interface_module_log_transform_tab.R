@@ -24,9 +24,9 @@ interface_module_log_transform_tab <- function(id) {
                     width = 9,
                     solidHeader = FALSE,
                     collapsible = TRUE,
-                    withSpinner(plotlyOutput(outputId = NS(id, "boxplot")),
-                        type = 6,
-                        color = "#3c8dbc"
+                    waiter::withWaiter(plotlyOutput(outputId = NS(id, "boxplot")),
+                        html = waiter::spin_fading_circles(),
+                        color = "rgba(0, 0, 0, 0.25)"
                     )
                 ),
                 box(

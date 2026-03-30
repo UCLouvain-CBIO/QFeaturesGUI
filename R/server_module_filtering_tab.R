@@ -9,7 +9,7 @@
 #' @rdname INTERNAL_server_module_filtering_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe NS reactive req reactiveVal removeModal icon
+#' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe NS reactive req reactiveVal icon
 #' @importFrom htmltools tags
 #' @importFrom shinydashboard renderInfoBox infoBox
 server_module_filtering_tab <- function(id,
@@ -205,19 +205,22 @@ server_module_filtering_tab <- function(id,
         observeEvent(input$export,
             {
                 req(processed_assays())
-                loading(paste("Be aware that this operation",
-                    "can be quite time consuming for large data sets",
-                    sep = " "
-                ))
-                error_handler(
-                    add_assays_to_global_rv,
-                    component_name = "Add assays to global_rv",
-                    processed_qfeatures = processed_assays(),
-                    step_number = step_number,
-                    type = paste0(type, "_filtering")
+                with_task_loader(
+                    caption = paste(
+                        "Be aware that this operation",
+                        "can be quite time consuming for large data sets"
+                    ),
+                    expr = {
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = processed_assays(),
+                            step_number = step_number,
+                            type = paste0(type, "_filtering")
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
                 )
-                step_rv(step_rv() + 1L)
-                removeModal()
             },
             ignoreInit = TRUE
         )

@@ -47,7 +47,6 @@ interface_module_filtering_box <- function(id, box_title, annotation_choices = N
 #' @importFrom shiny NS selectInput actionButton
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom plotly renderPlotly
-#' @importFrom shinycssloaders withSpinner
 #' @importFrom shinyBS bsAlert
 #'
 interface_module_annotation_plot <- function(id) {
@@ -58,9 +57,9 @@ interface_module_annotation_plot <- function(id) {
         solidHeader = TRUE,
         collapsible = TRUE,
         collapsed = FALSE,
-        withSpinner(plotlyOutput(NS(id, "plot")),
-            type = 6,
-            color = "#3c8dbc"
+        waiter::withWaiter(plotlyOutput(NS(id, "plot")),
+            html = waiter::spin_fading_circles(),
+            color = "rgba(0, 0, 0, 0.25)"
         ),
         bsAlert(NS(id, "alert")) # Not working with NS
     )
