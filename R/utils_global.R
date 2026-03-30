@@ -294,7 +294,7 @@ task_loader_markup <- function(caption = NULL) {
         return(waiter::spin_fading_circles())
     }
     caption <- as.character(caption)[1]
-    if (!nzchar(caption)) {
+    if (is.na(caption) || !nzchar(caption)) {
         return(waiter::spin_fading_circles())
     }
     tagList(
