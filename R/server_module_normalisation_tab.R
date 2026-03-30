@@ -60,19 +60,22 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
         observeEvent(input$export,
             {
                 req(processed_assays())
-                loading(paste("Be aware that this operation",
-                    "can be quite time consuming for large data sets",
-                    sep = " "
-                ))
-                error_handler(
-                    add_assays_to_global_rv,
-                    component_name = "Add assays to global_rv",
-                    processed_qfeatures = processed_assays(),
-                    step_number = step_number,
-                    type = "normalisation"
+                with_task_loader(
+                    caption = paste(
+                        "Be aware that this operation",
+                        "can be quite time consuming for large data sets"
+                    ),
+                    expr = {
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = processed_assays(),
+                            step_number = step_number,
+                            type = "normalisation"
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
                 )
-                step_rv(step_rv() + 1L)
-                removeModal()
             },
             ignoreInit = TRUE
         )
