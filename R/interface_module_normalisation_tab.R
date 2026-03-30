@@ -4,9 +4,9 @@
 #' @rdname INTERNAL_interface_module_normalisation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow NS actionButton icon uiOutput
+#' @importFrom shiny fluidRow column NS actionButton icon uiOutput
 #' @importFrom shinydashboardPlus box
-#' @importFrom htmltools tagList h2
+#' @importFrom htmltools tagList h2 tags
 #' @importFrom shinyBS bsTooltip
 #'
 interface_module_normalisation_tab <- function(id) {
@@ -24,9 +24,23 @@ interface_module_normalisation_tab <- function(id) {
                     width = 9,
                     solidHeader = FALSE,
                     collapsible = TRUE,
-                    withSpinner(plotlyOutput(outputId = NS(id, "density_plot")),
-                        type = 6,
-                        color = "#3c8dbc"
+                    fluidRow(
+                        column(
+                            6,
+                            tags$h4("Pre-normalisation"),
+                            withSpinner(plotlyOutput(outputId = NS(id, "density_plot_pre")),
+                                type = 6,
+                                color = "#3c8dbc"
+                            )
+                        ),
+                        column(
+                            6,
+                            tags$h4("Post-normalisation"),
+                            withSpinner(plotlyOutput(outputId = NS(id, "density_plot_post")),
+                                type = 6,
+                                color = "#3c8dbc"
+                            )
+                        )
                     )
                 ),
                 box(
@@ -45,7 +59,7 @@ interface_module_normalisation_tab <- function(id) {
                             "center.median",
                             "div.mean",
                             "div.median",
-                            "diff.meda",
+                            "diff.median",
                             "quantiles",
                             "quantiles.robust",
                             "vsn"
@@ -53,11 +67,12 @@ interface_module_normalisation_tab <- function(id) {
                         selected = "center.median"
                     ),
                     br(),
-                    h4("Plot options"),
+                    tags$h4("Plot options"),
                     selectInput(
                         inputId = NS(id, "color"),
                         label = "Color by",
-                        choices = NULL
+                        choices = c("NULL"),
+                        selected = "NULL"
                     )
                 )
             )
