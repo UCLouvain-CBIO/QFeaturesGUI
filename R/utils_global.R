@@ -613,6 +613,17 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     return(plotly)
 }
 
+#' Check whether an assay set is empty
+#'
+#' @param assay_object a SummarizedExperiment-like assay object
+#'
+#' @return a logical scalar
+#' @rdname INTERNAL_is_empty_set
+#' @keywords internal
+is_empty_set <- function(assay_object) {
+    nrow(assay_object) == 0L || ncol(assay_object) == 0L
+}
+
 #' A function that adds processed assays to the non-reactive global QFeatures store
 #'
 #' @param processed_qfeatures `QFeatures` object whose assays will be added to
@@ -634,18 +645,6 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #'   `.qf$qfeatures` (the non-reactive global environment store).
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
-
-#' Check whether an assay set is empty
-#'
-#' @param assay_object a SummarizedExperiment-like assay object
-#'
-#' @return a logical scalar
-#' @rdname INTERNAL_is_empty_set
-#' @keywords internal
-is_empty_set <- function(assay_object) {
-    nrow(assay_object) == 0L || ncol(assay_object) == 0L
-}
-
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varFrom = NULL, varTo = NULL) {
     n_added <- 0L
     n_skipped_empty <- 0L
