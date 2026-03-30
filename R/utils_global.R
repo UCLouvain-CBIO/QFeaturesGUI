@@ -1231,6 +1231,7 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
 #'   the package-level `.qf$qfeatures` object
 #' @param step_number `int` number of the step
 #' @param type A `character(1)` providing the name of the step.
+#' @param featuresType which type of features will be joined
 #'
 #' @rdname INTERNAL_add_assays_to_global_rv
 #' @keywords internal
@@ -1240,17 +1241,21 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 #'
-add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, type) {
-  for (name in names(processed_qfeatures)) {
-    new_name <- paste0(
-      strsplit(name, "_QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
-      "_(QFeaturesGUI#", step_number, ")",
-      "_", type, "_", step_number
+add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, featuresType, type) {
+  # for (name in names(processed_qfeatures)) {
+  #   new_name <- paste0(
+  #     strsplit(name, "_QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
+  #     "_(QFeaturesGUI#", step_number, ")",
+  #     "_", type, "_", step_number
+  #   )
+  # }
+  name <- names(processed_qfeatures)[length(processed_qfeatures)]
+  new_name <- paste0(
+    strsplit(name,"_QFeaturesGUI#",fixed =TRUE)[[1]][[1]],
+    "_(QFeaturesGUI#", step_number, ")",
+    "_", featuresType, "_", type, "_", step_number
     )
-  }
-  
   .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
-  
   from_pattern <- paste0("QFeaturesGUI#", step_number - 1, "\\)")
   from_names <- grep(from_pattern, names(.qf$qfeatures), value = TRUE)
   .qf$qfeatures <- addAssayLink(

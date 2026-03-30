@@ -14,6 +14,15 @@ interface_module_join_tab <- function(id) {
     uiOutput(
       NS(id, "joinAvailability")
     ),
+    div(
+      style = "display: flex; justify-content: center;",
+      selectInput(
+        NS(id, "feature_type"),
+        label = "Choose the type of features your set contain.",
+        choices = c("PSM", "Peptides", "Proteins"),
+        width = "200px"
+      )
+    ),
     actionButton(
       NS(id, "export"),
       "Join and save the processed assays",

@@ -29,47 +29,14 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
       )
     })
     output$joinAvailability <- renderUI({
-      assays <- assays_to_process()
-      n <- length(assays)
-      duplicates <- FALSE
-      if (n >= 1) {
-        rownamesQF <- rownames(assays[[1]])
-        if (n > 1) {
-          for (i in 2:n) {
-            rownamesQF <- c(rownamesQF, rownames(assays[[i]]))
-            if (length(rownamesQF) != length(unique(rownamesQF))) {
-              duplicates <- TRUE
-              break
-            }
-          }
-        }
-      }
+      n <- length(assays_to_process())
       div(
         style = "text-align : center; padding: 60px 20px;",
-        p("Sets will be joined by combining rownames of sets please make sure you use the aggregation step before trying to join sets."),
+        p("Sets will be joined by combining rownames of sets."),
         p(
           paste(n, "sets will be join in 1 set.")
         ),
-        if(isTRUE(duplicates)){
-          p(
-            style = "font-size: 1.1em; color: #777;",
-            "Found duplicates in the rownames, the sets cannot be joined.",
-            tags$i(
-              class = "fa fa-xmark"
-            )
-            
-          )
-        } else {
-          p(
-            style = "font-size: 1.1em; color: #777;",
-            "No duplicates found in the rownames the sets can be joined.",
-            tags$i(
-              class = "fa fa-check"
-            )
-          )
-        }
-      )
-      
+      )    
     })
     observeEvent(input$export, {
       req(assays_to_process())
@@ -88,6 +55,7 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
         add_joined_assay_to_global_rv,
         component_name = "Add assays to global_rv",
         processed_qfeatures = processed_assays,
+        featuresType = input$feature_type,
         step_number = step_number,
         type = "join"
       )
