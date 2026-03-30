@@ -73,7 +73,6 @@ interface_module_qc_metrics <- function(id, type) {
 #'
 #' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom shiny selectInput checkboxInput numericInput NS
-#' @importFrom shinycssloaders withSpinner
 #' @importFrom plotly plotlyOutput
 #'
 interface_module_pca_box <- function(id, title) {
@@ -115,9 +114,9 @@ interface_module_pca_box <- function(id, title) {
                 max = 30
             )
         ),
-        withSpinner(plotlyOutput(outputId = NS(id, "pca")),
-            type = 6,
-            color = "#3c8dbc"
+        waiter::withWaiter(plotlyOutput(outputId = NS(id, "pca")),
+            html = waiter::spin_fading_circles(),
+            color = "rgba(0, 0, 0, 0.25)"
         )
     )
 }

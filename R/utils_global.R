@@ -282,6 +282,87 @@ loading <- function(msg) {
     ))
 }
 
+#' Build the markup used by the full-page task loader
+#'
+#' @param caption Optional loader caption shown under the spinner
+#'
+#' @return HTML tags used by waiter.
+#' @rdname INTERNAL_task_loader_markup
+#' @keywords internal
+task_loader_markup <- function(caption = NULL) {
+    if (is.null(caption) || length(caption) == 0L) {
+        return(waiter::spin_fading_circles())
+    }
+    caption <- as.character(caption)[1]
+    if (is.na(caption) || !nzchar(caption)) {
+        return(waiter::spin_fading_circles())
+    }
+    tagList(
+        waiter::spin_fading_circles(),
+        tags$h4(caption, style = "margin-top: 12px; color: #FFFFFF;")
+    )
+}
+
+#' Start a full-page loader for long-running tasks
+#'
+#' @param caption Optional loader caption.
+#'
+#' @return A waiter loader object.
+#' @rdname INTERNAL_task_loader_start
+#' @keywords internal
+task_loader_start <- function(caption = NULL) {
+    loader <- waiter::Waiter$new(
+        html = task_loader_markup(caption),
+        color = "rgba(0, 0, 0, 0.35)"
+    )
+    loader$show()
+    loader
+}
+
+#' Update the caption of a running full-page task loader
+#'
+#' @param loader A loader object returned by `task_loader_start()`.
+#' @param caption Optional updated caption.
+#'
+#' @return Invisibly `NULL`.
+#' @rdname INTERNAL_task_loader_update
+#' @keywords internal
+task_loader_update <- function(loader, caption = NULL) {
+    if (is.null(loader)) {
+        return(invisible(NULL))
+    }
+    loader$update(html = task_loader_markup(caption))
+    invisible(NULL)
+}
+
+#' Stop a full-page task loader
+#'
+#' @param loader A loader object returned by `task_loader_start()`.
+#'
+#' @return Invisibly `NULL`.
+#' @rdname INTERNAL_task_loader_stop
+#' @keywords internal
+task_loader_stop <- function(loader) {
+    if (!is.null(loader)) {
+        loader$hide()
+    }
+    invisible(NULL)
+}
+
+#' Execute an expression with a full-page task loader
+#'
+#' @param caption Optional loader caption.
+#' @param expr Expression to execute while the loader is displayed.
+#'
+#' @return The value of `expr`.
+#' @rdname INTERNAL_with_task_loader
+#' @keywords internal
+with_task_loader <- function(caption = NULL, expr) {
+    loader <- task_loader_start(caption)
+    on.exit(task_loader_stop(loader), add = TRUE)
+    force(expr)
+}
+
 #' Normalize and validate set selection indices
 #'
 #' Internal helper to validate and normalise assay selections for a
@@ -622,7 +703,7 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
 #' @rdname INTERNAL_is_empty_set
 #' @keywords internal
 is_empty_set <- function(assay_object) {
-  nrow(assay_object) == 0L || ncol(assay_object) == 0L
+    nrow(assay_object) == 0L || ncol(assay_object) == 0L
 }
 
 #' A function that adds processed assays to the non-reactive global QFeatures store
@@ -646,7 +727,6 @@ is_empty_set <- function(assay_object) {
 #'   `.qf$qfeatures` (the non-reactive global environment store).
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
-
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varFrom = NULL, varTo = NULL) {
     n_added <- 0L
     n_skipped_empty <- 0L
@@ -1164,38 +1244,33 @@ annotation_cols <- function(x, what) {
 #'
 aggregation_qfeatures <- function(qfeatures, method,
                                   fcol) {
-  n <- length(qfeatures)
-  waiter <- waiter::Waiter$new(
-    html = tagList(
-      waiter::spin_fading_circles(),
-      h4(paste0("Aggregation of 1/", n, " sets"))
-    )
-  )
-  waiter$show()
-  el <- lapply(seq_along(qfeatures), function(i) {
-    name <- names(qfeatures)[i]
-    waiter$update(
-      html = tagList(
-        waiter::spin_fading_circles(),
-        h4(paste0("Aggregation of ", i, "/", n, " sets"))
-      )
-    )
-    aggregateFeatures(
-      object = qfeatures[[name]],
-      fun = list(
-        robustSummary = MsCoreUtils::robustSummary,
-        medianPolish = MsCoreUtils::medianPolish,
-        colMeans = base::colMeans,
-        colMedians = matrixStats::colMedians,
-        colSums = base::colSums
-      )[[method]],
-      fcol = fcol,
-      na.rm = TRUE
-    )  
-  })
-  waiter$hide()
-  names(el) <- names(qfeatures)
-  QFeatures(el, colData = colData(qfeatures))
+    n <- length(qfeatures)
+    caption <- if (n > 0L) {
+        paste0("Aggregation of 1/", n, " sets")
+    } else {
+        "Aggregation in progress"
+    }
+    loader <- task_loader_start(caption)
+    on.exit(task_loader_stop(loader), add = TRUE)
+
+    el <- lapply(seq_along(qfeatures), function(i) {
+        name <- names(qfeatures)[i]
+        task_loader_update(loader, paste0("Aggregation of ", i, "/", n, " sets"))
+        aggregateFeatures(
+            object = qfeatures[[name]],
+            fun = list(
+                robustSummary = MsCoreUtils::robustSummary,
+                medianPolish = MsCoreUtils::medianPolish,
+                colMeans = base::colMeans,
+                colMedians = matrixStats::colMedians,
+                colSums = base::colSums
+            )[[method]],
+            fcol = fcol,
+            na.rm = TRUE
+        )
+    })
+    names(el) <- names(qfeatures)
+    QFeatures(el, colData = colData(qfeatures))
 }
 
 #' A function that will join all the assays of a qfeatures

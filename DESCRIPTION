@@ -27,7 +27,6 @@ Imports:
     MultiAssayExperiment,
     RColorBrewer,
     methods,
-    shinycssloaders,
     shinyFeedback,
     viridisLite,
     stats,

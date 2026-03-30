@@ -4,22 +4,25 @@
 #' @rdname INTERNAL_build_import_ui
 #' @keywords internal
 #'
-#' @importFrom shinydashboard dashboardBody tabItem tabItems
+#' @importFrom shinydashboard dashboardBody tabItem tabItems 
 #' @importFrom shinydashboardPlus dashboardPage dashboardSidebar
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
 #' @importFrom shinyjs useShinyjs
+#' @importFrom waiter useWaiter
 #'
 build_import_ui <- function() {
     ui <- dashboardPage(
         skin = "blue",
         header = header("import QFeatures App"),
-        dashboardSidebar(collapsed = TRUE, disable = TRUE, width = 0),
+        dashboardSidebar(disable = TRUE, minified = FALSE, width = 0),
         dashboardBody(
             useShinyjs(),
+            waiter::useWaiter(),
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             import_tab()
-        )
+        ),
+        scrollToTop = TRUE
     )
     return(ui)
 }

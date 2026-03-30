@@ -9,7 +9,6 @@
 #' @importFrom DT dataTableOutput
 #' @importFrom shiny NS
 #' @importFrom plotly plotlyOutput
-#' @importFrom shinycssloaders withSpinner
 interface_module_summary_tab <- function(id) {
     box(
         title = "QFeatures Summary",
@@ -17,13 +16,13 @@ interface_module_summary_tab <- function(id) {
         solidHeader = TRUE,
         collapsible = TRUE,
         width = 12,
-        withSpinner(DT::dataTableOutput(NS(id, "qfeatures_dt")),
-            type = 6,
-            color = "#3c8dbc"
+        waiter::withWaiter(DT::dataTableOutput(NS(id, "qfeatures_dt")),
+            html = waiter::spin_fading_circles(),
+            color = "rgba(0, 0, 0, 0.25)"
         ),
-        withSpinner(DT::dataTableOutput(NS(id, "assay_table")),
-            type = 6,
-            color = "#3c8dbc"
+        waiter::withWaiter(DT::dataTableOutput(NS(id, "assay_table")),
+            html = waiter::spin_fading_circles(),
+            color = "rgba(0, 0, 0, 0.25)"
         ),
         box(
             title = "Visual Summary",
@@ -31,9 +30,9 @@ interface_module_summary_tab <- function(id) {
             solidHeader = FALSE,
             collapsible = TRUE,
             width = 12,
-            withSpinner(plotlyOutput(NS(id, "qfeatures_plot")),
-                type = 6,
-                color = "#3c8dbc"
+            waiter::withWaiter(plotlyOutput(NS(id, "qfeatures_plot")),
+                html = waiter::spin_fading_circles(),
+                color = "rgba(0, 0, 0, 0.25)"
             )
         ),
         downloadButton(
