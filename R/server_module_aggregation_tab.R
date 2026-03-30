@@ -6,7 +6,6 @@
 #' @keywords internal
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
-#' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
@@ -64,6 +63,16 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     observeEvent(input$aggregate, {
       clicked(TRUE)
     })
+
+    output$aggregation_boxplot_ui <- renderUI({
+      if (!clicked()) {
+        return(NULL)
+      }
+      interface_module_feature_levels_boxplot(
+        NS(id, "aggregation_boxplot")
+      )
+    })
+
     output$pre_boxplot <- renderText({
       if(!clicked()) {
         "The graph will be displayed once you have done the aggregation."
@@ -105,21 +114,21 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     
     observeEvent(input$export, {
       req(processed_assays())
-      shinycssloaders::showPageSpinner(
-        type = "6",
-        caption = "Saving sets in QFeatures object"
+      with_task_loader(
+        caption = "Saving sets in QFeatures object",
+        expr = {
+          error_handler(
+            add_assays_to_global_rv,
+            component_name = "Add assays to global_rv",
+            processed_qfeatures = processed_assays(),
+            step_number = step_number,
+            type = "aggregation",
+            varTo = input$fcol,
+            varFrom = input$fcol
+          )
+          step_rv(step_rv() + 1L)
+        }
       )
-      error_handler(
-        add_assays_to_global_rv,
-        component_name = "Add assays to global_rv",
-        processed_qfeatures = processed_assays(),
-        step_number = step_number,
-        type = "aggregation",
-        varTo = input$fcol,
-        varFrom = input$fcol
-      )
-      step_rv(step_rv() + 1L)
-      shinycssloaders::hidePageSpinner()
     })
   })
 }

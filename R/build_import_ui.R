@@ -9,6 +9,7 @@
 #' @importFrom htmltools includeCSS
 #' @importFrom shinyFeedback useShinyFeedback
 #' @importFrom shinyjs useShinyjs
+#' @importFrom waiter useWaiter
 #'
 build_import_ui <- function() {
     ui <- dashboardPage(
@@ -17,6 +18,7 @@ build_import_ui <- function() {
         dashboardSidebar(disable = TRUE, minified = FALSE, width = 0),
         dashboardBody(
             useShinyjs(),
+            waiter::useWaiter(),
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             import_tab()
         ),

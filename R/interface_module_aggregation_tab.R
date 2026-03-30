@@ -8,21 +8,10 @@
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList h2
 #' @importFrom shinyBS bsTooltip
-#' @importFrom waiter use_waiter
 #'
 interface_module_aggregation_tab <- function(id) {
   tagList(
     fluidRow(
-      waiter::useWaiter(),
-      tags$head(
-        tags$style(HTML("
-          .waiter-overlay {
-            background-color: rgba(0, 0, 0, 0.3)  !important;
-            backdrop-filter: blur(4px);
-          }
-        ")
-        )
-      ),
       box(
         title = "Aggregation boxplot",
         status = "primary",
@@ -33,9 +22,7 @@ interface_module_aggregation_tab <- function(id) {
           style = "text-align: center; font-size: 16px; color: #777;",
           textOutput(NS(id,"pre_boxplot"))
         ),
-        interface_module_feature_levels_boxplot(
-          NS(id, "aggregation_boxplot")
-        )
+        uiOutput(NS(id, "aggregation_boxplot_ui"))
       ),
       box(
         title = "Settings",
@@ -117,5 +104,9 @@ interface_module_aggregation_tab <- function(id) {
 #'
 
 interface_module_feature_levels_boxplot <- function(id) {
-  plotlyOutput(outputId = NS(id, "boxplot"))
+    waiter::withWaiter(
+        plotlyOutput(outputId = NS(id, "boxplot")),
+        html = waiter::spin_fading_circles(),
+        color = "rgba(0, 0, 0, 0.25)"
+    )
 }

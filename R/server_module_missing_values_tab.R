@@ -10,7 +10,6 @@
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues
 #' @importFrom shiny observe reactiveValuesToList NS reactive updateSelectInput plotOutput isolate
 #' @importFrom shinydashboard renderInfoBox
-#' @importFrom shinycssloaders showPageSpinner hidePageSpinner
 #' @importFrom QFeatures nNA filterNA rbindRowData rowDataNames
 #' @importFrom DT renderDataTable dataTableOutput datatable
 #' @importFrom SingleCellExperiment colData
@@ -64,10 +63,18 @@ server_module_missing_values_tab <- function(id, step_number, type, step_rv, par
         output[[paste0("dynamic_", type)]] <- renderUI({
             req(tableMetadataNA())
             if (type == "features") {
-                plotOutput(NS(id, paste0("plot_na_", type)))
+                waiter::withWaiter(
+                    plotOutput(NS(id, paste0("plot_na_", type))),
+                    html = waiter::spin_fading_circles(),
+                    color = "rgba(0, 0, 0, 0.25)"
+                )
             } else {
                 if (length(rownames(tableMetadataNA())) > 10) {
-                    plotOutput(NS(id, paste0("plot_na_", type)))
+                    waiter::withWaiter(
+                        plotOutput(NS(id, paste0("plot_na_", type))),
+                        html = waiter::spin_fading_circles(),
+                        color = "rgba(0, 0, 0, 0.25)"
+                    )
                 } else {
                     DT::dataTableOutput(NS(id, paste0("dataTable_na_", type)))
                 }
@@ -134,27 +141,27 @@ server_module_missing_values_tab <- function(id, step_number, type, step_rv, par
         observeEvent(input$export,
             {
                 req(tableMetadataNA())
-                shinycssloaders::showPageSpinner(
-                    type = "6",
-                    caption = "The filtering of QFeatures object can be quite time consuming for large datasets"
+                with_task_loader(
+                    caption = "The filtering of QFeatures object can be quite time consuming for large datasets",
+                    expr = {
+                        if (type == "features") {
+                            processed_assays <- QFeatures::filterNA(parent_assays(),
+                                i = seq_along(parent_assays()),
+                                pNA = input[[paste0("threshold_", type)]]
+                            )
+                        } else {
+                            processed_assays <- parent_assays()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
+                        }
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = processed_assays,
+                            step_number = step_number,
+                            type = paste0("missing_values", type)
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
                 )
-                if (type == "features") {
-                    processed_assays <- QFeatures::filterNA(parent_assays(),
-                        i = seq_along(parent_assays()),
-                        pNA = input[[paste0("threshold_", type)]]
-                    )
-                } else {
-                    processed_assays <- parent_assays()[, tableMetadataNA()$pNA <= input[[paste0("threshold_", type)]], ]
-                }
-                error_handler(
-                    add_assays_to_global_rv,
-                    component_name = "Add assays to global_rv",
-                    processed_qfeatures = processed_assays,
-                    step_number = step_number,
-                    type = paste0("missing_values", type)
-                )
-                step_rv(step_rv() + 1L)
-                shinycssloaders::hidePageSpinner()
             },
             ignoreInit = TRUE
         )

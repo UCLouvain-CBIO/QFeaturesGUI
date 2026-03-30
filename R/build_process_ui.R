@@ -12,6 +12,7 @@
 #' @importFrom shinyFeedback useShinyFeedback
 #' @importFrom shinyalert useShinyalert
 #' @importFrom shiny icon
+#' @importFrom waiter useWaiter
 build_process_ui <- function(initial_steps) {
     ui <- dashboardPage(
         skin = "blue",
@@ -34,6 +35,7 @@ build_process_ui <- function(initial_steps) {
         body = dashboardBody(
             useShinyFeedback(),
             useShinyalert(force = TRUE),
+            waiter::useWaiter(),
             includeCSS(system.file(package = "QFeaturesGUI", "www", "style.css")),
             tabItems(
                 tabItem(

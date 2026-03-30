@@ -5,7 +5,7 @@
 #' @rdname INTERNAL_server_module_normalisation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive removeModal
+#' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
 #'
 server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv) {
@@ -41,13 +41,16 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
 
         processed_assays <- eventReactive(input$apply_normalisation, {
             req(parent_assays())
-            loading("Applying normalisation and generating post-normalisation densities")
-            on.exit(removeModal(), add = TRUE)
-            error_handler(
-                normalisation_qfeatures,
-                component_name = "Normalisation",
-                qfeatures = parent_assays(),
-                method = input$method
+            with_task_loader(
+                caption = "Applying normalisation and generating post-normalisation densities",
+                expr = {
+                    error_handler(
+                        normalisation_qfeatures,
+                        component_name = "Normalisation",
+                        qfeatures = parent_assays(),
+                        method = input$method
+                    )
+                }
             )
         })
 
@@ -98,19 +101,22 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
         observeEvent(input$export,
             {
                 req(processed_assays())
-                loading(paste("Be aware that this operation",
-                    "can be quite time consuming for large data sets",
-                    sep = " "
-                ))
-                error_handler(
-                    add_assays_to_global_rv,
-                    component_name = "Add assays to global_rv",
-                    processed_qfeatures = processed_assays(),
-                    step_number = step_number,
-                    type = "normalisation"
+                with_task_loader(
+                    caption = paste(
+                        "Be aware that this operation",
+                        "can be quite time consuming for large data sets"
+                    ),
+                    expr = {
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = processed_assays(),
+                            step_number = step_number,
+                            type = "normalisation"
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
                 )
-                step_rv(step_rv() + 1L)
-                removeModal()
             },
             ignoreInit = TRUE
         )

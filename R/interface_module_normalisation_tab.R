@@ -4,7 +4,7 @@
 #' @rdname INTERNAL_interface_module_normalisation_tab
 #' @keywords internal
 #'
-#' @importFrom shiny fluidRow column NS actionButton icon uiOutput
+#' @importFrom shiny fluidRow column NS actionButton icon uiOutput textOutput
 #' @importFrom shinydashboardPlus box
 #' @importFrom htmltools tagList h2 tags
 #' @importFrom shinyBS bsTooltip
@@ -28,9 +28,10 @@ interface_module_normalisation_tab <- function(id) {
                         column(
                             6,
                             tags$h4("Pre-normalisation"),
-                            withSpinner(plotlyOutput(outputId = NS(id, "density_plot_pre")),
-                                type = 6,
-                                color = "#3c8dbc"
+                            waiter::withWaiter(
+                                plotlyOutput(outputId = NS(id, "density_plot_pre")),
+                                html = waiter::spin_fading_circles(),
+                                color = "rgba(0, 0, 0, 0.25)"
                             )
                         ),
                         column(
@@ -40,9 +41,10 @@ interface_module_normalisation_tab <- function(id) {
                                 style = "text-align: center; font-size: 16px; color: #777;",
                                 textOutput(NS(id, "pre_density_post"))
                             ),
-                            withSpinner(plotlyOutput(outputId = NS(id, "density_plot_post")),
-                                type = 6,
-                                color = "#3c8dbc"
+                            waiter::withWaiter(
+                                plotlyOutput(outputId = NS(id, "density_plot_post")),
+                                html = waiter::spin_fading_circles(),
+                                color = "rgba(0, 0, 0, 0.25)"
                             )
                         )
                     )
