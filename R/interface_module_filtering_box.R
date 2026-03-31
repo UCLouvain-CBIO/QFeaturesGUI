@@ -57,9 +57,9 @@ interface_module_annotation_plot <- function(id) {
         solidHeader = TRUE,
         collapsible = TRUE,
         collapsed = FALSE,
-        waiter::withWaiter(plotlyOutput(NS(id, "plot")),
-            html = waiter::spin_fading_circles(),
-            color = "rgba(0, 0, 0, 0.25)"
+        with_output_waiter(plotlyOutput(NS(id, "plot")),
+            html = waiter::spin_6(),
+            color = "transparent"
         ),
         bsAlert(NS(id, "alert")) # Not working with NS
     )

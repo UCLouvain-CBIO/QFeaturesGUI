@@ -295,3 +295,7 @@ body {
 .right-align { text-align: right; display: block; }
 .italic-text { font-style: italic; }
 
+/* Legacy output loader style (blue spinner type 6) */
+.waiter-overlay .spinner.spinner--6 {
+  border-top-color: #3c8dbc !important;
+}

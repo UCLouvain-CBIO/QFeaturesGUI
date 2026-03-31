@@ -282,6 +282,75 @@ loading <- function(msg) {
     ))
 }
 
+#' Wrap output UI with a waiter loader that supports tag lists
+#'
+#' `waiter::withWaiter()` reads the target id from `element$attribs$id`.
+#' Some Shiny outputs (`plotlyOutput`, `DT::dataTableOutput`) are
+#' `shiny.tag.list` objects where the id is on the first child.
+#' This helper resolves the id robustly and injects the waiter script
+#' without mutating the output tag structure.
+#'
+#' @param element Shiny output element to wrap.
+#' @param html Loader HTML content.
+#' @param color Overlay background color.
+#' @param image Optional overlay image path.
+#'
+#' @return A UI element wrapped with waiter behavior.
+#' @rdname INTERNAL_with_output_waiter
+#' @keywords internal
+with_output_waiter <- function(
+      element,
+      html = waiter::spin_fading_circles(),
+      color = "rgba(0, 0, 0, 0.25)",
+      image = ""
+) {
+    output_id <- element$attribs$id
+    if (is.null(output_id) && is.list(element) && length(element) > 0L) {
+        first_child <- element[[1]]
+        if (is.list(first_child) && !is.null(first_child$attribs$id)) {
+            output_id <- first_child$attribs$id
+        }
+    }
+    if (is.null(output_id)) {
+        stop("`element` must be a Shiny output tag with an `id` attribute.")
+    }
+
+    html_string <- gsub("\n", "", as.character(html))
+    script <- paste0(
+        "$(document).on('shiny:outputinvalidated shiny:recalculating', function(event) {\n",
+        "  if(event.target.id != '", output_id, "')\n",
+        "    return;\n\n",
+        "  waiter.show({\n",
+        "    id: '", output_id, "',\n",
+        "    html: '", html_string, "', \n",
+        "    color: '", color, "',\n",
+        "    image: '", image, "'\n",
+        "  });\n",
+        "});\n\n",
+        "$(function() {\n",
+        "  var el = document.getElementById('", output_id, "');\n",
+        "  if(el && el.classList && el.classList.contains('recalculating')) {\n",
+        "    waiter.show({\n",
+        "      id: '", output_id, "',\n",
+        "      html: '", html_string, "', \n",
+        "      color: '", color, "',\n",
+        "      image: '", image, "'\n",
+        "    });\n",
+        "  }\n",
+        "});\n\n",
+        "$(document).on('shiny:value shiny:error', function(event) {\n",
+        "  if(event.target.id != '", output_id, "')\n",
+        "    return;\n",
+        "  waiter.hide('", output_id, "');\n",
+        "});"
+    )
+
+    tagList(
+        htmltools::singleton(HTML(paste0("<script>", script, "</script>"))),
+        element
+    )
+}
+
 #' Build the markup used by the full-page task loader
 #'
 #' @param caption Optional loader caption shown under the spinner

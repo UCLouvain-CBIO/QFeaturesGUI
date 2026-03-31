@@ -43,9 +43,9 @@ interface_module_viz_box <- function(id) {
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
-                waiter::withWaiter(plotlyOutput(NS(id, "plot")),
-                    html = waiter::spin_fading_circles(),
-                    color = "rgba(0, 0, 0, 0.25)"
+                with_output_waiter(plotlyOutput(NS(id, "plot")),
+                    html = waiter::spin_6(),
+                    color = "transparent"
                 )
             )
         )

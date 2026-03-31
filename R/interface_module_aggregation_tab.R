@@ -104,9 +104,9 @@ interface_module_aggregation_tab <- function(id) {
 #'
 
 interface_module_feature_levels_boxplot <- function(id) {
-    waiter::withWaiter(
+    with_output_waiter(
         plotlyOutput(outputId = NS(id, "boxplot")),
-        html = waiter::spin_fading_circles(),
-        color = "rgba(0, 0, 0, 0.25)"
+        html = waiter::spin_6(),
+        color = "transparent"
     )
 }

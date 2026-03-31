@@ -114,9 +114,9 @@ interface_module_pca_box <- function(id, title) {
                 max = 30
             )
         ),
-        waiter::withWaiter(plotlyOutput(outputId = NS(id, "pca")),
-            html = waiter::spin_fading_circles(),
-            color = "rgba(0, 0, 0, 0.25)"
+        with_output_waiter(plotlyOutput(outputId = NS(id, "pca")),
+            html = waiter::spin_6(),
+            color = "transparent"
         )
     )
 }

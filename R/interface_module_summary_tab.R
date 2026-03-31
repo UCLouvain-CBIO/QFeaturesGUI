@@ -16,13 +16,13 @@ interface_module_summary_tab <- function(id) {
         solidHeader = TRUE,
         collapsible = TRUE,
         width = 12,
-        waiter::withWaiter(DT::dataTableOutput(NS(id, "qfeatures_dt")),
-            html = waiter::spin_fading_circles(),
-            color = "rgba(0, 0, 0, 0.25)"
+        with_output_waiter(DT::dataTableOutput(NS(id, "qfeatures_dt")),
+            html = waiter::spin_6(),
+            color = "transparent"
         ),
-        waiter::withWaiter(DT::dataTableOutput(NS(id, "assay_table")),
-            html = waiter::spin_fading_circles(),
-            color = "rgba(0, 0, 0, 0.25)"
+        with_output_waiter(DT::dataTableOutput(NS(id, "assay_table")),
+            html = waiter::spin_6(),
+            color = "transparent"
         ),
         box(
             title = "Visual Summary",
@@ -30,9 +30,9 @@ interface_module_summary_tab <- function(id) {
             solidHeader = FALSE,
             collapsible = TRUE,
             width = 12,
-            waiter::withWaiter(plotlyOutput(NS(id, "qfeatures_plot")),
-                html = waiter::spin_fading_circles(),
-                color = "rgba(0, 0, 0, 0.25)"
+            with_output_waiter(plotlyOutput(NS(id, "qfeatures_plot")),
+                html = waiter::spin_6(),
+                color = "transparent"
             )
         ),
         downloadButton(

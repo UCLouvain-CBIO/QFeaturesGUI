@@ -63,17 +63,17 @@ server_module_missing_values_tab <- function(id, step_number, type, step_rv, par
         output[[paste0("dynamic_", type)]] <- renderUI({
             req(tableMetadataNA())
             if (type == "features") {
-                waiter::withWaiter(
+                with_output_waiter(
                     plotOutput(NS(id, paste0("plot_na_", type))),
-                    html = waiter::spin_fading_circles(),
-                    color = "rgba(0, 0, 0, 0.25)"
+                    html = waiter::spin_6(),
+                    color = "transparent"
                 )
             } else {
                 if (length(rownames(tableMetadataNA())) > 10) {
-                    waiter::withWaiter(
+                    with_output_waiter(
                         plotOutput(NS(id, paste0("plot_na_", type))),
-                        html = waiter::spin_fading_circles(),
-                        color = "rgba(0, 0, 0, 0.25)"
+                        html = waiter::spin_6(),
+                        color = "transparent"
                     )
                 } else {
                     DT::dataTableOutput(NS(id, paste0("dataTable_na_", type)))
