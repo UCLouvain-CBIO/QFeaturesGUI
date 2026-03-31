@@ -60,7 +60,6 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
         }
       )
       step_rv(step_rv() + 1L)
-      shinycssloaders::hidePageSpinner()
     })
   })
 }
