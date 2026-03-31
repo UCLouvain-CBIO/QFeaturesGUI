@@ -31,7 +31,7 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
             clicked(TRUE)
         })
 
-        output$pre_density_post <- renderText({
+        output$post_density_message <- renderText({
             if (!clicked()) {
                 "The post-normalisation plot will be displayed once you apply normalisation."
             } else {

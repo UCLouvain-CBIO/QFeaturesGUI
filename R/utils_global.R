@@ -829,20 +829,24 @@ normalisation_qfeatures <- function(qfeatures, method) {
 }
 
 
-#' A function that return a plot of the densities of intensities by sample
+#' A function that returns ridge density plots of intensities by sample group
 #'
 #' @param qfeatures `QFeatures` object
 #' @param color `character(1)` optional column name in `colData` used to
 #'   group samples. If `NULL`, all samples are treated as one group.
 #' @param title `character(1)` title to display on the plot
-#' @return a plotly object
+#' @return A plotly object containing one ridge per sample group.
 #'
 #' @rdname INTERNAL_density_by_sample_plotly
 #' @keywords internal
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom plotly layout
 #' @importFrom plotly plot_ly
-density_by_sample_plotly <- function(qfeatures, color = NULL, title = "Density by sample") {
+density_by_sample_plotly <- function(qfeatures, color = NULL, title = "Density by sample group") {
+    if (length(qfeatures) == 0L) {
+        return(plot_ly() %>% layout(title = title))
+    }
+
     sample_metadata <- as.data.frame(colData(qfeatures))
     sample_names <- rownames(sample_metadata)
     if (is.null(sample_names) || length(sample_names) == 0L) {
