@@ -1342,10 +1342,7 @@ add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, feat
   n <- length(processed_qfeatures)
   shinyalert(
     title = "Step saved",
-    text = paste0(
-      n, " set", if (n != 1) "s" else "",
-      " added to QFeatures."
-    ),
+    text = "1 set added to QFeatures.",
     type = "success"
   )
   
