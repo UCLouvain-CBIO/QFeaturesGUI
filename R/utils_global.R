@@ -811,7 +811,7 @@ log_transform_qfeatures <- function(qfeatures, base, pseudocount) {
 #' A function that will normalise all the assays of a qfeatures
 #'
 #' @param qfeatures `QFeatures` object to normalise
-#' @param method `str` method to use for the normalisation (see `QFeatures::normalise`)
+#' @param method `str` method to use for normalisation (see `QFeatures::normalize`)
 #' @return `QFeatures` object with the normalised assays
 #' @rdname INTERNAL_normalisation_qfeatures
 #' @keywords internal
@@ -830,36 +830,74 @@ normalisation_qfeatures <- function(qfeatures, method) {
 }
 
 
-#' A function that return a plot of the densities of intensities by sample
+#' A function that returns ridge density plots of intensities by sample group
 #'
 #' @param qfeatures `QFeatures` object
-#' @param color `str` colname of the column of colData to use as color
-#' @return a plotly object
+#' @param color `character(1)` optional column name in `colData` used to
+#'   group samples. If `NULL`, all samples are treated as one group.
+#' @param title `character(1)` title to display on the plot
+#' @return A plotly object containing one ridge per sample group.
 #'
 #' @rdname INTERNAL_density_by_sample_plotly
 #' @keywords internal
 #' @importFrom SummarizedExperiment assay colData
+#' @importFrom plotly layout
+#' @importFrom plotly plot_ly
+density_by_sample_plotly <- function(qfeatures, color = NULL, title = "Density by sample group") {
+    if (length(qfeatures) == 0L) {
+        return(plot_ly() %>% layout(title = title))
+    }
 
-density_by_sample_plotly <- function(qfeatures, color) {
-    combined_df <- data.frame(intensity = numeric(), sample = character())
+    sample_metadata <- as.data.frame(colData(qfeatures))
+    sample_names <- rownames(sample_metadata)
+    if (is.null(sample_names) || length(sample_names) == 0L) {
+        sample_names <- colnames(qfeatures[[1]])
+    }
+
+    if (is.null(color)) {
+        sample_groups <- rep("All samples", length(sample_names))
+    } else {
+        if (!(color %in% colnames(sample_metadata))) {
+            stop("Unknown color column: ", color)
+        }
+        sample_groups <- as.character(sample_metadata[[color]])
+        sample_groups[is.na(sample_groups)] <- "NA"
+        sample_groups[!nzchar(sample_groups)] <- "NA"
+    }
+    names(sample_groups) <- sample_names
+
+    combined_df <- data.frame(
+        intensity = numeric(),
+        group = character(),
+        stringsAsFactors = FALSE
+    )
     for (assayName in names(qfeatures)) {
         assayData <- assay(qfeatures[[assayName]])
 
         intensities <- as.vector(assayData)
         sampleNames <- rep(colnames(assayData), each = nrow(assayData))
+        groups <- as.character(sample_groups[sampleNames])
+        groups[is.na(groups)] <- "NA"
 
-        assay_df <- data.frame(intensity = intensities, sample = sampleNames)
+        assay_df <- data.frame(
+            intensity = intensities,
+            group = groups,
+            stringsAsFactors = FALSE
+        )
 
         combined_df <- rbind(combined_df, assay_df)
     }
+    combined_df <- combined_df[is.finite(combined_df$intensity), , drop = FALSE]
+    if (nrow(combined_df) == 0L) {
+        return(plot_ly() %>% layout(title = title))
+    }
 
-    combined_df$color <- colData(qfeatures)[combined_df$sample, color]
-
-    plotlyridges(
+    p <- plotlyridges(
         data = combined_df,
         vardens = "intensity",
-        varcat = "sample"
+        varcat = "group"
     )
+    p %>% layout(title = title)
 }
 
 # This function comes from the github repo rushkin/bitsandends
@@ -890,87 +928,146 @@ density_by_sample_plotly <- function(qfeatures, color) {
 #'
 #' @rdname INTERNAL_plotlyridges
 #' @keywords internal
-#' @importFrom plotly plot_ly add_trace layout
+#' @importFrom plotly plot_ly add_trace add_annotations layout
 #'
 plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolor = "steelblue", fillopacity = 0.6, linewidth = 0.5, scale = 0.9, logspaced = FALSE, cut.from = 0, cut.to = 3, n = 512, bw = NULL, bw.separate = FALSE, height.norm = "integral", round.digits = 2, x.min = 0,
     height = NULL,
     width = NULL) {
-    data <- subset(data, !is.na(data[, vardens]))
+    empty_plot <- function() {
+        p <- plotly::plot_ly(type = "scatter", mode = "lines", height = height, width = width)
+        p <- plotly::add_annotations(
+            p,
+            text = "No finite values available for density estimation.",
+            xref = "paper",
+            yref = "paper",
+            x = 0.5,
+            y = 0.5,
+            showarrow = FALSE
+        )
+        plotly::layout(
+            p,
+            showlegend = FALSE,
+            xaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE),
+            yaxis = list(showticklabels = FALSE, zeroline = FALSE, showgrid = FALSE)
+        )
+    }
 
-    r <- range(data[, vardens])
+    var_values <- data[, vardens]
+    cat_values <- as.character(data[, varcat])
+    cat_values[is.na(cat_values) | !nzchar(cat_values)] <- "NA"
+    keep <- is.finite(var_values)
+    data <- data[keep, , drop = FALSE]
+    data[, varcat] <- cat_values[keep]
+    if (nrow(data) == 0L) {
+        return(empty_plot())
+    }
 
-    if (is.null(bw)) {
-        if (!bw.separate) {
-            if (logspaced) {
-                x <- log(data[, vardens])
-            } else {
-                x <- data[, vardens]
-            }
-            if (length(x) > 1) {
-                bw <- density(x)$bw
-            } else {
-                bw <- 1
-            }
+    r <- range(data[, vardens], finite = TRUE)
+    if (!all(is.finite(r))) {
+        return(empty_plot())
+    }
+
+    if (is.null(bw) && !bw.separate) {
+        x_all <- if (logspaced) log(data[, vardens]) else data[, vardens]
+        x_all <- x_all[is.finite(x_all)]
+        if (length(x_all) > 1L) {
+            bw <- density(x_all)$bw
+        } else {
+            bw <- 1
         }
     }
 
-    df <- aggregate(data[, vardens], by = list(varcat = data[, varcat]), FUN = function(x) {
-        if (length(x) == 0) {
-            return(NULL)
+    split_index <- split(seq_len(nrow(data)), data[, varcat], drop = TRUE)
+    catnames <- names(split_index)
+    x <- vector("list", length(split_index))
+    y <- vector("list", length(split_index))
+    kept_catnames <- character(0)
+    for (catname in catnames) {
+        idx <- split_index[[catname]]
+        x_group <- data[idx, vardens]
+        x_group <- x_group[is.finite(x_group)]
+        if (length(x_group) == 0L) {
+            next
         }
         if (bw.separate) {
-            if (length(x) == 1) {
-                bw <- 1
-            } else {
-                bw <- "nrd0"
-            }
+            bw_current <- if (length(x_group) == 1L) 1 else "nrd0"
+        } else {
+            bw_current <- bw
         }
         if (logspaced) {
-            x <- log(x)
+            x_group <- log(x_group)
+            x_group <- x_group[is.finite(x_group)]
+            if (length(x_group) == 0L) {
+                next
+            }
         }
-        from <- min(x, na.rm = TRUE) - cut.from * bw
-        to <- max(x, na.rm = TRUE) + cut.to * bw
-        d <- density(x, bw = bw, n = n, from = from, to = to)[1:2]
-        # Normalize height
+        from <- min(x_group, na.rm = TRUE) - cut.from * if (is.numeric(bw_current)) bw_current else 1
+        to <- max(x_group, na.rm = TRUE) + cut.to * if (is.numeric(bw_current)) bw_current else 1
+        if (!is.finite(from) || !is.finite(to)) {
+            next
+        }
+        if (from == to) {
+            from <- from - 0.5
+            to <- to + 0.5
+        }
+        d <- tryCatch(
+            density(x_group, bw = bw_current, n = n, from = from, to = to)[1:2],
+            error = function(e) NULL
+        )
+        if (is.null(d)) {
+            next
+        }
         if (height.norm == "1") {
             d$y <- d$y / max(d$y)
         }
         if (height.norm == "integral") {
             d$y <- d$y / (sum(d$y) * (d$x[2] - d$x[1]))
         }
-
         if (logspaced) {
             d$x <- exp(d$x)
             d$y <- d$y / d$x
         }
+        x[[length(kept_catnames) + 1L]] <- d$x
+        y[[length(kept_catnames) + 1L]] <- d$y
+        kept_catnames <- c(kept_catnames, catname)
+    }
+    catnames <- kept_catnames
+    if (length(catnames) == 0L) {
+        return(empty_plot())
+    }
+    x <- x[seq_along(catnames)]
+    y <- y[seq_along(catnames)]
 
-
-        return(d)
-    })
-
-    text <- aggregate(data[, vardens], by = list(varcat = data[, varcat]), FUN = function(x) {
-        x <- x[!is.na(x)]
+    text_df <- aggregate(data[, vardens], by = list(varcat = data[, varcat]), FUN = function(x) {
+        x <- x[is.finite(x)]
+        if (length(x) == 0L) {
+            return(NA_character_)
+        }
         q <- quantile(x)
-        text <- paste0("Observations: ", prettyNum(length(x), big.mark = ","), "<br>Median: ", round(q[3], round.digits), "<br>Range: [", round(q[1], round.digits), ", ", round(q[5], round.digits), "]", "<br>Interquartile Range: [", round(q[2], round.digits), ", ", round(q[4], round.digits), "]")
-        return(text)
-    })$x
-
-
-    catnames <- df[[1]]
-    x <- df[[2]][1:(length(df[[1]]))]
-    y <- df[[2]][-(1:(length(df[[1]])))]
-
+        paste0(
+            "Observations: ", prettyNum(length(x), big.mark = ","),
+            "<br>Median: ", round(q[3], round.digits),
+            "<br>Range: [", round(q[1], round.digits), ", ", round(q[5], round.digits), "]",
+            "<br>Interquartile Range: [", round(q[2], round.digits), ", ", round(q[4], round.digits), "]"
+        )
+    })
+    text_map <- setNames(text_df$x, as.character(text_df$varcat))
+    text <- as.character(text_map[catnames])
+    text[is.na(text)] <- ""
 
     ymax <- max(unlist(y), na.rm = TRUE)
+    if (!is.finite(ymax) || ymax <= 0) {
+        ymax <- 1
+    }
     y <- lapply(y, function(yy) {
         yy <- scale * yy / ymax
-        return(yy)
+        yy[!is.finite(yy)] <- 0
+        yy
     })
     p <- plotly::plot_ly(type = "scatter", mode = "lines", height = height, width = width)
 
     fillcolor <- as.vector(col2rgb(fillcolor)) / 255
     fillcolor <- rgb(fillcolor[1], fillcolor[2], fillcolor[3], alpha = fillopacity)
-
 
     if (is.null(x.min)) {
         xaxis <- list(range = r)
@@ -978,19 +1075,38 @@ plotlyridges <- function(data, vardens, varcat, linecolor = "darkblue", fillcolo
         xaxis <- list(range = c(x.min, r[2]))
     }
 
-    for (i in rev(1:length(catnames))) {
-        p <- plotly::add_trace(p, x = x[[i]], y = i, line = list(color = linecolor, width = linewidth), showlegend = FALSE, hoverinfo = "none")
-        p <- plotly::add_trace(p,
-            x = x[[i]], y = y[[i]] + i, fill = "tonexty", fillcolor = fillcolor, line = list(color = linecolor, width = linewidth), showlegend = FALSE, name = catnames[i], hoverinfo = "text", text = text[i]
+    for (i in rev(seq_along(catnames))) {
+        p <- plotly::add_trace(
+            p,
+            x = x[[i]],
+            y = i,
+            line = list(color = linecolor, width = linewidth),
+            showlegend = FALSE,
+            hoverinfo = "none"
         )
-
-        p <- plotly::layout(p,
-            yaxis = list(tickmode = "array", tickvals = (1:length(catnames)), ticktext = catnames, showline = TRUE),
-            xaxis = xaxis
+        p <- plotly::add_trace(
+            p,
+            x = x[[i]],
+            y = y[[i]] + i,
+            fill = "tonexty",
+            fillcolor = fillcolor,
+            line = list(color = linecolor, width = linewidth),
+            showlegend = FALSE,
+            name = catnames[i],
+            hoverinfo = "text",
+            text = text[i]
         )
     }
-    p
-    return(p)
+    plotly::layout(
+        p,
+        yaxis = list(
+            tickmode = "array",
+            tickvals = seq_along(catnames),
+            ticktext = catnames,
+            showline = TRUE
+        ),
+        xaxis = xaxis
+    )
 }
 
 #' A function that create a data frame that contains the intensities, the sample names (+ one col of colData and one col of rowData)

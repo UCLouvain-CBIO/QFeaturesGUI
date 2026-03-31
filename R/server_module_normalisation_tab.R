@@ -26,34 +26,75 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
             )
         })
 
-        processed_assays <- reactive({
+        clicked <- reactiveVal(FALSE)
+        observeEvent(input$apply_normalisation, {
+            clicked(TRUE)
+        })
+
+        output$post_density_message <- renderText({
+            if (!clicked()) {
+                "The post-normalisation plot will be displayed once you apply normalisation."
+            } else {
+                ""
+            }
+        })
+
+        processed_assays <- eventReactive(input$apply_normalisation, {
             req(parent_assays())
-            error_handler(
-                normalisation_qfeatures,
-                component_name = "Normalisation",
-                qfeatures = parent_assays(),
-                method = input$method
+            with_task_loader(
+                caption = "Applying normalisation and generating post-normalisation densities",
+                expr = {
+                    error_handler(
+                        normalisation_qfeatures,
+                        component_name = "Normalisation",
+                        qfeatures = parent_assays(),
+                        method = input$method
+                    )
+                }
             )
         })
 
-        output$density_plot <- renderPlotly({
-            req(processed_assays())
-            density_by_sample_plotly(
-                qfeatures = processed_assays(),
-                color = input$color
+        selected_color <- reactive({
+            req(input$color)
+            if (identical(input$color, "NULL")) {
+                return(NULL)
+            }
+            input$color
+        })
+
+        output$density_plot_pre <- renderPlotly({
+            req(parent_assays())
+            error_handler(
+                density_by_sample_plotly,
+                component_name = "Pre-normalisation density plot",
+                qfeatures = parent_assays(),
+                color = selected_color(),
+                title = "Pre-normalisation density"
             )
-            # error_handler(
-            #     density_by_sample_plotly,
-            #     component_name = "Density by sample plotly",
-            #     qfeatures = processed_assays(),
-            #     color = input$color)
+        })
+
+        output$density_plot_post <- renderPlotly({
+            req(processed_assays())
+            error_handler(
+                density_by_sample_plotly,
+                component_name = "Post-normalisation density plot",
+                qfeatures = processed_assays(),
+                color = selected_color(),
+                title = "Post-normalisation density"
+            )
         })
 
         observe({
-            req(processed_assays())
+            req(parent_assays())
+            choices <- c("NULL", colnames(colData(parent_assays())))
+            selected <- "NULL"
+            if (!is.null(input$color) && input$color %in% choices) {
+                selected <- input$color
+            }
             updateSelectInput(session,
                 "color",
-                choices = colnames(colData(processed_assays()))
+                choices = choices,
+                selected = selected
             )
         })
 
