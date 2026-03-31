@@ -15,12 +15,11 @@ interface_module_join_tab <- function(id) {
       NS(id, "joinAvailability")
     ),
     div(
-      style = "display: flex; justify-content: center;",
+      style = "display: flex; justify-content: center;  text-align : center;",
       selectInput(
         NS(id, "feature_type"),
         label = "Choose the type of features your set contain.",
-        choices = c("PSM", "Peptides", "Proteins"),
-        width = "200px"
+        choices = c("PSM", "Peptides", "Proteins")
       )
     ),
     actionButton(

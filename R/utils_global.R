@@ -1317,13 +1317,6 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
 #' @importFrom shinyalert shinyalert
 #'
 add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, featuresType, type) {
-  # for (name in names(processed_qfeatures)) {
-  #   new_name <- paste0(
-  #     strsplit(name, "_QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
-  #     "_(QFeaturesGUI#", step_number, ")",
-  #     "_", type, "_", step_number
-  #   )
-  # }
   name <- names(processed_qfeatures)[length(processed_qfeatures)]
   new_name <- paste0(
     strsplit(name,"_QFeaturesGUI#",fixed =TRUE)[[1]][[1]],
@@ -1343,7 +1336,9 @@ add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, feat
   shinyalert(
     title = "Step saved",
     text = "1 set added to QFeatures.",
-    type = "success"
+    type = "success", 
+    confirmButtonCol = "#3c8dbc",
+    closeOnClickOutside = TRUE
   )
   
 }
