@@ -40,24 +40,24 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
     })
     observeEvent(input$export, {
       req(assays_to_process())
-      shinycssloaders::showPageSpinner(
-        type = 6,
-        caption = "Be aware that joining can be quite time consuming for large data sets"
-      )
-      processed_assays <- error_handler(
-        joinAssays,
-        component_name = "Join",
-        assays_to_process(),
-        names(assays_to_process())
-      )
-   
-      error_handler(
-        add_joined_assay_to_global_rv,
-        component_name = "Add assays to global_rv",
-        processed_qfeatures = processed_assays,
-        featuresType = input$feature_type,
-        step_number = step_number,
-        type = "join"
+      with_task_loader(
+        caption = "Be aware that join table can be quite time consuming for large datasets.",
+        expr = {
+          processed_assays <- error_handler(
+            joinAssays,
+            component_name = "Join",
+            assays_to_process(),
+            names(assays_to_process())
+          )
+          error_handler(
+            add_joined_assay_to_global_rv,
+            component_name = "Add assays to global_rv",
+            processed_qfeatures = processed_assays,
+            featuresType = input$feature_type,
+            step_number = step_number,
+            type = "join"
+          )
+        }
       )
       step_rv(step_rv() + 1L)
       shinycssloaders::hidePageSpinner()
