@@ -315,34 +315,79 @@ with_output_waiter <- function(
         stop("`element` must be a Shiny output tag with an `id` attribute.")
     }
 
-    html_string <- gsub("\n", "", as.character(html))
+    escape_for_js <- function(value) {
+        value <- as.character(value)[1]
+        value <- gsub("\\\\", "\\\\\\\\", value)
+        value <- gsub("'", "\\\\'", value, fixed = TRUE)
+        value <- gsub("\r", "", value, fixed = TRUE)
+        value <- gsub("\n", "", value, fixed = TRUE)
+        value
+    }
+
+    output_id_js <- escape_for_js(output_id)
+    html_string <- escape_for_js(html)
+    color_string <- escape_for_js(color)
+    image_string <- escape_for_js(image)
+    event_namespace <- gsub("[^A-Za-z0-9_]", "_", as.character(output_id)[1])
+
     script <- paste0(
-        "$(document).on('shiny:outputinvalidated shiny:recalculating', function(event) {\n",
-        "  if(event.target.id != '", output_id, "')\n",
-        "    return;\n\n",
-        "  waiter.show({\n",
-        "    id: '", output_id, "',\n",
-        "    html: '", html_string, "', \n",
-        "    color: '", color, "',\n",
-        "    image: '", image, "'\n",
-        "  });\n",
-        "});\n\n",
-        "$(function() {\n",
-        "  var el = document.getElementById('", output_id, "');\n",
-        "  if(el && el.classList && el.classList.contains('recalculating')) {\n",
+        "(function() {\n",
+        "  var outputId = '", output_id_js, "';\n",
+        "  var namespace = '.qfgwaiter_", event_namespace, "';\n",
+        "  var hasRenderEvent = false;\n",
+        "  var stateStore = window.__qfg_waiter_state || (window.__qfg_waiter_state = {});\n",
+        "  var state = { visible: false };\n",
+        "  stateStore[outputId] = state;\n\n",
+        "  function showWaiter() {\n",
+        "    if (state.visible) {\n",
+        "      return;\n",
+        "    }\n",
         "    waiter.show({\n",
-        "      id: '", output_id, "',\n",
-        "      html: '", html_string, "', \n",
-        "      color: '", color, "',\n",
-        "      image: '", image, "'\n",
+        "      id: outputId,\n",
+        "      html: '", html_string, "',\n",
+        "      color: '", color_string, "',\n",
+        "      image: '", image_string, "'\n",
         "    });\n",
-        "  }\n",
-        "});\n\n",
-        "$(document).on('shiny:value shiny:error', function(event) {\n",
-        "  if(event.target.id != '", output_id, "')\n",
-        "    return;\n",
-        "  waiter.hide('", output_id, "');\n",
-        "});"
+        "    state.visible = true;\n",
+        "  }\n\n",
+        "  function hideWaiter() {\n",
+        "    if (!state.visible) {\n",
+        "      return;\n",
+        "    }\n",
+        "    waiter.hide(outputId);\n",
+        "    state.visible = false;\n",
+        "  }\n\n",
+        "  function startupShow(attempt) {\n",
+        "    var el = document.getElementById(outputId);\n",
+        "    if (!el || !el.classList || !el.classList.contains('recalculating') || state.visible || hasRenderEvent) {\n",
+        "      return;\n",
+        "    }\n",
+        "    if (el.offsetWidth > 0 && el.offsetHeight > 0) {\n",
+        "      showWaiter();\n",
+        "      return;\n",
+        "    }\n",
+        "    if (attempt < 8) {\n",
+        "      setTimeout(function() { startupShow(attempt + 1); }, 50);\n",
+        "    }\n",
+        "  }\n\n",
+        "  $(document).off(namespace);\n",
+        "  $(document).on('shiny:outputinvalidated' + namespace + ' shiny:recalculating' + namespace, function(event) {\n",
+        "    if (event.target.id !== outputId) {\n",
+        "      return;\n",
+        "    }\n",
+        "    hasRenderEvent = true;\n",
+        "    showWaiter();\n",
+        "  });\n\n",
+        "  $(function() {\n",
+        "    setTimeout(function() { startupShow(0); }, 0);\n",
+        "  });\n\n",
+        "  $(document).on('shiny:value' + namespace + ' shiny:error' + namespace, function(event) {\n",
+        "    if (event.target.id !== outputId) {\n",
+        "      return;\n",
+        "    }\n",
+        "    hideWaiter();\n",
+        "  });\n",
+        "})();"
     )
 
     tagList(
