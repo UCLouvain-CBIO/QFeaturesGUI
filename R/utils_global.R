@@ -1434,10 +1434,10 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
 #'
 add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, featuresType, type) {
   name <- names(processed_qfeatures)[length(processed_qfeatures)]
-  new_name <- paste0(
+  new_name <- paste0(featuresType, "_",
     strsplit(name,"_QFeaturesGUI#",fixed =TRUE)[[1]][[1]],
     "_(QFeaturesGUI#", step_number, ")",
-    "_", featuresType, "_", type, "_", step_number
+    "_", type, "_", step_number
     )
   .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
   from_pattern <- paste0("QFeaturesGUI#", step_number - 1, "\\)")
