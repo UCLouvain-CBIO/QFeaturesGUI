@@ -498,7 +498,8 @@ check_prefilled_steps <- function(prefilledSteps) {
         feature_filtering = "Feature Filtering",
         missing_values_features = "Filtering NAs by Features",
         missing_values_samples = "Filtering NAs by Samples",
-        aggregation = "Aggregation"
+        aggregation = "Aggregation",
+        join = "Join"
     )
 
     unknown_steps <- setdiff(prefilledSteps, names(valid_steps))
@@ -1270,4 +1271,74 @@ aggregation_qfeatures <- function(qfeatures, method,
     })
     names(el) <- names(qfeatures)
     QFeatures(el, colData = colData(qfeatures))
+}
+
+#' A function that will join all the assays of a qfeatures
+#'
+#' @param qfeatures `QFeatures` object to join
+#'
+#' @return `QFeatures` object with the joined assays
+#'
+#' @rdname INTERNAL_join_qfeatures
+#'
+#' @keywords internal
+#'
+#' @importFrom QFeatures joinAssays createPrecursorId
+#'
+join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
+  if (!is.null(fcol2)) {
+    fcol_combined <- paste0(fcol, "_", fcol2)
+    qfeatures <- createPrecursorId(
+      qfeatures, name = fcol_combined,
+      fcols = c(fcol, fcol2)
+    )
+    fcol <- fcol_combined
+  }
+  qf <- joinAssays(qfeatures, names(qfeatures), fcol = fcol)
+  suppressMessages(suppressWarnings(qf[, , "joinedAssay"]))
+}
+
+#' A function that will add the assays to the package-level `.qf$qfeatures`
+#' object when performing a joining step, where multiple parent assays
+#' are linked to one child assay.
+#'
+#' @param processed_qfeatures `QFeatures` object whose assays will be added to
+#'   the package-level `.qf$qfeatures` object
+#' @param step_number `int` number of the step
+#' @param type A `character(1)` providing the name of the step.
+#' @param featuresType which type of features will be joined
+#'
+#' @rdname INTERNAL_add_assays_to_global_rv
+#' @keywords internal
+#'
+#' @return (NULL) does not return anything but will add the assays to the
+#'   package-level `.qf$qfeatures` object
+#' @importFrom QFeatures addAssayLink
+#' @importFrom shinyalert shinyalert
+#'
+add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, featuresType, type) {
+  name <- names(processed_qfeatures)[length(processed_qfeatures)]
+  new_name <- paste0(
+    strsplit(name,"_QFeaturesGUI#",fixed =TRUE)[[1]][[1]],
+    "_(QFeaturesGUI#", step_number, ")",
+    "_", featuresType, "_", type, "_", step_number
+    )
+  .qf$qfeatures[[new_name]] <- processed_qfeatures[[name]]
+  from_pattern <- paste0("QFeaturesGUI#", step_number - 1, "\\)")
+  from_names <- grep(from_pattern, names(.qf$qfeatures), value = TRUE)
+  .qf$qfeatures <- addAssayLink(
+    .qf$qfeatures,
+    from = from_names,
+    to = new_name
+  )
+  
+  n <- length(processed_qfeatures)
+  shinyalert(
+    title = "Step saved",
+    text = "1 set added to QFeatures.",
+    type = "success", 
+    confirmButtonCol = "#3c8dbc",
+    closeOnClickOutside = TRUE
+  )
+  
 }
