@@ -25,7 +25,7 @@ interface_module_qc_metrics <- function(id, type) {
                         selectInput(
                             inputId = NS(id, "selected_assay"),
                             choices = NULL,
-                            label = "Select assay"
+                            label = "Select set"
                         )
                     ),
                     column(
