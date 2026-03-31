@@ -299,3 +299,30 @@ body {
 .waiter-overlay .spinner.spinner--6 {
   border-top-color: #3c8dbc !important;
 }
+
+.workflow-doc-header {
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.workflow-doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2c3e50;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.workflow-doc-link:hover,
+.workflow-doc-link:focus {
+  color: #1f6fb2;
+}
+
+.workflow-doc-link-icon {
+  font-size: 0.8em;
+  opacity: 0.9;
+}
