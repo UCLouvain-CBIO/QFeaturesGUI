@@ -157,7 +157,7 @@ server_module_missing_values_tab <- function(id, step_number, type, step_rv, par
                             component_name = "Add assays to global_rv",
                             processed_qfeatures = processed_assays,
                             step_number = step_number,
-                            type = paste0("missing_values", type)
+                            type = paste0("missing_value_", type)
                         )
                         step_rv(step_rv() + 1L)
                     }
