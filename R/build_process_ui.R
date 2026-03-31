@@ -16,7 +16,7 @@
 build_process_ui <- function(initial_steps) {
     ui <- dashboardPage(
         skin = "blue",
-        header = header("Process QFeatures"),
+        header = header("processQFeatures"),
         sidebar = dashboardSidebar(
             sidebarMenu(
                 menuItem("Workflow Config",
@@ -72,7 +72,7 @@ build_process_ui <- function(initial_steps) {
                 tabItem(tabName = "step_20", uiOutput("dynamic_step_ui_20"))
             )
         ),
-        title = "importQFeatures",
+        title = "processQFeatures",
         scrollToTop = TRUE
     )
 
