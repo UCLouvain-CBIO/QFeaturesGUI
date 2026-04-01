@@ -27,6 +27,16 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps) {
         )
         .qf$qfeatures <- format_qfeatures(qfeatures, initial_sets)
         global_rv$workflow_config <- initial_steps
+        global_rv$code_lines <- list(
+          sampleFilteringCode  = character(),
+          featureFilteringCode = character(),
+          aggregationCode = character(),
+          joinCode = character(),
+          missingValuesFeaturesCode = character(),
+          missingValuesSamplesCode = character(),
+          normalisationCode = character()
+          
+        )
         server_exception_menu(input, output, session)
         server_sidebar(input, output, session)
         server_module_workflow_config("workflow_config")
