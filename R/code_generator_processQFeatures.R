@@ -55,6 +55,7 @@ codeGeneratorNA <- function(qf, pNA, type, tableMetadataNA = NULL){
   codeLines
 }
 
+
 codeGeneratorNormalisation <- function(qf, method){
   codeLines <- sprintf(
     "%s <- lapply(names(%s), function(name){
@@ -68,9 +69,10 @@ codeGeneratorNormalisation <- function(qf, method){
     qf,
     method
   )
+  codeLines
 }
 
-
+### Re do this function 
 codeGeneratorFiltering <- function(qf, condition, type){
   if(type == "feature"){
     codeLines <- sprintf(
@@ -90,4 +92,5 @@ codeGeneratorFiltering <- function(qf, condition, type){
       condition
     )
   }
+  codeLines
 }
