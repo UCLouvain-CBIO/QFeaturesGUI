@@ -49,3 +49,14 @@ codeGeneratorNA <- function(qf, pNA){
    codeLines
 }
 
+codeGeneratorNormalisation <- function(qf, method){
+  codeLines <- sprintf(
+    "%s <- lapply(names(%s), function(name){
+    \tnormalize(
+    \t\tobject = %s[[name]],
+    \t\tmethod = method
+    \t)
+    })"
+  )
+}
+
