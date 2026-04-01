@@ -60,9 +60,34 @@ codeGeneratorNormalisation <- function(qf, method){
     "%s <- lapply(names(%s), function(name){
     \tnormalize(
     \t\tobject = %s[[name]],
-    \t\tmethod = method
+    \t\tmethod = %s
     \t)
-    })"
+    })",
+    qf,
+    qf,
+    qf,
+    method
   )
 }
 
+
+codeGeneratorFiltering <- function(qf, condition, type){
+  if(type == "feature"){
+    codeLines <- sprintf(
+      "for(assay_name in names(%s)) {
+      \t%s[[assay_name]] <- %s[%s, drop = FALSE]
+      }",
+      qf,
+      qf,
+      qf,
+      condition
+    )
+  } else {
+    codeLines <- sprintf(
+      "%s <- %s[, %s, ]",
+      qf,
+      qf,
+      condition
+    )
+  }
+}
