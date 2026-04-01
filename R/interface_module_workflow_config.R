@@ -43,10 +43,10 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     tags$h3("Suggested Workflow"),
                     tags$ol(
-                        tags$li("Filtering NAs by Features"),
-                        tags$li("Filtering NAs by Samples"),
                         tags$li("Sample Filtering"),
                         tags$li("Feature Filtering"),
+                        tags$li("Filtering NAs by Features"),
+                        tags$li("Filtering NAs by Samples"),
                         tags$li("Normalisation"),
                         tags$li("Aggregation"),
                         tags$li("Join"),
