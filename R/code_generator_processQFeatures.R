@@ -34,19 +34,25 @@ codeGeneratorJoin <- function(qf){
 }
 
 
-codeGeneratorNA <- function(qf, pNA){
-   codeLines <- sprintf(
-     "%s <- filterNA(
+codeGeneratorNA <- function(qf, pNA, type, tableMetadataNA = NULL){
+  if(type == "features"){
+    codeLines <- sprintf(
+      "%s <- filterNA(
      \tobject = %s,
      \ti = seq_along(%s),
      \tpNA = %s
      )",
-     qf,
-     qf,
-     qf,
-     pNA
-   )
-   codeLines
+      qf,
+      qf,
+      qf,
+      pNA
+    )
+  } else {
+    codeLines <- sprintf(
+      "%s <- %s[, %s$pNA <= pNA,]"
+    )
+  }
+  codeLines
 }
 
 codeGeneratorNormalisation <- function(qf, method){
