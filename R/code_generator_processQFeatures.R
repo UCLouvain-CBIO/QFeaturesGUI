@@ -30,6 +30,22 @@ codeGeneratorJoin <- function(qf){
     qf,
     qf
   )
+  codeLines
 }
 
+
+codeGeneratorNA <- function(qf, pNA){
+   codeLines <- sprintf(
+     "%s <- filterNA(
+     \tobject = %s,
+     \ti = seq_along(%s),
+     \tpNA = %s
+     )",
+     qf,
+     qf,
+     qf,
+     pNA
+   )
+   codeLines
+}
 
