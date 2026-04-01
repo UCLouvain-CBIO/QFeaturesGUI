@@ -20,15 +20,13 @@ codeGeneratorAggregation <- function(qf, method, fcol){
 }
 
 
-codeGeneratorJoin <- function(qf){
+codeGeneratorJoin <- function(names){
   codeLines <- sprintf(
-    "%s <- joinAssays(
-    \t% x = %s,
-    \t% i = names(%s)
+    "qf <- joinAssays(
+    \t% x = qf,
+    \t% i = %s
     )",
-    qf,
-    qf,
-    qf
+    names
   )
   codeLines
 }
