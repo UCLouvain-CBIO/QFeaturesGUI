@@ -126,6 +126,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
             varTo = input$fcol,
             varFrom = input$fcol
           )
+          global_rv$codeLines[[paste0("aggregagtion_", step_number)]] <- codeGeneratorAggregation(method = as.character(input$method), fcol = input$fcol)
           step_rv(step_rv() + 1L)
         }
       )
