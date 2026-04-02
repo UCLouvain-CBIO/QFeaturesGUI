@@ -71,15 +71,77 @@ server_module_summary_tab <- function(id) {
             }
         })
 
+        # output$download_qfeatures <- downloadHandler(
+        #     filename = function() {
+        #         "qfeatures_object.rds"
+        #     },
+        #     content = function(file) {
+        #         final_qfeatures <- .qf$qfeatures
+        #         names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
+        #         saveRDS(final_qfeatures, file)
+        #     }
+        # )
+        
         output$download_qfeatures <- downloadHandler(
-            filename = function() {
-                "qfeatures_object.rds"
-            },
-            content = function(file) {
+          filename = function() {
+            "qfeatures_object.zip"
+          },
+          content = function(file) {
+            with_task_loader(
+              caption = "Preparing download, can be quite time consuming",
+              expr = {
+                tmpdir <- tempdir()
                 final_qfeatures <- .qf$qfeatures
                 names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-                saveRDS(final_qfeatures, file)
-            }
+                rds_file <- file.path(tmpdir, "final_QFeatures.rds")
+                saveRDS(final_qfeatures, rds_file)
+                rmd_file <- file.path(tmpdir, "sessionInfo.Rmd")
+                SI_file <- file.path(tmpdir, "final_QFeatures_sessionInfo.html")
+                r_file <- file.path(tmpdir, "processQFeatures_script.R")
+                writeLines(
+                  c(
+                    "---",
+                    "title : \"SessionInfo\"",
+                    "output: html_document",
+                    "---",
+                    "",
+                    "```{r}",
+                    "sessionInfo()",
+                    "```"
+                  ),
+                  rmd_file
+                )
+                rmarkdown::render(
+                  rmd_file,
+                  output_file = SI_file,
+                  quiet = TRUE
+                )
+                writeLines(
+                  c(
+                    "# Reproducible R script",
+                    paste0("# Generated on: ", Sys.time()),
+                    "",
+                    "library(QFeatures)\n"
+                  ),
+                  r_file
+                )
+                for(i in global_rv$codeLines){
+                  write(
+                    c(
+                      i
+                    ),
+                    file = r_file,
+                    append = TRUE
+                  )
+                }
+                utils::zip(
+                  zipfile = file,
+                  files = c(rds_file, SI_file, r_file),
+                  flags = "-j"
+                )
+              }
+            )
+          }
         )
     })
 }

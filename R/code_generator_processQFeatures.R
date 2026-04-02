@@ -1,18 +1,14 @@
-codeGeneratorAggregation <- function(qf, method, fcol){
+codeGeneratorAggregation <- function(method, fcol){
   codeLines <- sprintf(
-    "%s <- lapply(seq_along(%s), function(i) {
-    \tname <- names(%s)[i]
+    "qf <- lapply(seq_along(qf), function(i) {
+    \tname <- names(qf)[i]
     \taggregateFeatures(
-    \t\tobject = %s[[name]],
+    \t\tobject = qf[[name]],
     \t\tmethod = %s,
-    \t\trunCol = %s,
+    \t\trunCol = '%s',
     \t\tna.rm = TRUE
     \t)
-    }",
-    qf,
-    qf,
-    qf,
-    qf,
+    })",
     method,
     fcol
   )
@@ -20,13 +16,12 @@ codeGeneratorAggregation <- function(qf, method, fcol){
 }
 
 
-codeGeneratorJoin <- function(names){
+codeGeneratorJoin <- function(){
   codeLines <- sprintf(
     "qf <- joinAssays(
-    \t% x = qf,
-    \t% i = %s
-    )",
-    names
+    \tx = qf,
+    \ti = names(qf)
+    )"
   )
   codeLines
 }
@@ -35,19 +30,17 @@ codeGeneratorJoin <- function(names){
 codeGeneratorNA <- function(qf, pNA, type, tableMetadataNA = NULL){
   if(type == "features"){
     codeLines <- sprintf(
-      "%s <- filterNA(
-     \tobject = %s,
-     \ti = seq_along(%s),
+      "qf <- filterNA(
+     \tobject = qf,
+     \ti = seq_along(qf),
      \tpNA = %s
      )",
-      qf,
-      qf,
-      qf,
       pNA
     )
   } else {
     codeLines <- sprintf(
-      "%s <- %s[, %s$pNA <= pNA,]"
+      "qf <- qf[, qf$pNA <= %s,]",
+      pNA
     )
   }
   codeLines
