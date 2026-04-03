@@ -27,19 +27,22 @@ codeGeneratorJoin <- function(){
 }
 
 
-codeGeneratorNA <- function(qf, pNA, type, tableMetadataNA = NULL){
+codeGeneratorNA <- function(pNA, type){
   if(type == "features"){
     codeLines <- sprintf(
       "qf <- filterNA(
-     \tobject = qf,
-     \ti = seq_along(qf),
-     \tpNA = %s
-     )",
+      \tobject = qf,
+      \ti = seq_along(qf),
+      \tpNA = %s
+      )",
       pNA
     )
   } else {
     codeLines <- sprintf(
-      "qf <- qf[, qf$pNA <= %s,]",
+      "tableNA <- nNA(
+      \tobject = qf,
+      \ti = seq_along(qf)
+      \t)\ntableMetadata <- colData(qf)\ntableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(df_to_render), tableNA$nNAcols$name)]\nqf <- qf[, tableMetadata$pNA <= %s,]",
       pNA
     )
   }
@@ -47,17 +50,13 @@ codeGeneratorNA <- function(qf, pNA, type, tableMetadataNA = NULL){
 }
 
 
-codeGeneratorNormalisation <- function(qf, method){
+codeGeneratorNormalisation <- function(method){
   codeLines <- sprintf(
-    "%s <- lapply(names(%s), function(name){
+    "qf <- lapply(names(qf), function(name){
     \tnormalize(
-    \t\tobject = %s[[name]],
-    \t\tmethod = %s
-    \t)
-    })",
-    qf,
-    qf,
-    qf,
+    \t\tobject = qf[[name]],
+    \t\tmethod = '%s'
+    \t)\n})",
     method
   )
   codeLines
