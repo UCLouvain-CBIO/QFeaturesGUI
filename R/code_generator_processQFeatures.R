@@ -62,24 +62,45 @@ codeGeneratorNormalisation <- function(method){
   codeLines
 }
 
-### Re do this function 
-codeGeneratorFiltering <- function(qf, condition, type){
-  if(type == "feature"){
+
+codeGeneratorFiltering <- function(condition, type){
+  if(type == "features"){
+    final = ""
+    for(i in 1:length(condition)){
+      build_condition <- paste0("filterFeatures(~",condition[[i]]$annotation, " ", condition[[i]]$operator," ")
+      if(is.numeric(condition[[i]]$value[[1]])){
+        vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
+      } else{
+        vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
+      }
+      build_condition <- paste0(build_condition, vector)
+      final <- paste0(final, " |> ", build_condition)
+    }
+    condition_used <- paste0("qf", final)
     codeLines <- sprintf(
-      "for(assay_name in names(%s)) {
-      \t%s[[assay_name]] <- %s[%s, drop = FALSE]
-      }",
-      qf,
-      qf,
-      qf,
-      condition
+      "qf <- %s",
+      condition_used
     )
   } else {
+    final = ""
+    for(i in 1:length(condition)){
+      build_condition <- paste0("colData(qf)$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
+      if(is.numeric(condition[[i]]$value[[1]])){
+        vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
+      } else{
+        vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
+      }
+      build_condition <- paste0(build_condition, vector)
+      if(i == 1){
+        final <- build_condition
+      } else {
+        final <- paste0(final, " & ", build_condition)
+      }
+    }
+    condition_used <- paste0("qf[, ", final, "]")
     codeLines <- sprintf(
-      "%s <- %s[, %s, ]",
-      qf,
-      qf,
-      condition
+      "qf <- %s",
+      condition_used
     )
   }
   codeLines
