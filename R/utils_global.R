@@ -1350,13 +1350,6 @@ unique_feature_boxplot <- function(assays_df, feature) {
 #' @importFrom QFeatures rbindRowData
 #' @importFrom SummarizedExperiment colData
 
-count_features_rows <- function(qfeatures) {
-    sum(vapply(seq_along(qfeatures), function(i) {
-        nrow(qfeatures[[i]])
-    }, integer(1)))
-}
-
-
 percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filtering, type) {
     type <- match.arg(type, c("features", "samples"))
     if (type == "features") {
@@ -1391,6 +1384,22 @@ percent_removed <- function(qfeatures_before_filtering, qfeatures_after_filterin
         )
     }
     return(pct_removed)
+}
+
+#' A function that will return the number of features by rows
+#'
+#' @param qfeatures a qfeatures object.
+#'
+#' @return an integer
+#'
+#' @rdname INTERNAL_count_features_rows
+#' @keywords internal
+#'
+
+count_features_rows <- function(qfeatures) {
+  sum(vapply(seq_along(qfeatures), function(i) {
+    nrow(qfeatures[[i]])
+  }, integer(1)))
 }
 
 #' A function that will return the number of samples/features that have been removed
