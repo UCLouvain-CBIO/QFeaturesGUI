@@ -312,6 +312,16 @@ feature_filtering <- function(qfeatures, condition_specs) {
 }
 
 
+#' @title apply filter operator
+#'
+#' @param values A vector of values to compare
+#' @param operator A comparison operator (`"=="`, `"!="`, `"<"`, `"<="`, `">"` or `">="`)
+#' @param target A target value (or vector of values for equality operators)
+#'
+#' @return A logical vector indicating whether each value satisfies the condition
+#' @rdname INTERNAL_apply_filter_operator
+#' @keywords internal
+#'
 apply_filter_operator <- function(values, operator, target) {
     if (length(target) == 0) {
         return(rep(FALSE, length(values)))
