@@ -39,7 +39,8 @@ Imports:
     dplyr,
     matrixStats,
     MsCoreUtils,
-    waiter
+    waiter,
+    shinycssloaders
 Depends:
     shinyBS,
     R (>= 4.3.0)
