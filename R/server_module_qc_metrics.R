@@ -38,12 +38,36 @@ server_module_qc_metrics <- function(id, assays_to_process) {
                 assays_choices_vector()[input$selected_assay]
             ))
         })
+        annotation_names <- reactive({
+          req(single_assay())
+          if (input$assay_type == "features") {
+            c("NULL", colnames(rowData(single_assay())))
+          } else {
+            c("NULL", colnames(colData(single_assay())))
+          }
+        })
+        
+        observe({
+          req(single_assay())
+          req(annotation_names())
+          stopifnot(is(single_assay(), "SummarizedExperiment"))
+          updateSelectInput(session,
+                            "pca_color",
+                            choices = annotation_names(),
+                            selected = "NULL"
+          )
+        })
 
         server_module_pca_box(
           id = "features",
           single_assay = single_assay,
           method = reactive(input$selected_method),
-          pca_type = reactive(input$assay_type)
+          pca_type = reactive(input$assay_type),
+          scale = reactive(input$scale),
+          center = reactive(input$center),
+          color = reactive(input$pca_color),
+          show_legend = reactive(input$show_legend),
+          color_width = reactive(input$color_width)
         )
 
         server_module_viz_box("viz_box", assays_to_process)
@@ -68,48 +92,35 @@ server_module_qc_metrics <- function(id, assays_to_process) {
 #' @importFrom pcaMethods pca scores
 #' @importFrom methods is
 #'
-server_module_pca_box <- function(id, single_assay, method, pca_type) {
+server_module_pca_box <- function(id, single_assay, method, pca_type, scale, center, show_legend, color, color_width) {
     moduleServer(id, function(input, output, session) {
       stopifnot(is.reactive(method))
       stopifnot(is.reactive(pca_type))
-        annotation_names <- reactive({
-            req(single_assay())
-            if (pca_type() == "features") {
-                c("NULL", colnames(rowData(single_assay())))
-            } else {
-                c("NULL", colnames(colData(single_assay())))
-            }
-        })
-
-        observe({
-            req(single_assay())
-            req(annotation_names())
-            stopifnot(is(single_assay(), "SummarizedExperiment"))
-            updateSelectInput(session,
-                "pca_color",
-                choices = annotation_names(),
-                selected = "NULL"
-            )
-        })
+      stopifnot(is.reactive(scale))
+      stopifnot(is.reactive(center))
+      stopifnot(is.reactive(show_legend))
+      stopifnot(is.reactive(color))
+      stopifnot(is.reactive(color_width))
+        
 
         color_data <- reactive({
             req(single_assay())
-            req(input$pca_color)
-            if (input$pca_color != "NULL") {
+            req(color())
+            if (color() != "NULL") {
                 if (pca_type() == "features") {
-                    df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
+                    df <- rowData(single_assay())[, color(), drop = FALSE]
                 } else {
-                    df <- colData(single_assay())[, input$pca_color, drop = FALSE]
+                    df <- colData(single_assay())[, color(), drop = FALSE]
                 }
                 if (is.character(df[, 1])) {
-                    df[, 1] <- ifelse(nchar(df[, 1]) > input$color_width,
-                        paste0(substr(df[, 1], 1, input$color_width), "..."), df[, 1]
+                    df[, 1] <- ifelse(nchar(df[, 1]) > color_width(),
+                        paste0(substr(df[, 1], 1, color_width()), "..."), df[, 1]
                     )
                 }
                 if (all(is.na(df))) {
                     df[, 1] <- "NA"
                 }
-                colnames(df) <- input$pca_color
+                colnames(df) <- color()
                 return(df)
             }
         })
@@ -123,8 +134,8 @@ server_module_pca_box <- function(id, single_assay, method, pca_type) {
                 single_assay(),
                 method = method(),
                 transpose = pca_type() == "samples",
-                scale = input$scale,
-                center = input$center
+                scale = scale(),
+                center = center()
             )
         })
         dataframe <- reactive({
@@ -132,7 +143,7 @@ server_module_pca_box <- function(id, single_assay, method, pca_type) {
             req(!is_empty_set(single_assay()))
             req(ncol(single_assay()) > 0L)
             req(pca_result())
-            if (input$pca_color == "NULL") {
+            if (color() == "NULL") {
                 as.data.frame(
                     data.frame(scores(pca_result()))
                 )
@@ -192,8 +203,8 @@ server_module_pca_box <- function(id, single_assay, method, pca_type) {
                 component_name = "PCA quality control plot",
                 df = dataframe(),
                 pca_result = pca_result(),
-                color_name = input$pca_color,
-                show_legend = input$show_legend
+                color_name = color(),
+                show_legend = show_legend()
             )
         })
     })

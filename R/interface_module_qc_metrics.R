@@ -14,42 +14,65 @@ interface_module_qc_metrics <- function(id, type) {
     tagList(
         fluidRow(
             box(
-                title = "PCA",
+                title = "Parameters",
                 status = "primary",
-                width = 12,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                fluidRow(
-                    column(
-                        4,
-                        selectInput(
-                            inputId = NS(id, "assay_type"),
-                            choices = c("samples", "features"),
-                            label = "Select the assay type for representation",
-                            selected = "samples"
-                        )
-                    ),
-                    column(
-                        4,
-                        selectInput(
-                            inputId = NS(id, "selected_assay"),
-                            choices = NULL,
-                            label = "Select set"
-                        )
-                    ),
-                    column(
-                        4,
-                        selectInput(
-                            inputId = NS(id, "selected_method"),
-                            choices = c("nipals", "ppca", "svdImpute"),
-                            label = "Select Reduction Method"
-                        )
-                    )
+                width = 4,
+                solidHeader = FALSE,
+                collapsible = FALSE,
+                selectInput(
+                    inputId = NS(id, "assay_type"),
+                    choices = c("samples", "features"),
+                    label = "Select the assay type for representation",
+                    selected = "samples"
                 ),
-                interface_module_pca_box(
-                    NS(id, "features"),
-                    title = "PCA"
+                selectInput(
+                    inputId = NS(id, "selected_assay"),
+                    choices = NULL,
+                    label = "Select set"
+                ),
+                selectInput(
+                    inputId = NS(id, "selected_method"),
+                    choices = c("nipals", "ppca", "svdImpute"),
+                    label = "Select Reduction Method"
+                ),
+                selectInput(
+                  inputId = NS(id, "pca_color"),
+                  label = "Color by",
+                  choices = NULL
+                ),
+                checkboxInput(
+                  inputId = NS(id, "scale"),
+                  label = "Scale data",
+                  value = TRUE
+                ),
+                checkboxInput(
+                  inputId = NS(id, "center"),
+                  label = "Center data",
+                  value = TRUE
+                ),
+                checkboxInput(
+                  inputId = NS(id, "show_legend"),
+                  label = "Show Legend",
+                  value = FALSE
+                ),
+                numericInput(
+                  inputId = NS(id, "color_width"),
+                  label = "Color value max length (chr)",
+                  value = 10,
+                  min = 5,
+                  max = 30
                 )
+                
+            ),
+            box(
+              title = "PCA",
+              status = "primary",
+              width = 8,
+              solidHeader = FALSE,
+              collapsible = FALSE,
+              interface_module_pca_box(
+                NS(id, "features")
+              ) 
             )
         ),
         fluidRow(
@@ -78,48 +101,9 @@ interface_module_qc_metrics <- function(id, type) {
 #' @importFrom shiny selectInput checkboxInput numericInput NS
 #' @importFrom plotly plotlyOutput
 #'
-interface_module_pca_box <- function(id, title) {
-    box(
-        title = title,
-        status = "primary",
-        width = 12,
-        solidHeader = FALSE,
-        collapsible = FALSE,
-        sidebar = boxSidebar(
-            id = NS(id, "pca_sidebar"),
-            width = 50,
-            startOpen = FALSE,
-            selectInput(
-                inputId = NS(id, "pca_color"),
-                label = "Color by",
-                choices = NULL
-            ),
-            checkboxInput(
-                inputId = NS(id, "scale"),
-                label = "Scale data",
-                value = TRUE
-            ),
-            checkboxInput(
-                inputId = NS(id, "center"),
-                label = "Center data",
-                value = TRUE
-            ),
-            checkboxInput(
-                inputId = NS(id, "show_legend"),
-                label = "Show Legend",
-                value = FALSE
-            ),
-            numericInput(
-                inputId = NS(id, "color_width"),
-                label = "Color value max length (chr)",
-                value = 10,
-                min = 5,
-                max = 30
-            )
-        ),
-        with_output_waiter(plotlyOutput(outputId = NS(id, "pca")),
-            html = waiter::spin_6(),
-            color = "transparent"
-        )
+interface_module_pca_box <- function(id) {
+    with_output_waiter(plotlyOutput(outputId = NS(id, "pca")),
+        html = waiter::spin_6(),
+        color = "transparent"
     )
 }
