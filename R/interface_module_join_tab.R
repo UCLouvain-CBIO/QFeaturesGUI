@@ -16,10 +16,9 @@ interface_module_join_tab <- function(id) {
     ),
     div(
       style = "display: flex; justify-content: center;  text-align : center;",
-      selectInput(
+      textInput(
         NS(id, "feature_type"),
-        label = "Choose the type of features your set contain.",
-        choices = c("PSM", "Peptides", "Proteins")
+        label = "Choose the type of features your set contain."
       )
     ),
     actionButton(
