@@ -26,6 +26,7 @@ server_module_qc_metrics <- function(id, assays_to_process) {
                 choices = names(choices)
             )
         })
+        
         single_assay <- reactive({
             req(input$selected_assay)
             req(assays_to_process())
@@ -39,16 +40,10 @@ server_module_qc_metrics <- function(id, assays_to_process) {
         })
 
         server_module_pca_box(
-            id = "features",
-            single_assay = single_assay,
-            method = input$selected_method,
-            transpose = FALSE
-        )
-        server_module_pca_box(
-            id = "samples",
-            single_assay = single_assay,
-            method = input$selected_method,
-            transpose = TRUE
+          id = "features",
+          single_assay = single_assay,
+          method = reactive(input$selected_method),
+          pca_type = reactive(input$assay_type)
         )
 
         server_module_viz_box("viz_box", assays_to_process)
@@ -73,11 +68,13 @@ server_module_qc_metrics <- function(id, assays_to_process) {
 #' @importFrom pcaMethods pca scores
 #' @importFrom methods is
 #'
-server_module_pca_box <- function(id, single_assay, method, transpose) {
+server_module_pca_box <- function(id, single_assay, method, pca_type) {
     moduleServer(id, function(input, output, session) {
+      stopifnot(is.reactive(method))
+      stopifnot(is.reactive(pca_type))
         annotation_names <- reactive({
             req(single_assay())
-            if (id == "features") {
+            if (pca_type() == "features") {
                 c("NULL", colnames(rowData(single_assay())))
             } else {
                 c("NULL", colnames(colData(single_assay())))
@@ -99,7 +96,7 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             req(single_assay())
             req(input$pca_color)
             if (input$pca_color != "NULL") {
-                if (id == "features") {
+                if (pca_type() == "features") {
                     df <- rowData(single_assay())[, input$pca_color, drop = FALSE]
                 } else {
                     df <- colData(single_assay())[, input$pca_color, drop = FALSE]
@@ -124,8 +121,8 @@ server_module_pca_box <- function(id, single_assay, method, transpose) {
             req(ncol(single_assay()) > 0L)
             pcaMethods_wrapper(
                 single_assay(),
-                method = method,
-                transpose = transpose,
+                method = method(),
+                transpose = pca_type() == "samples",
                 scale = input$scale,
                 center = input$center
             )

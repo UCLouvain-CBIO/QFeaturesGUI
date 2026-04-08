@@ -21,7 +21,16 @@ interface_module_qc_metrics <- function(id, type) {
                 collapsible = TRUE,
                 fluidRow(
                     column(
-                        6,
+                        4,
+                        selectInput(
+                            inputId = NS(id, "assay_type"),
+                            choices = c("samples", "features"),
+                            label = "Select the assay type for representation",
+                            selected = "samples"
+                        )
+                    ),
+                    column(
+                        4,
                         selectInput(
                             inputId = NS(id, "selected_assay"),
                             choices = NULL,
@@ -29,23 +38,17 @@ interface_module_qc_metrics <- function(id, type) {
                         )
                     ),
                     column(
-                        6,
+                        4,
                         selectInput(
                             inputId = NS(id, "selected_method"),
-                            choices = c("nipals"),
+                            choices = c("nipals", "ppca", "svdImpute"),
                             label = "Select Reduction Method"
                         )
                     )
                 ),
-                fluidRow(
-                    interface_module_pca_box(
-                        NS(id, "features"),
-                        title = "Features PCA"
-                    ),
-                    interface_module_pca_box(
-                        NS(id, "samples"),
-                        title = "Samples PCA"
-                    )
+                interface_module_pca_box(
+                    NS(id, "features"),
+                    title = "PCA"
                 )
             )
         ),
@@ -79,7 +82,7 @@ interface_module_pca_box <- function(id, title) {
     box(
         title = title,
         status = "primary",
-        width = 6,
+        width = 12,
         solidHeader = FALSE,
         collapsible = FALSE,
         sidebar = boxSidebar(
