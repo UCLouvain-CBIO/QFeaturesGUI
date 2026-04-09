@@ -121,7 +121,7 @@ server_module_summary_tab <- function(id) {
                     "# Reproducible R script",
                     paste0("# Generated on: ", Sys.time()),
                     "",
-                    "library(QFeatures)\n"
+                    "####################################\n######### Package loading ##########\n####################################\n\nlibrary(QFeatures)\n"
                   ),
                   r_file
                 )

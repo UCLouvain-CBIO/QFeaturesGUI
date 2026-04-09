@@ -11,15 +11,18 @@
 
 codeGeneratorAggregation <- function(method, fcol){
   codeLines <- sprintf(
-    "qf <- lapply(seq_along(qf), function(i) {
-  \tname <- names(qf)[i]
-  \taggregateFeatures(
-  \t\tobject = qf[[name]],
-  \t\tmethod = %s,
-  \t\trunCol = '%s',
-  \t\tna.rm = TRUE
-  \t)
-  })",
+  "####################################
+########### Aggregation ############
+####################################\n
+qf <- lapply(seq_along(qf), function(i) {
+\tname <- names(qf)[i]
+\taggregateFeatures(
+\t\tobject = qf[[name]],
+\t\tmethod = %s,
+\t\tfcol = '%s',
+\t\tna.rm = TRUE
+\t)
+})\n",
     method,
     fcol
   )
@@ -35,10 +38,13 @@ codeGeneratorAggregation <- function(method, fcol){
 
 codeGeneratorJoin <- function(){
   codeLines <- sprintf(
-    "qf <- joinAssays(
-  \tx = qf,
-  \ti = names(qf)
-  )"
+"####################################
+############### Join ###############
+####################################\n
+qf <- joinAssays(
+\tx = qf,
+\ti = names(qf)
+)\n"
   )
   codeLines
 }
@@ -55,19 +61,28 @@ codeGeneratorJoin <- function(){
 codeGeneratorNA <- function(pNA, type){
   if(type == "features"){
     codeLines <- sprintf(
-      "qf <- filterNA(
-      \tobject = qf,
-      \ti = seq_along(qf),
-      \tpNA = %s
-      )",
+      "####################################
+###### Missing value features ######
+####################################\n
+qf <- filterNA(
+\tobject = qf,
+\ti = seq_along(qf),
+\tpNA = %s
+)\n",
       pNA
     )
   } else {
     codeLines <- sprintf(
-      "tableNA <- nNA(
-      \tobject = qf,
-      \ti = seq_along(qf)
-      \t)\ntableMetadata <- colData(qf)\ntableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(df_to_render), tableNA$nNAcols$name)]\nqf <- qf[, tableMetadata$pNA <= %s,]",
+      "####################################
+###### Missing value samples #######
+####################################\n
+tableNA <- nNA(
+\tobject = qf,
+\ti = seq_along(qf)
+\t)
+tableMetadata <- colData(qf)
+tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
+qf <- qf[, tableMetadata$pNA <= %s,]\n",
       pNA
     )
   }
@@ -84,11 +99,14 @@ codeGeneratorNA <- function(pNA, type){
 
 codeGeneratorNormalisation <- function(method){
   codeLines <- sprintf(
-    "qf <- lapply(names(qf), function(name){
-    \tnormalize(
-    \t\tobject = qf[[name]],
-    \t\tmethod = '%s'
-    \t)\n})",
+    "####################################
+########## Normalisation ###########
+####################################\n
+qf <- lapply(names(qf), function(name){
+\tnormalize(
+\t\tobject = qf[[name]],
+\t\tmethod = '%s'
+\t)\n})\n",
     method
   )
   codeLines
@@ -105,7 +123,13 @@ codeGeneratorNormalisation <- function(method){
 
 codeGeneratorFiltering <- function(condition, type){
   if(length(condition) == 0){
-    codeLines <- sprintf("#No %s filtering applied", type)
+    codeLines <- sprintf(
+      "####################################
+######## %s filtering ########
+####################################\n
+#No %s filtering applied\n",
+      type,
+      type)
   } else {
     if(type == "features"){
       final = ""
@@ -121,7 +145,10 @@ codeGeneratorFiltering <- function(condition, type){
       }
       condition_used <- paste0("qf", final)
       codeLines <- sprintf(
-        "qf <- %s",
+        "####################################
+######## features filtering ########
+####################################\n
+qf <- %s\n",
         condition_used
       )
     } else {
@@ -142,7 +169,10 @@ codeGeneratorFiltering <- function(condition, type){
       }
       condition_used <- paste0("qf[, ", final, "]")
       codeLines <- sprintf(
-        "qf <- %s",
+        "####################################
+######## samples filtering #########
+####################################\n
+qf <- %s\n",
         condition_used
       )
     }
