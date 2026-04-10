@@ -1,3 +1,12 @@
+codeGeneratorInitialization <- function(qf, initialSets = NULL){
+  if(is.null(initialSets)){
+    setsNames <- names(qf)
+  } else {
+    setsNames <- names(qf)[initialSets]
+  }
+  codeLines <- sprintf("%s", setsNames)
+}
+
 #' @title Code generator for aggregation tab
 #' @param method the method used to do the aggregation
 #' @param fcol `character(1)` naming a `rowData` variable that defines how to aggregate
