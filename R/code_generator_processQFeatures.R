@@ -1,10 +1,17 @@
-codeGeneratorInitialization <- function(qf, initialSets = NULL){
-  if(is.null(initialSets)){
-    setsNames <- names(qf)
+codeGeneratorInitialization <- function(qf, step_number){
+  vec <- names(qf)
+  if(step_number == 1){
+    initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#0"), vec)]
+    initial_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", initial_setNames)
+    step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
+    step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
+    codeLines <- sprintf("#initial set names\ninitial_setNames <- %s\n\n#Step number %s names\nstep%s_setNames<- %s\n", initial_setNames, step_number, step_number, step_setNames)
   } else {
-    setsNames <- names(qf)[initialSets]
+    step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
+    step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
+    codeLines <- sprintf("Step number %s names\nstep%s_setNames<- %s\n", step_number, step_number, step_setNames)
   }
-  codeLines <- sprintf("%s", setsNames)
+  codeLines
 }
 
 #' @title Code generator for aggregation tab
@@ -27,7 +34,7 @@ qf <- lapply(seq_along(qf), function(i) {
 \tname <- names(qf)[i]
 \taggregateFeatures(
 \t\tobject = qf[[name]],
-\t\tmethod = %s,
+\t\tfun = %s,
 \t\tfcol = '%s',
 \t\tna.rm = TRUE
 \t)
