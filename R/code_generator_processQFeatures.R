@@ -35,6 +35,9 @@ step%s_setNames<- c(%s)\n",
   codeLines
 }
 
+############################################## Add a function that try if the step number have the same number of set if not render a new list updated with the right name of sets
+
+
 #' @title Code generator for aggregation tab
 #' @param method the method used to do the aggregation
 #' @param fcol `character(1)` naming a `rowData` variable that defines how to aggregate
@@ -46,22 +49,24 @@ step%s_setNames<- c(%s)\n",
 #' @keywords internal
 #'
 
-codeGeneratorAggregation <- function(method, fcol){
+codeGeneratorAggregation <- function(method, fcol, step_number){
   codeLines <- sprintf(
   "####################################
 ########### Aggregation ############
 ####################################\n
-qf <- lapply(seq_along(qf), function(i) {
-\tname <- names(qf)[i]
-\taggregateFeatures(
-\t\tobject = qf[[name]],
-\t\tfun = %s,
-\t\tfcol = '%s',
-\t\tna.rm = TRUE
-\t)
-})\n",
-    method,
-    fcol
+for(i in 1:length(step%s_setNames)){
+  qf[[step%s_setNames[i]]] <- aggregateFeatures(
+    object = qf[[step%s_setNames[i]]],
+    fun = %s,
+    fcol = '%s',
+    na.rm = TRUE
+  )
+}\n",
+  step_number-1,
+  step_number,
+  step_number-1
+  method,
+  fcol
   )
   codeLines
 }
