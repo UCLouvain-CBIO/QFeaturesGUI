@@ -5,11 +5,32 @@ codeGeneratorInitialization <- function(qf, step_number){
     initial_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", initial_setNames)
     step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
     step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
-    codeLines <- sprintf("#initial set names\ninitial_setNames <- c(%s)\n\n#Step number %s names\nstep%s_setNames<- c(%s)\n",  paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"), step_number, step_number, paste(sprintf('"%s"', step_setNames), collapse = ", \n\t"))
+    codeLines <- sprintf(
+      "####################################
+######### initial set names ########
+####################################
+step0_setNames <- c(%s)\n
+####################################
+####### Step number %s names ######## 
+####################################
+step%s_setNames <- c(%s)\n",
+      paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"),
+      step_number, 
+      step_number, 
+      paste(sprintf('"%s"', step_setNames), collapse = ", \n\t")
+      )
   } else {
     step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
     step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
-    codeLines <- sprintf("Step number %s names\nstep%s_setNames<- c(%s)\n", step_number, step_number, paste(sprintf('"%s"', step_setNames), collapse = ", \n\t"))
+    codeLines <- sprintf(
+      "####################################
+####### Step number %s names ########
+####################################
+step%s_setNames<- c(%s)\n",
+      step_number,
+      step_number,
+      paste(sprintf('"%s"', step_setNames), collapse = ", \n\t")
+      )
   }
   codeLines
 }
@@ -74,17 +95,21 @@ qf <- joinAssays(
 #' @keywords internal
 #'
 
-codeGeneratorNA <- function(pNA, type){
+codeGeneratorNA <- function(pNA, type, step_number){
   if(type == "features"){
     codeLines <- sprintf(
       "####################################
 ###### Missing value features ######
 ####################################\n
-qf <- filterNA(
-\tobject = qf,
-\ti = seq_along(qf),
-\tpNA = %s
-)\n",
+for (i in 1:length(step%s_setNames)){
+\tqf[[step%s_setNames[i]]] <- filterNA(
+\t\tobject = qf[[step%s_setNames[i]]],
+\t\tpNA = %s
+\t)
+}",
+      step_number,
+      step_number,
+      step_number-1,
       pNA
     )
   } else {
@@ -92,13 +117,19 @@ qf <- filterNA(
       "####################################
 ###### Missing value samples #######
 ####################################\n
-tableNA <- nNA(
-\tobject = qf,
-\ti = seq_along(qf)
-\t)
-tableMetadata <- colData(qf)
-tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
-qf <- qf[, tableMetadata$pNA <= %s,]\n",
+for(i in 1:length(step%s_setNames)){
+  tableNA <- nNA(
+    object = qf,
+    i = step%s_setNames[i]
+  )
+  tableMetadata <- colData(qf[[step%s_setNames[i]]])
+  tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
+  qf[[step%s_setNames[i]]] <- qf[, tableMetadata$pNA <= %s,]
+}",
+      step_number,
+      step_number-1,
+      step_number-1,
+      step_number,
       pNA
     )
   }
