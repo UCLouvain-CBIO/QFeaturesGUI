@@ -124,7 +124,7 @@ for(i in 1:length(step%s_setNames)){
   )
   tableMetadata <- colData(qf[[step%s_setNames[i]]])
   tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
-  qf[[step%s_setNames[i]]] <- qf[, tableMetadata$pNA <= %s,]
+  qf[[step%s_setNames[i]]] <- qf[, tableMetadata$pNA <= %s]
 }",
       step_number,
       step_number-1,
