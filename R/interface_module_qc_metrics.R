@@ -22,18 +22,18 @@ interface_module_qc_metrics <- function(id, type) {
                 selectInput(
                     inputId = NS(id, "assay_type"),
                     choices = c("samples", "features"),
-                    label = "Select the assay type for representation",
+                    label = "Select dimension reduction type",
                     selected = "samples"
                 ),
                 selectInput(
                     inputId = NS(id, "selected_assay"),
                     choices = NULL,
-                    label = "Select set"
+                    label = "Select the set for dimension reduction"
                 ),
                 selectInput(
                     inputId = NS(id, "selected_method"),
                     choices = c("nipals", "ppca", "svdImpute"),
-                    label = "Select Reduction Method"
+                    label = "Select Dimension Reduction Method"
                 ),
                 selectInput(
                   inputId = NS(id, "pca_color"),
@@ -65,7 +65,7 @@ interface_module_qc_metrics <- function(id, type) {
                 
             ),
             box(
-              title = "PCA",
+              title = "Dimension Reduction",
               status = "primary",
               width = 8,
               solidHeader = FALSE,
