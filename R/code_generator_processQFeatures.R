@@ -5,11 +5,11 @@ codeGeneratorInitialization <- function(qf, step_number){
     initial_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", initial_setNames)
     step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
     step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
-    codeLines <- sprintf("#initial set names\ninitial_setNames <- %s\n\n#Step number %s names\nstep%s_setNames<- %s\n", initial_setNames, step_number, step_number, step_setNames)
+    codeLines <- sprintf("#initial set names\ninitial_setNames <- c(%s)\n\n#Step number %s names\nstep%s_setNames<- c(%s)\n",  paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"), step_number, step_number, paste(sprintf('"%s"', step_setNames), collapse = ", \n\t"))
   } else {
     step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
     step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
-    codeLines <- sprintf("Step number %s names\nstep%s_setNames<- %s\n", step_number, step_number, step_setNames)
+    codeLines <- sprintf("Step number %s names\nstep%s_setNames<- c(%s)\n", step_number, step_number, paste(sprintf('"%s"', step_setNames), collapse = ", \n\t"))
   }
   codeLines
 }
