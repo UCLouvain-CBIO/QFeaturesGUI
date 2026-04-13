@@ -64,7 +64,7 @@ for(i in 1:length(step%s_setNames)){
 }\n",
   step_number-1,
   step_number,
-  step_number-1
+  step_number-1,
   method,
   fcol
   )
@@ -78,15 +78,18 @@ for(i in 1:length(step%s_setNames)){
 #' @keywords internal
 #'
 
-codeGeneratorJoin <- function(){
+codeGeneratorJoin <- function(step_number){
   codeLines <- sprintf(
 "####################################
 ############### Join ###############
 ####################################\n
 qf <- joinAssays(
 \tx = qf,
-\ti = names(qf)
-)\n"
+\ti = step%s_setNames,
+\tname = step%s_setNames
+)\n",
+  step_number-1,
+  step_number
   )
   codeLines
 }
@@ -129,12 +132,13 @@ for(i in 1:length(step%s_setNames)){
   )
   tableMetadata <- colData(qf[[step%s_setNames[i]]])
   tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
-  qf[[step%s_setNames[i]]] <- qf[, tableMetadata$pNA <= %s]
+  qf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]][, tableMetadata$pNA <= %s]
 }",
       step_number,
       step_number-1,
       step_number-1,
       step_number,
+      step_number-1,
       pNA
     )
   }
@@ -149,16 +153,19 @@ for(i in 1:length(step%s_setNames)){
 #' @keywords internal
 #'
 
-codeGeneratorNormalisation <- function(method){
+codeGeneratorNormalisation <- function(method, step_number){
   codeLines <- sprintf(
     "####################################
 ########## Normalisation ###########
 ####################################\n
-qf <- lapply(names(qf), function(name){
-\tnormalize(
-\t\tobject = qf[[name]],
-\t\tmethod = '%s'
-\t)\n})\n",
+for(i in 1:length(step%s_setNames)){
+qf[[step%s_setNames[i]]] <- normalize(
+\tobject = qf[[step%s_setNames[i]]],
+\tmethod = '%s'
+\t)}\n",
+    step_number-1,
+    step_number,
+    step_number-1,
     method
   )
   codeLines
