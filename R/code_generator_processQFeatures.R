@@ -46,11 +46,12 @@ check_for_missing_set <- function(qf,step_number){
    if(length(initial)!= length(current)){
      for(i in 1:length(initial)){
        if(!(initial[i] %in% current)){
-         initial_setNames <- initial_setNames[-i]
+         indice_to_remove <- append(indice_to_remove,i)
        }
      }
+     initial_setNames <- initial_setNames[-indice_to_remove]
      initial_setNames <- remove_QFeaturesGUI(initial_setNames)
-     codeLines <- sprintf("#The number of set has changed.\nstep%s_setNames <- c(%s)", 
+     codeLines <- sprintf("#The number of set has changed.\nstep%s_setNames <- c(%s)\n", 
                           step_number-1,
                           paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"))
      return(codeLines)
