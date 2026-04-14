@@ -37,6 +37,27 @@ step%s_setNames<- c(%s)\n",
 
 ############################################## Add a function that try if the step number have the same number of set if not render a new list updated with the right name of sets
 
+check_for_missing_set <- function(qf,step_number){
+  vec <- names(qf)
+  initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#",step_number-1), vec)]
+  initial <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", initial_setNames)
+  currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#",step_number),vec)]
+  current <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", currentStep_setNames)
+   if(length(initial)!= length(current)){
+     for(i in 1:length(initial)){
+       if(!(initial[i] %in% current)){
+         initial_setNames <- initial_setNames[-i]
+       }
+     }
+     initial_setNames <- remove_QFeaturesGUI(initial_setNames)
+     codeLines <- sprintf("#The number of set has changed.\nstep%s_setNames <- c(%s)", 
+                          step_number-1,
+                          paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"))
+     return(codeLines)
+   }
+}
+  
+
 
 #' @title Code generator for aggregation tab
 #' @param method the method used to do the aggregation
@@ -180,15 +201,16 @@ qf[[step%s_setNames[i]]] <- normalize(
 #' @keywords internal
 #'
 
-codeGeneratorFiltering <- function(condition, type){
+codeGeneratorFiltering <- function(qf,condition, type, step_number){
+  codeLines <- check_for_missing_set(qf, step_number = step_number)
   if(length(condition) == 0){
-    codeLines <- sprintf(
+    codeLines <- c(codeLines,sprintf(
       "####################################
 ######## %s filtering ########
 ####################################\n
 #No %s filtering applied\n",
       type,
-      type)
+      type))
   } else {
     if(type == "features"){
       final = ""
@@ -203,37 +225,71 @@ codeGeneratorFiltering <- function(condition, type){
         final <- paste0(final, " |> ", build_condition)
       }
       condition_used <- paste0("qf", final)
-      codeLines <- sprintf(
+      codeLines <- c(codeLines, sprintf(
         "####################################
 ######## features filtering ########
 ####################################\n
-qf <- %s\n",
-        condition_used
-      )
+for(i in 1:length(step%s_setNames)){
+\tqf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]] %s
+}\n",
+        step_number-1,
+        step_number,
+        step_number-1,
+        #condition_used
+        final
+      ))
     } else {
-      final = ""
+      final = "sample_metadata_subset <- sample_metadata_subset["
       for(i in 1:length(condition)){
-        build_condition <- paste0("colData(qf)$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
-        if(is.numeric(condition[[i]]$value[[1]])){
-          vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
-        } else{
-          vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
+        if(condition[[i]]$operator == "=="){
+          build_condition <- paste0("sample_metadata_subset$", condition[[i]]$annotation, " %in% ")
+          if(is.numeric(condition[[i]]$value[[1]])){
+            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
+          } else {
+            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
+          }
+        } else if(condition[[i]]$operator == "!="){
+          build_condition <- paste0("!(sample_metadata_subset$", condition[[i]]$annotation, " %in% ")
+          if(is.numeric(condition[[i]]$value[[1]])){
+            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
+          } else {
+            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
+          }
+        } else {
+          build_condition <- paste0("sample_metadata_subset$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
+          if(is.numeric(condition[[i]]$value[[1]])){
+            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
+          } else {
+            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
+          }
         }
         build_condition <- paste0(build_condition, vector)
         if(i == 1){
-          final <- build_condition
+          final <- paste0(final,build_condition)
         } else {
           final <- paste0(final, " & ", build_condition)
         }
       }
-      condition_used <- paste0("qf[, ", final, "]")
-      codeLines <- sprintf(
+      condition_used <- paste0(final, ",]")
+      codeLines <- c(codeLines, sprintf(
         "####################################
 ######## samples filtering #########
 ####################################\n
-qf <- %s\n",
-        condition_used
-      )
+sample_metadata <- as.data.frame(colData(qf))
+for(i in 1:length(step%s_setNames)){
+\tsample_metadata_subset <- sample_metadata[rownames(sample_metadata) %s colnames(qf[[step%s_setNames[i]]]), ]
+\t%s
+\tqf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]][, colnames(qf[[step%s_setNames[i]]]) %s rownames(sample_metadata_subset)]
+}\n",
+        step_number-1,
+        "%in%",
+        step_number-1,
+        condition_used,
+        step_number,
+        step_number-1,
+        step_number-1,
+        "%in%"
+      ))
     }
   }
   codeLines
