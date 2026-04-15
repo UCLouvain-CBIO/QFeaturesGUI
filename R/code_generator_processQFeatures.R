@@ -1,10 +1,19 @@
+#' @title Code generator that print the set names for the different step
+#' @param qf QFeatures object
+#' @param step_number The step number
+#'
+#' @return code lines generated
+#' @rdname codeGeneratorInitialization
+#' @keywords internal
+#'
+
 codeGeneratorInitialization <- function(qf, step_number){
   vec <- names(qf)
   if(step_number == 1){
     initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#0"), vec)]
-    initial_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", initial_setNames)
+    initial_setNames <- step_setNames(initial_setNames)
     step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
-    step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
+    step_setNames <- remove_QFeaturesGUI(step_setNames)
     codeLines <- sprintf(
       "####################################
 ######### initial set names ########
@@ -35,7 +44,14 @@ step%s_setNames<- c(%s)\n",
   codeLines
 }
 
-############################################## Add a function that try if the step number have the same number of set if not render a new list updated with the right name of sets
+#' @title Check for missing set
+#' @param qf QFeatures object
+#' @param step_number The step number
+#'
+#' @return code lines generated
+#' @rdname check_for_missing_set
+#' @keywords internal
+#'
 
 check_for_missing_set <- function(qf,step_number){
   vec <- names(qf)
@@ -64,8 +80,9 @@ check_for_missing_set <- function(qf,step_number){
 #' @title Code generator for aggregation tab
 #' @param method the method used to do the aggregation
 #' @param fcol `character(1)` naming a `rowData` variable that defines how to aggregate
-#'   the features within each assay. This variable is either a character or a (possibly
-#'   sparse) matrix.
+#' the features within each assay. This variable is either a character or a (possibly
+#' sparse) matrix.
+#' @param step_number The step number
 #'
 #' @return code line generated
 #' @rdname codeGeneratorAggregation
@@ -95,7 +112,8 @@ for(i in 1:length(step%s_setNames)){
 }
 
 #' @title Code generator for join tab
-#'
+#' @param step_number The step number
+#' 
 #' @return code line generated
 #' @rdname codeGeneratorJoin
 #' @keywords internal
@@ -120,6 +138,7 @@ qf <- joinAssays(
 #' @title Code generator for filtering missing values tab
 #' @param pNA `float` threshold for filtering missing value
 #' @param type feature or sample
+#' @param step_number The step number
 #'
 #' @return code lines generated
 #' @rdname codeGeneratorNA
@@ -171,6 +190,7 @@ for(i in 1:length(step%s_setNames)){
 
 #' @title Code generator for normalisation tab
 #' @param method the method used to do the normalisation
+#' @param step_number The step number
 #' 
 #' @return code lines generated
 #' @rdname codeGeneratorNormalisation
@@ -196,15 +216,17 @@ qf[[step%s_setNames[i]]] <- normalize(
 }
 
 #' @title Code generator for filtering tab
+#' @param qf QFeatures object
 #' @param condition A list of filtering condition specifications
 #' @param type feature or sample
+#' @param step_number The step number
 #'
 #' @return code lines generated
 #' @rdname codeGeneratorFiltering
 #' @keywords internal
 #'
 
-codeGeneratorFiltering <- function(qf,condition, type, step_number){
+codeGeneratorFiltering <- function(qf, condition, type, step_number){
   codeLines <- check_for_missing_set(qf, step_number = step_number)
   if(length(condition) == 0){
     codeLines <- c(codeLines,sprintf(
