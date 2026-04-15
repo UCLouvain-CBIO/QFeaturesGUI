@@ -93,18 +93,16 @@ codeGeneratorAggregation <- function(method, fcol, step_number){
   codeLines <- sprintf(
   "####################################
 ########### Aggregation ############
-####################################\n
-for(i in 1:length(step%s_setNames)){
-  qf[[step%s_setNames[i]]] <- aggregateFeatures(
-    object = qf[[step%s_setNames[i]]],
-    fun = %s,
-    fcol = '%s',
-    na.rm = TRUE
-  )
-}\n",
+####################################
+qf <- aggregateFeatures(qf, 
+\ti = step%s_setNames, 
+\tname = step%s_setNames, 
+\tfun = %s, 
+\tfcol = '%s', 
+\tna.rm = TRUE
+)\n",
   step_number-1,
   step_number,
-  step_number-1,
   method,
   fcol
   )
@@ -123,7 +121,7 @@ codeGeneratorJoin <- function(step_number){
   codeLines <- sprintf(
 "####################################
 ############### Join ###############
-####################################\n
+####################################
 qf <- joinAssays(
 \tx = qf,
 \ti = step%s_setNames,
@@ -151,23 +149,26 @@ codeGeneratorNA <- function(qf, pNA, type, step_number){
     codeLines <- c(codeLines, sprintf(
       "####################################
 ###### Missing value features ######
-####################################\n
+####################################
 for (i in 1:length(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- filterNA(
 \t\tobject = qf[[step%s_setNames[i]]],
 \t\tpNA = %s
 \t)
+\tqf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }",
-      step_number,
+      step_number-1,
       step_number,
       step_number-1,
-      pNA
+      pNA,
+      step_number-1,
+      step_number
     ))
   } else {
     codeLines <- c(codeLines, sprintf(
       "####################################
 ###### Missing value samples #######
-####################################\n
+####################################
 for(i in 1:length(step%s_setNames)){
   tableNA <- nNA(
     object = qf,
@@ -176,13 +177,16 @@ for(i in 1:length(step%s_setNames)){
   tableMetadata <- colData(qf[[step%s_setNames[i]]])
   tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
   qf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]][, tableMetadata$pNA <= %s]
+  qf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }",
+      step_number-1,
+      step_number-1,
+      step_number-1,
       step_number,
       step_number-1,
+      pNA,
       step_number-1,
-      step_number,
-      step_number-1,
-      pNA
+      step_number
     ))
   }
   codeLines
@@ -201,16 +205,20 @@ codeGeneratorNormalisation <- function(method, step_number){
   codeLines <- sprintf(
     "####################################
 ########## Normalisation ###########
-####################################\n
+####################################
 for(i in 1:length(step%s_setNames)){
-qf[[step%s_setNames[i]]] <- normalize(
-\tobject = qf[[step%s_setNames[i]]],
-\tmethod = '%s'
-\t)}\n",
+\tqf[[step%s_setNames[i]]] <- normalize(
+\t\tobject = qf[[step%s_setNames[i]]],
+\t\tmethod = '%s'
+\t)
+\tqf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
+}\n",
     step_number-1,
     step_number,
     step_number-1,
-    method
+    method,
+    step_number-1,
+    step_number
   )
   codeLines
 }
@@ -232,7 +240,7 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number){
     codeLines <- c(codeLines,sprintf(
       "####################################
 ######## %s filtering ########
-####################################\n
+####################################
 #No %s filtering applied\n",
       type,
       type))
@@ -273,15 +281,18 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number){
       codeLines <- c(codeLines, sprintf(
         "####################################
 ######## features filtering ########
-####################################\n
+####################################
 for(i in 1:length(step%s_setNames)){
 \tse <- getWithColData(qf, step%s_setNames[i])
 \t%s
 \tqf[[step%s_setNames[i]]] <- se
+\tqf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }\n",
         step_number-1,
         step_number-1,
         condition_used,
+        step_number,
+        step_number-1,
         step_number
       ))
     } else {
@@ -320,15 +331,18 @@ for(i in 1:length(step%s_setNames)){
       codeLines <- c(codeLines, sprintf(
         "####################################
 ######## samples filtering #########
-####################################\n
+####################################
 for(i in 1:length(step%s_setNames)){
 \tse <- getWithColData(qf, step%s_setNames[i])
 \t%s
 \tqf[[step%s_setNames[i]]] <- se
+\tqf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }\n",
         step_number-1,
         step_number-1,
         condition_used,
+        step_number,
+        step_number-1,
         step_number
       ))
     }

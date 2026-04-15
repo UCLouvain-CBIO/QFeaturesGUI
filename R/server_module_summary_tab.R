@@ -70,17 +70,6 @@ server_module_summary_tab <- function(id) {
                 )
             }
         })
-
-        # output$download_qfeatures <- downloadHandler(
-        #     filename = function() {
-        #         "qfeatures_object.rds"
-        #     },
-        #     content = function(file) {
-        #         final_qfeatures <- .qf$qfeatures
-        #         names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-        #         saveRDS(final_qfeatures, file)
-        #     }
-        # )
         
         output$download_qfeatures <- downloadHandler(
           filename = function() {
@@ -121,7 +110,8 @@ server_module_summary_tab <- function(id) {
                     "# Reproducible R script",
                     paste0("# Generated on: ", Sys.time()),
                     "",
-                    "####################################\n######### Package loading ##########\n####################################\n\nlibrary(QFeatures)\n"
+                    "####################################\n######### Package loading ##########\n####################################\nlibrary(QFeatures)\n",
+                    "####################################\n########## Load dataset ############\n####################################\n#Replace 'myDataset' with the path towards your RDS or QFeatures file\nqf <- readRDS('myDataset') \n"
                   ),
                   r_file
                 )
