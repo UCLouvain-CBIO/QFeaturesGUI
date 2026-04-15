@@ -3,7 +3,7 @@
 #' @param step_number The step number
 #'
 #' @return code lines generated
-#' @rdname codeGeneratorInitialization
+#' @rdname INTERNAL_codeGeneratorInitialization
 #' @keywords internal
 #'
 
@@ -49,7 +49,7 @@ step%s_setNames<- c(%s)\n",
 #' @param step_number The step number
 #'
 #' @return code lines generated
-#' @rdname check_for_missing_set
+#' @rdname INTERNAL_check_for_missing_set
 #' @keywords internal
 #'
 
@@ -85,7 +85,7 @@ check_for_missing_set <- function(qf,step_number){
 #' @param step_number The step number
 #'
 #' @return code line generated
-#' @rdname codeGeneratorAggregation
+#' @rdname INTERNAL_codeGeneratorAggregation
 #' @keywords internal
 #'
 
@@ -115,7 +115,7 @@ for(i in 1:length(step%s_setNames)){
 #' @param step_number The step number
 #' 
 #' @return code line generated
-#' @rdname codeGeneratorJoin
+#' @rdname INTERNAL_codeGeneratorJoin
 #' @keywords internal
 #'
 
@@ -141,7 +141,7 @@ qf <- joinAssays(
 #' @param step_number The step number
 #'
 #' @return code lines generated
-#' @rdname codeGeneratorNA
+#' @rdname INTERNAL_codeGeneratorNA
 #' @keywords internal
 #'
 
@@ -193,7 +193,7 @@ for(i in 1:length(step%s_setNames)){
 #' @param step_number The step number
 #' 
 #' @return code lines generated
-#' @rdname codeGeneratorNormalisation
+#' @rdname INTERNAL_codeGeneratorNormalisation
 #' @keywords internal
 #'
 
@@ -222,7 +222,7 @@ qf[[step%s_setNames[i]]] <- normalize(
 #' @param step_number The step number
 #'
 #' @return code lines generated
-#' @rdname codeGeneratorFiltering
+#' @rdname INTERNAL_codeGeneratorFiltering
 #' @keywords internal
 #'
 
