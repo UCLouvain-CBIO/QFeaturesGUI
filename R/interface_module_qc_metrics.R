@@ -92,12 +92,10 @@ interface_module_qc_metrics <- function(id, type) {
 #' PCA Box interface module
 #'
 #' @param id module id
-#' @param title title of the box
 #' @return a box object that contains the UI for the pca module
 #' @rdname INTERNAL_interface_module_pca_box
 #' @keywords internal
 #'
-#' @importFrom shinydashboardPlus box boxSidebar
 #' @importFrom shiny selectInput checkboxInput numericInput NS
 #' @importFrom plotly plotlyOutput
 #'

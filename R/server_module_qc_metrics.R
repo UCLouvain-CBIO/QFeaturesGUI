@@ -79,9 +79,14 @@ server_module_qc_metrics <- function(id, assays_to_process) {
 #' @param id module id
 #' @param single_assay a reactiveVal that contains the selected assay
 #' @param method a character string specifying the PCA method to use
-#' valid values are c("nipals")
-#' @param transpose a boolean that specifies if the PCA should be transposed
-#' TRUE for samples and FALSE for features
+#' valid values are c("nipals", "ppca", "svdImpute")
+#' @param pca_type sample or features
+#' @param scale a boolean that specifies if the data should be scaled
+#' @param center a boolen that specifies if the data should be centered
+#' @param show_legend a boolean that specifies if the legend should be shown
+#' @param color which metadata use for color
+#' @param color_width how many letter display in the legend
+#' 
 #' @return A shiny module server function that contains the PCA logic
 #' @rdname INTERNAL_server_module_pca_box
 #' @keywords internal
