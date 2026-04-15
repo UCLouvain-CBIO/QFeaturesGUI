@@ -7,7 +7,6 @@
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
-#' @importFrom shinycssloaders hidePageSpinner showPageSpinner
 #' @importFrom QFeatures joinAssays
 #'
 server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
