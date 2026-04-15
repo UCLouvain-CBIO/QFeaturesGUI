@@ -70,7 +70,7 @@ interface_module_qc_metrics <- function(id, type) {
               width = 8,
               solidHeader = FALSE,
               collapsible = FALSE,
-              interface_module_pca_box(
+              interface_module_pca(
                 NS(id, "features")
               ) 
             )
@@ -89,17 +89,17 @@ interface_module_qc_metrics <- function(id, type) {
     )
 }
 
-#' PCA Box interface module
+#' PCA plot interface module
 #'
 #' @param id module id
-#' @return a box object that contains the UI for the pca module
+#' @return a plotly for PCA
 #' @rdname INTERNAL_interface_module_pca_box
 #' @keywords internal
 #'
 #' @importFrom shiny selectInput checkboxInput numericInput NS
 #' @importFrom plotly plotlyOutput
 #'
-interface_module_pca_box <- function(id) {
+interface_module_pca <- function(id) {
     with_output_waiter(plotlyOutput(outputId = NS(id, "pca")),
         html = waiter::spin_6(),
         color = "transparent"
