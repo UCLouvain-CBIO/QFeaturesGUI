@@ -52,7 +52,7 @@ check_for_missing_set <- function(qf,step_number){
      }
      initial_setNames <- initial_setNames[-indice_to_remove]
      initial_setNames <- remove_QFeaturesGUI(initial_setNames)
-     codeLines <- sprintf("#The number of set has changed.\nstep%s_setNames <- c(%s)\n", 
+     codeLines <- sprintf("#After filtering steps one or more set has been deleted.\nstep%s_setNames <- c(%s)\n", 
                           step_number-1,
                           paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"))
      return(codeLines)
@@ -215,50 +215,24 @@ codeGeneratorFiltering <- function(qf,condition, type, step_number){
       type))
   } else {
     if(type == "features"){
-      final = ""
-      for(i in 1:length(condition)){
-        build_condition <- paste0("filterFeatures(~",condition[[i]]$annotation, " ", condition[[i]]$operator," ")
-        if(is.numeric(condition[[i]]$value[[1]])){
-          vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
-        } else{
-          vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
-        }
-        build_condition <- paste0(build_condition, vector)
-        final <- paste0(final, " |> ", build_condition)
-      }
-      condition_used <- paste0("qf", final)
-      codeLines <- c(codeLines, sprintf(
-        "####################################
-######## features filtering ########
-####################################\n
-for(i in 1:length(step%s_setNames)){
-\tqf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]] %s
-}\n",
-        step_number-1,
-        step_number,
-        step_number-1,
-        #condition_used
-        final
-      ))
-    } else {
-      final = "sample_metadata_subset <- sample_metadata_subset["
+      final = "se <- se["
       for(i in 1:length(condition)){
         if(condition[[i]]$operator == "=="){
-          build_condition <- paste0("sample_metadata_subset$", condition[[i]]$annotation, " %in% ")
+          build_condition <- paste0("rowData(se)$", condition[[i]]$annotation, " %in% ")
           if(is.numeric(condition[[i]]$value[[1]])){
             vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
           } else {
             vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
           }
         } else if(condition[[i]]$operator == "!="){
-          build_condition <- paste0("!(sample_metadata_subset$", condition[[i]]$annotation, " %in% ")
+          build_condition <- paste0("!(rowData(se)$", condition[[i]]$annotation, " %in% ")
           if(is.numeric(condition[[i]]$value[[1]])){
             vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
           } else {
             vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
           }
         } else {
-          build_condition <- paste0("sample_metadata_subset$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
+          build_condition <- paste0("rowData(se)$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
           if(is.numeric(condition[[i]]$value[[1]])){
             vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
           } else {
@@ -273,24 +247,67 @@ for(i in 1:length(step%s_setNames)){
         }
       }
       condition_used <- paste0(final, ",]")
+      print(condition_used)
+      codeLines <- c(codeLines, sprintf(
+        "####################################
+######## features filtering ########
+####################################\n
+for(i in 1:length(step%s_setNames)){
+\tse <- getWithColData(qf, step%s_setNames[i])
+\t%s
+\tqf[[step%s_setNames[i]]] <- se
+}\n",
+        step_number-1,
+        step_number-1,
+        condition_used,
+        step_number
+      ))
+    } else {
+      final = "se <- se[,"
+      for(i in 1:length(condition)){
+        if(condition[[i]]$operator == "=="){
+          build_condition <- paste0("colData(se)$", condition[[i]]$annotation, " %in% ")
+          if(is.numeric(condition[[i]]$value[[1]])){
+            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
+          } else {
+            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
+          }
+        } else if(condition[[i]]$operator == "!="){
+          build_condition <- paste0("!(colData(se)$", condition[[i]]$annotation, " %in% ")
+          if(is.numeric(condition[[i]]$value[[1]])){
+            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
+          } else {
+            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
+          }
+        } else {
+          build_condition <- paste0("colData(se)$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
+          if(is.numeric(condition[[i]]$value[[1]])){
+            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
+          } else {
+            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
+          }
+        }
+        build_condition <- paste0(build_condition, vector)
+        if(i == 1){
+          final <- paste0(final,build_condition)
+        } else {
+          final <- paste0(final, " & ", build_condition)
+        }
+      }
+      condition_used <- paste0(final, "]")
       codeLines <- c(codeLines, sprintf(
         "####################################
 ######## samples filtering #########
 ####################################\n
-sample_metadata <- as.data.frame(colData(qf))
 for(i in 1:length(step%s_setNames)){
-\tsample_metadata_subset <- sample_metadata[rownames(sample_metadata) %s colnames(qf[[step%s_setNames[i]]]), ]
+\tse <- getWithColData(qf, step%s_setNames[i])
 \t%s
-\tqf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]][, colnames(qf[[step%s_setNames[i]]]) %s rownames(sample_metadata_subset)]
+\tqf[[step%s_setNames[i]]] <- se
 }\n",
         step_number-1,
-        "%in%",
         step_number-1,
         condition_used,
-        step_number,
-        step_number-1,
-        step_number-1,
-        "%in%"
+        step_number
       ))
     }
   }
