@@ -160,7 +160,7 @@ server_module_missing_values_tab <- function(id, step_number, type, step_rv, par
                             type = paste0("missing_value_", type)
                         )
                         global_rv$codeLines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(qf = .qf$qfeatures, step_number = step_number)
-                        global_rv$codeLines[[paste0("Missing_values_",type,"_",step_number)]] <- codeGeneratorNA(pNA = input[[paste0("threshold_", type)]], type = type, step_number = step_number)
+                        global_rv$codeLines[[paste0("Missing_values_",type,"_",step_number)]] <- codeGeneratorNA(qf = .qf$qfeatures, pNA = input[[paste0("threshold_", type)]], type = type, step_number = step_number)
                         step_rv(step_rv() + 1L)
                     }
                 )

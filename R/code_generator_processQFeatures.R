@@ -126,9 +126,10 @@ qf <- joinAssays(
 #' @keywords internal
 #'
 
-codeGeneratorNA <- function(pNA, type, step_number){
+codeGeneratorNA <- function(qf, pNA, type, step_number){
+  codeLines <- check_for_missing_set(qf, step_number = step_number)
   if(type == "features"){
-    codeLines <- sprintf(
+    codeLines <- c(codeLines, sprintf(
       "####################################
 ###### Missing value features ######
 ####################################\n
@@ -142,9 +143,9 @@ for (i in 1:length(step%s_setNames)){
       step_number,
       step_number-1,
       pNA
-    )
+    ))
   } else {
-    codeLines <- sprintf(
+    codeLines <- c(codeLines, sprintf(
       "####################################
 ###### Missing value samples #######
 ####################################\n
@@ -163,7 +164,7 @@ for(i in 1:length(step%s_setNames)){
       step_number,
       step_number-1,
       pNA
-    )
+    ))
   }
   codeLines
 }
