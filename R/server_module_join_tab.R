@@ -56,8 +56,8 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
             step_number = step_number,
             type = "join"
           )
-          global_rv$codeLines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(qf = .qf$qfeatures, step_number = step_number)
-          global_rv$codeLines[[paste0("join_", step_number)]] <- codeGeneratorJoin(step_number = step_number)
+          global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(qf = .qf$qfeatures, step_number = step_number)
+          global_rv$code_lines[[paste0("join_", step_number)]] <- codeGeneratorJoin(step_number = step_number)
         }
       )
       step_rv(step_rv() + 1L)
