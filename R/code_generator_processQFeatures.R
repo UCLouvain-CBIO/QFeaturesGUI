@@ -1,4 +1,4 @@
-#' @title Code generator that print the set names for the different step
+#' @title Code generator that prints the set names for the different steps
 #' @param qf QFeatures object
 #' @param step_number The step number
 #'
@@ -30,7 +30,7 @@ step%s_setNames <- c(%s)\n",
       )
   } else {
     step_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
-    step_setNames <- gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", step_setNames)
+    step_setNames <- remove_QFeaturesGUI(step_setNames)
     codeLines <- sprintf(
       "####################################
 ####### Step number %s names ########
@@ -61,7 +61,7 @@ check_for_missing_set <- function(qf,step_number){
   currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#",step_number),vec)]
   current <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", currentStep_setNames)
    if(length(initial)!= length(current)){
-     for(i in 1:length(initial)){
+     for(i in seq_along(initial)){
        if(!(initial[i] %in% current)){
          indice_to_remove <- append(indice_to_remove,i)
        }
@@ -236,6 +236,17 @@ for(i in 1:length(step%s_setNames)){
 
 codeGeneratorFiltering <- function(qf, condition, type, step_number){
   codeLines <- check_for_missing_set(qf, step_number = step_number)
+  as_r_string_literal <- function(x){
+    encodeString(as.character(x), quote = "\"")
+  }
+  as_r_vector_literal  <- function(values){
+    if(is.numeric(values[[1]])){
+      paste0("c(", paste(values, collapse = ","), ")")
+    } else {
+      escaped_values <- vapply(values, as_r_string_literal, character(1))
+      paste0("c(", paste(escaped_values, collapse = ","), ")")
+    }
+  }
   if(length(condition) == 0){
     codeLines <- c(codeLines,sprintf(
       "####################################
@@ -248,27 +259,16 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number){
     if(type == "features"){
       final = "se <- se["
       for(i in 1:length(condition)){
+        annotation <- as_r_string_literal(condition[[i]]$annotation)
         if(condition[[i]]$operator == "=="){
-          build_condition <- paste0("rowData(se)$", condition[[i]]$annotation, " %in% ")
-          if(is.numeric(condition[[i]]$value[[1]])){
-            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
-          } else {
-            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
-          }
-        } else if(condition[[i]]$operator == "!="){
-          build_condition <- paste0("!(rowData(se)$", condition[[i]]$annotation, " %in% ")
-          if(is.numeric(condition[[i]]$value[[1]])){
-            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
-          } else {
-            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
-          }
+          build_condition <- paste0("rowData(se)[[",annotation,"]] %in% ")
+          vector <- as_r_vector_literal(condition[[i]]$value)
+        } else if(condition[[i]]$operator == "!=") {
+          build_condition <- paste0("!(rowData(se)[[", annotation, "]] %in% ")
+          vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
         } else {
-          build_condition <- paste0("rowData(se)$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
-          if(is.numeric(condition[[i]]$value[[1]])){
-            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
-          } else {
-            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
-          }
+          build_condition <- paste0("rowData(se)[[", annotation, "]] ", condition[[i]]$operator, " ")
+          vector <- as_r_vector_literal(condition[[i]]$value)
         }
         build_condition <- paste0(build_condition, vector)
         if(i == 1){
@@ -298,27 +298,16 @@ for(i in 1:length(step%s_setNames)){
     } else {
       final = "se <- se[,"
       for(i in 1:length(condition)){
+        annotation <- as_r_string_literal(condition[[i]]$annotation)
         if(condition[[i]]$operator == "=="){
-          build_condition <- paste0("colData(se)$", condition[[i]]$annotation, " %in% ")
-          if(is.numeric(condition[[i]]$value[[1]])){
-            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
-          } else {
-            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
-          }
-        } else if(condition[[i]]$operator == "!="){
-          build_condition <- paste0("!(colData(se)$", condition[[i]]$annotation, " %in% ")
-          if(is.numeric(condition[[i]]$value[[1]])){
-            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), "))")
-          } else {
-            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "'))")
-          }
+          build_condition <- paste0("colData(se)[[",annotation,"]] %in% ")
+          vector <- as_r_vector_literal(condition[[i]]$value)
+        } else if(condition[[i]]$operator == "!=") {
+          build_condition <- paste0("!(colData(se)[[", annotation, "]] %in% ")
+          vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
         } else {
-          build_condition <- paste0("colData(se)$", condition[[i]]$annotation, " ", condition[[i]]$operator, " ")
-          if(is.numeric(condition[[i]]$value[[1]])){
-            vector <- paste0("c(", paste(condition[[i]]$value, collapse = ","), ")")
-          } else {
-            vector <- paste0("c('", paste(condition[[i]]$value, collapse = "','"), "')")
-          }
+          build_condition <- paste0("colData(se)[[", annotation, "]] ", condition[[i]]$operator, " ")
+          vector <- as_r_vector_literal(condition[[i]]$value)
         }
         build_condition <- paste0(build_condition, vector)
         if(i == 1){
