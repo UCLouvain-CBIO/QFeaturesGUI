@@ -13,6 +13,45 @@ interface_module_normalisation_tab <- function(id) {
     tagList(
         fluidRow(
             box(
+              title = "Settings",
+              status = "primary",
+              width = 3,
+              solidHeader = TRUE,
+              collapsible = TRUE,
+              selectInput(
+                inputId = NS(id, "method"),
+                label = "method",
+                choices = c(
+                  "sum",
+                  "max",
+                  "center.mean",
+                  "center.median",
+                  "div.mean",
+                  "div.median",
+                  "diff.median",
+                  "quantiles",
+                  "quantiles.robust",
+                  "vsn"
+                ),
+                selected = "center.median"
+              ),
+              br(),
+              actionButton(
+                inputId = NS(id, "apply_normalisation"),
+                label = "Apply normalisation",
+                width = "100%",
+                class = "load-button"
+              ),
+              br(), br(),
+              tags$h4("Plot options"),
+              selectInput(
+                inputId = NS(id, "color"),
+                label = "Color by",
+                choices = c("NULL"),
+                selected = "NULL"
+              )
+            ),
+            box(
                 title = "Density Plots",
                 status = "primary",
                 width = 9,
@@ -41,45 +80,6 @@ interface_module_normalisation_tab <- function(id) {
                             color = "transparent"
                         )
                     )
-                )
-            ),
-            box(
-                title = "Settings",
-                status = "primary",
-                width = 3,
-                solidHeader = TRUE,
-                collapsible = TRUE,
-                selectInput(
-                    inputId = NS(id, "method"),
-                    label = "method",
-                    choices = c(
-                        "sum",
-                        "max",
-                        "center.mean",
-                        "center.median",
-                        "div.mean",
-                        "div.median",
-                        "diff.median",
-                        "quantiles",
-                        "quantiles.robust",
-                        "vsn"
-                    ),
-                    selected = "center.median"
-                ),
-                br(),
-                actionButton(
-                    inputId = NS(id, "apply_normalisation"),
-                    label = "Apply normalisation",
-                    width = "100%",
-                    class = "load-button"
-                ),
-                br(), br(),
-                tags$h4("Plot options"),
-                selectInput(
-                    inputId = NS(id, "color"),
-                    label = "Color by",
-                    choices = c("NULL"),
-                    selected = "NULL"
                 )
             )
         ),
