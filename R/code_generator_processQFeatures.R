@@ -235,6 +235,7 @@ for(i in 1:length(step%s_setNames)){
 #'
 
 codeGeneratorFiltering <- function(qf, condition, type, step_number){
+  #print(condition)
   codeLines <- check_for_missing_set(qf, step_number = step_number)
   as_r_string_literal <- function(x){
     encodeString(as.character(x), quote = "\"")
@@ -260,15 +261,25 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number){
       final = "se <- se["
       for(i in 1:length(condition)){
         annotation <- as_r_string_literal(condition[[i]]$annotation)
-        if(condition[[i]]$operator == "=="){
-          build_condition <- paste0("rowData(se)[[",annotation,"]] %in% ")
-          vector <- as_r_vector_literal(condition[[i]]$value)
-        } else if(condition[[i]]$operator == "!=") {
-          build_condition <- paste0("!(rowData(se)[[", annotation, "]] %in% ")
-          vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
+        if(condition[[i]]$annotation == ".qfeaturesgui_rowname"){
+          if(condition[[i]]$operator == "=="){
+            build_condition <- paste0("rownames(rowData(se)) %in% ")
+            vector <- as_r_vector_literal(condition[[i]]$value)
+          } else {
+            build_condition <- paste0("!(rownames(rowData(se)) %in% ")
+            vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
+          }
         } else {
-          build_condition <- paste0("rowData(se)[[", annotation, "]] ", condition[[i]]$operator, " ")
-          vector <- as_r_vector_literal(condition[[i]]$value)
+          if(condition[[i]]$operator == "=="){
+            build_condition <- paste0("rowData(se)[[",annotation,"]] %in% ")
+            vector <- as_r_vector_literal(condition[[i]]$value)
+          } else if(condition[[i]]$operator == "!=") {
+            build_condition <- paste0("!(rowData(se)[[", annotation, "]] %in% ")
+            vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
+          } else {
+            build_condition <- paste0("rowData(se)[[", annotation, "]] ", condition[[i]]$operator, " ")
+            vector <- as_r_vector_literal(condition[[i]]$value)
+          }
         }
         build_condition <- paste0(build_condition, vector)
         if(i == 1){
@@ -299,15 +310,25 @@ for(i in 1:length(step%s_setNames)){
       final = "se <- se[,"
       for(i in 1:length(condition)){
         annotation <- as_r_string_literal(condition[[i]]$annotation)
-        if(condition[[i]]$operator == "=="){
-          build_condition <- paste0("colData(se)[[",annotation,"]] %in% ")
-          vector <- as_r_vector_literal(condition[[i]]$value)
-        } else if(condition[[i]]$operator == "!=") {
-          build_condition <- paste0("!(colData(se)[[", annotation, "]] %in% ")
-          vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
+        if(condition[[i]]$annotation == ".qfeaturesgui_rowname"){
+          if(condition[[i]]$operator == "=="){
+            build_condition <- paste0("rownames(colData(se)) %in% ")
+            vector <- as_r_vector_literal(condition[[i]]$value)
+          } else {
+            build_condition <- paste0("!(rownames(colData(se)) %in% ")
+            vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
+          }
         } else {
-          build_condition <- paste0("colData(se)[[", annotation, "]] ", condition[[i]]$operator, " ")
-          vector <- as_r_vector_literal(condition[[i]]$value)
+          if(condition[[i]]$operator == "=="){
+            build_condition <- paste0("colData(se)[[",annotation,"]] %in% ")
+            vector <- as_r_vector_literal(condition[[i]]$value)
+          } else if(condition[[i]]$operator == "!=") {
+            build_condition <- paste0("!(colData(se)[[", annotation, "]] %in% ")
+            vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
+          } else {
+            build_condition <- paste0("colData(se)[[", annotation, "]] ", condition[[i]]$operator, " ")
+            vector <- as_r_vector_literal(condition[[i]]$value)
+          }
         }
         build_condition <- paste0(build_condition, vector)
         if(i == 1){
