@@ -16,9 +16,13 @@ interface_module_join_tab <- function(id) {
     ),
     div(
       style = "display: flex; justify-content: center;  text-align : center;",
+      shinyFeedback::useShinyFeedback(),
       textInput(
         NS(id, "feature_type"),
         label = "Choose the type of features your set contain."
+      ),
+      textOutput(
+        NS(id, "output")
       )
     ),
     actionButton(
