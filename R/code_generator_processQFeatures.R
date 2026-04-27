@@ -235,7 +235,6 @@ for(i in 1:length(step%s_setNames)){
 #'
 
 codeGeneratorFiltering <- function(qf, condition, type, step_number){
-  #print(condition)
   codeLines <- check_for_missing_set(qf, step_number = step_number)
   as_r_string_literal <- function(x){
     encodeString(as.character(x), quote = "\"")
@@ -253,7 +252,7 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number){
       "####################################
 ######## %s filtering ########
 ####################################
-##No %s filtering applied\n",
+## No %s filtering applied\n",
       type,
       type))
   } else {
