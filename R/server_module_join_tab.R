@@ -37,6 +37,14 @@ server_module_join_tab <- function(id, step_number, step_rv, parent_rv) {
         ),
       )    
     })
+    
+    feature_type <- reactive({
+      bool <- str_detect(input$feature_type, pattern = '"')
+      shinyFeedback::feedbackDanger("feature_type", isTRUE(bool), "\"\ character is not allowed")
+    })
+    
+    output$output <- renderText(feature_type())
+    
     observeEvent(input$export, {
       req(assays_to_process())
       with_task_loader(
