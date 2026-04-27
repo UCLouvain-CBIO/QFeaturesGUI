@@ -68,7 +68,7 @@ check_for_missing_set <- function(qf,step_number){
      }
      initial_setNames <- initial_setNames[-indice_to_remove]
      initial_setNames <- remove_QFeaturesGUI(initial_setNames)
-     codeLines <- sprintf("#After filtering steps one or more set has been deleted.\nstep%s_setNames <- c(%s)\n", 
+     codeLines <- sprintf("##After filtering steps one or more set has been deleted.\nstep%s_setNames <- c(%s)\n", 
                           step_number-1,
                           paste(sprintf('"%s"', initial_setNames), collapse = ", \n\t"))
      return(codeLines)
@@ -252,7 +252,7 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number){
       "####################################
 ######## %s filtering ########
 ####################################
-#No %s filtering applied\n",
+##No %s filtering applied\n",
       type,
       type))
   } else {
