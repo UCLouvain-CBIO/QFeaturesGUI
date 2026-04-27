@@ -145,6 +145,7 @@ qfeatures <- readQFeatures(
 #> Checking arguments.
 #> Loading data as a 'SummarizedExperiment' object.
 #> Splitting data in runs.
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 #> Formatting sample annotations (colData).
 #> Formatting data as a 'QFeatures' object.
 
