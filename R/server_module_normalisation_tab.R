@@ -115,6 +115,8 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
                             type = "normalisation"
                         )
                         step_rv(step_rv() + 1L)
+                        global_rv$code_lines[[paste0("Initialization_names_",step_number)]] <- codeGeneratorInitialization(qf = .qf$qfeatures, step_number = step_number)
+                        global_rv$code_lines[[paste0("normalisation_", step_number)]] <- codeGeneratorNormalisation(method = input$method, step_number = step_number)
                     }
                 )
             },
