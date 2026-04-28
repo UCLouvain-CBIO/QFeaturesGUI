@@ -55,7 +55,7 @@ interface_module_normalisation_tab <- function(id) {
                 title = "Density Plots",
                 status = "primary",
                 width = 9,
-                solidHeader = FALSE,
+                solidHeader = TRUE,
                 collapsible = TRUE,
                 fluidRow(
                     column(

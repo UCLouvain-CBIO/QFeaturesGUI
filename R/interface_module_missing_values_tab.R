@@ -13,6 +13,11 @@
 interface_module_missing_values_tab <- function(id, type) {
     tagList(
         box(
+          title = "Settings",
+          status = "primary",
+          width = 6,
+          solidHeader = TRUE,
+          collapsible = TRUE,
           numericInput(
             inputId = NS(id, paste0("threshold_", type)),
             label = paste("Threshold value for", type),
@@ -31,6 +36,8 @@ interface_module_missing_values_tab <- function(id, type) {
         ),
         box(
             title = paste("NA by", type),
+            status = "primary",
+            solidHeader = TRUE,
             sidebar = boxSidebar(
                 id = "plot_sidebar",
                 width = 50,
