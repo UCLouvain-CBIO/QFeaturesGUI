@@ -14,7 +14,7 @@ interface_module_qc_metrics <- function(id, type) {
     tagList(
         fluidRow(
             box(
-                title = "Parameters",
+                title = "Settings",
                 status = "primary",
                 width = 4,
                 solidHeader = FALSE,

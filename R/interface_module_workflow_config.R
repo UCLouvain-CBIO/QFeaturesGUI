@@ -136,7 +136,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                 box(
                     title = "Workflow Configuration",
                     width = 12,
-                    solidHeader = FALSE,
+                    solidHeader = TRUE,
                     status = "primary",
                     tagList(
                         fluidRow(

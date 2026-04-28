@@ -13,18 +13,6 @@ interface_module_aggregation_tab <- function(id) {
   tagList(
     fluidRow(
       box(
-        title = "Aggregation boxplot",
-        status = "primary",
-        width = 9,
-        solidHeader = TRUE,
-        collapsible = FALSE,
-        div(
-          style = "text-align: center; font-size: 16px; color: #777;",
-          textOutput(NS(id,"pre_boxplot"))
-        ),
-        uiOutput(NS(id, "aggregation_boxplot_ui"))
-      ),
-      box(
         title = "Settings",
         status = "primary",
         width = 3,
@@ -72,6 +60,18 @@ interface_module_aggregation_tab <- function(id) {
           width = "100%",
           class = "load-button" 
         )
+      ),
+      box(
+        title = "Aggregation boxplot",
+        status = "primary",
+        width = 9,
+        solidHeader = TRUE,
+        collapsible = FALSE,
+        div(
+          style = "text-align: center; font-size: 16px; color: #777;",
+          textOutput(NS(id,"pre_boxplot"))
+        ),
+        uiOutput(NS(id, "aggregation_boxplot_ui"))
       )
     ),
     actionButton(

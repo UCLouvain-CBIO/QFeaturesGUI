@@ -14,7 +14,7 @@ interface_module_viz_box <- function(id) {
         column(
             4,
             box(
-                title = "Parameters",
+                title = "Settings",
                 status = "primary",
                 solidHeader = FALSE,
                 collapsible = TRUE,
