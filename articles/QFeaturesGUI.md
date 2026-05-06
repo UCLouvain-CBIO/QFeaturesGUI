@@ -91,6 +91,7 @@ documentation will often help users troubleshoot effectively.
 ### Installation
 
 ``` r
+
 # Check if remotes is installed. Otherwise install it.
 if (!require("remotes", quietly = TRUE)) {
     install.packages("remotes")
@@ -112,6 +113,7 @@ For example, the application dedicated to importing data into a
 `QFeatures` object can be launched as follows:
 
 ``` r
+
 app <- importQFeatures()
 
 if (interactive()) {
@@ -123,6 +125,7 @@ Similarly, the application dedicated to data processing can be launched
 using:
 
 ``` r
+
 app <- processQFeatures(qfeaturesObject)
 
 if (interactive()) {
@@ -154,13 +157,12 @@ documented in their own vignettes.
 
 ## References
 
-Amezquita, Robert A, Aaron T L Lun, Etienne Becht, Vince J Carey,
-Lindsay N Carpp, Ludwig Geistlinger, Federico Marini, et al. 2020.
+Amezquita, Robert A, Aaron T L Lun, Etienne Becht, et al. 2020.
 “Orchestrating Single-Cell Analysis with Bioconductor.” *Nat. Methods*
 17 (2): 137–45.
 
-Gatto, Laurent. 2020. “QFeatures: Quantitative Features for Mass
-Spectrometry Data.”
+Gatto, Laurent. 2020. *QFeatures: Quantitative Features for Mass
+Spectrometry Data*.
 
 Vanderaa, Christophe, and Laurent Gatto. 2021. “Replication of
 Single-Cell Proteomics Data Reveals Important Computational Challenges.”
