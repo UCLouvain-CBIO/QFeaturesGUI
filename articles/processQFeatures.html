@@ -60,8 +60,10 @@
       <h1>processQFeatures App</h1>
                         <h4 data-toc-skip class="author">Léopold
 Guyot</h4>
+                                    <h4 data-toc-skip class="author">Loïc
+Guille</h4>
                         
-            <h4 data-toc-skip class="date">8 May 2026</h4>
+            <h4 data-toc-skip class="date">11 May 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/QFeaturesGUI/vignettes/processQFeatures.Rmd" class="external-link"><code>vignettes/processQFeatures.Rmd</code></a></small>
       <div class="d-none name"><code>processQFeatures.Rmd</code></div>
@@ -69,7 +71,304 @@ Guyot</h4>
 
     
     
-<p><em>WIP</em></p>
+<div class="section level2">
+<h2 id="start-the-app">Start the app<a class="anchor" aria-label="anchor" href="#start-the-app"></a>
+</h2>
+<p>Parameters of the shiny application :</p>
+<ul>
+<li><p><code>qfeatures</code>: a QFeatures object this can be either a
+path to an rds file or a QFeatures object already loaded in your R
+session.</p></li>
+<li><p><code>prefilledSteps</code>(optional): define the different steps
+of the workflow use to analyze the QFeatures object, accepted values are
+<code>sampleFiltering</code>, <code>featureFiltering</code>,
+<code>normalisation</code>, <code>missingValuesFeatures</code>,
+<code>missingValuesSamples</code>, <code>zeroToNA</code>,
+<code>logTransform</code>, <code>imputation</code>,
+<code>aggregation</code> and <code>join</code>. The suggested workflow
+set as default value is <code>sampleFiltering</code>,
+<code>featureFiltering</code>, <code>missingValuesFeatures</code>,
+<code>missingValuesSamples</code>,
+<code>normalisation</code>,<code>aggregation</code>, <code>join</code>
+and <code>aggregation</code>.</p></li>
+<li><p><code>initialSets</code>(optional): Sets to use for the analysis
+of the QFeatures object. Default is set to
+<code>seq_along(qfeatures)</code>.</p></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="workflow-configuration">Workflow configuration<a class="anchor" aria-label="anchor" href="#workflow-configuration"></a>
+</h2>
+<p>A predefined workflow is defined by default with the argument
+<code>prefilledSteps</code>, if <code>prefilledSteps</code> was modified
+when the application was launched this change will be taken in
+account.</p>
+<p>On the page there is a brief explanation of each step. To modify the
+workflow, drag and drop the different steps to be executed onto the
+QFeatures object. Once the workflow is configured you can click on
+<code>Confirm Current Workflow</code>.</p>
+<p>If the default workflow is the one you want to use or if you have
+already specified the desired workflow in <code>prefilledSteps</code>
+parameter, simply click on <code>Step 1</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="samplefeature-filtering">Sample/Feature Filtering<a class="anchor" aria-label="anchor" href="#samplefeature-filtering"></a>
+</h2>
+<div class="section level3">
+<h3 id="pre-filtering-metrics-section">Pre-Filtering Metrics section<a class="anchor" aria-label="anchor" href="#pre-filtering-metrics-section"></a>
+</h3>
+<div class="figure">
+<img src="screenshots/preFilteringMetrics.jpg" class="r-plt" alt="pre-Filtering metrics section" width="100%"><p class="caption">
+pre-Filtering metrics section
+</p>
+</div>
+<p><code>pre-Filtering metrics</code> section (Figure 1) is composed of
+two different part :</p>
+<ul>
+<li><p>a dimension reduction graph (<code>B</code>) on the right and the
+settings (<code>A</code>) to customize this graph on the left, you can
+for example choose the dimensionality reduction method or the type of
+dimensionality reduction.</p></li>
+<li><p>a single feature visualization (<code>C</code>) where you can
+display a boxplot of a selected feature split by sample
+annotation.</p></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="filtering-section">Filtering section<a class="anchor" aria-label="anchor" href="#filtering-section"></a>
+</h3>
+<div class="figure">
+<img src="screenshots/filtering.jpg" class="r-plt" alt="filtering section" width="100%"><p class="caption">
+filtering section
+</p>
+</div>
+<ul>
+<li>the second section is <code>Filtering</code> (Figure 2). To create a
+condition click <code>Add Filtering Condition</code> (<code>A</code>).
+Clicking this button will open the <code>filtering boxes</code>
+(<code>B</code>). In this box you can add filtering conditions. Once you
+have chosen the annotation and the value to filter you will dynamically
+see the number of cells that will be filtered. You will also find a
+summary of the selected conditions. Once the filters are chosen click
+<code>Apply Filters</code> (<code>C</code>). If a condition is
+unnecessary you can also click on <code>Remove last condition</code>
+(<code>A</code>).</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="post-filtering-metrics-section">Post-filtering Metrics section<a class="anchor" aria-label="anchor" href="#post-filtering-metrics-section"></a>
+</h3>
+<div class="figure">
+<img src="screenshots/postFilteringMetrics.jpg" class="r-plt" alt="post-Filtering metrics section" width="100%"><p class="caption">
+post-Filtering metrics section
+</p>
+</div>
+<ul>
+<li>the third section entitled <code>post-Filtering metrics</code>
+(Figure 3) repeats the elements of the
+<code>pre-Filtering metrics</code> section but the graph presents the
+data after filtering. It also contains statistics on the number and
+percentage of samples/features removed.</li>
+</ul>
+<p>Once the filtering has been done, save the object by clicking the
+button <code>Save the processed sets</code>.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="filtering-missing-values-by-samplesfeatures">Filtering missing values by samples/features<a class="anchor" aria-label="anchor" href="#filtering-missing-values-by-samplesfeatures"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/missing_values_filtering.jpg" class="r-plt" alt="Filtering missing values by samples/features page" width="100%"><p class="caption">
+Filtering missing values by samples/features page
+</p>
+</div>
+<p>Missing values can be very numerous in certain proteomics experiments
+and need to be dealt with carefully.</p>
+<p>In this step you will need to define a threshold for the percentage
+of missing value (NA) beyond which a feature/sample should be removed
+(<code>A</code>). By changing this value, the statistics relating to the
+number and percent of features/samples removed (<code>B</code>) and the
+associated graph (<code>C</code>) will be automatically updated. Once
+the threshold is defined click on <code>Save the processed sets</code>
+(<code>D</code>).</p>
+</div>
+<div class="section level2">
+<h2 id="normalisation">Normalisation<a class="anchor" aria-label="anchor" href="#normalisation"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/normalisation.jpg" class="r-plt" alt="Normalization page" width="100%"><p class="caption">
+Normalization page
+</p>
+</div>
+<p>QFeatures object can be normalised on this step. Several
+normalization methods are available (<code>A</code>).</p>
+<ul>
+<li><p><code>sum</code> and <code>max</code>, where each feature’s
+intensity is divided by the maximum or the sum of the feature
+respectively. These two methods are applied along the features
+(rows).</p></li>
+<li><p><code>center.mean</code> and <code>center.median</code> center
+the respective sample (column) intensities by substracting the
+respective column means or medians. <code>div.mean</code> and
+<code>div.median</code> divide by the column means or medians.</p></li>
+<li><p><code>diff.median</code> center all samples (columns) so that
+they all match the grand median by substracting the respective columns
+medians differences to the grand median.</p></li>
+<li><p>Using <code>quantiles</code> or <code>quantiles.robust</code>
+applies (robust) quantile normalisation, as implemented in
+<code>preprocessCore::normalize.quantiles()</code> and
+<code>preprocessCore::normalize.quantiles.robust()</code>.
+<code>vsn</code> uses <code>vsn::vsn2()</code> function. Note that the
+latter also glog-transforms the intensities. See respective manuals for
+more details and functions arguments.</p></li>
+</ul>
+<p>Once the normalisation method is selected click on
+<code>Apply normalisation</code> (<code>B</code>), the density graph
+after normalization will be displayed. Click on
+<code>Save the processed sets</code> (<code>C</code>).</p>
+</div>
+<div class="section level2">
+<h2 id="zero-to-na">Zero to NA<a class="anchor" aria-label="anchor" href="#zero-to-na"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/zero_to_na.jpg" class="r-plt" alt="Zero to NA page" width="100%"><p class="caption">
+Zero to NA page
+</p>
+</div>
+<p>This step convert all zero intensities into missing values (NA) in
+the selected sets.</p>
+</div>
+<div class="section level2">
+<h2 id="log-transformation">Log Transformation<a class="anchor" aria-label="anchor" href="#log-transformation"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/logTransform.jpg" class="r-plt" alt="Log transformation page" width="100%"><p class="caption">
+Log transformation page
+</p>
+</div>
+<p>When analysing continuous data using parametric methods (such as
+t-test or linear models), it is often necessary to log-transform the
+data.</p>
+<p>The Log base is by default set to <code>log2</code>, but can also be
+set to <code>log10</code> and <code>ln</code> (<code>A</code>), a
+pseudocount value can be added (<code>B</code>) to handle zero values in
+data before applying logarithm. Then click on
+<code>Apply log transform</code> (<code>C</code>), this will display a
+density plot post log transformation. Once this is done do not forget to
+click on <code>Save the processed sets</code> (<code>D</code>).</p>
+</div>
+<div class="section level2">
+<h2 id="imputation">Imputation<a class="anchor" aria-label="anchor" href="#imputation"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/imputation.jpg" class="r-plt" alt="Imputation page" width="100%"><p class="caption">
+Imputation page
+</p>
+</div>
+<p>There are two types of mechanisms resulting in missing values in
+LC/MSMS experiments.</p>
+<ul>
+<li><p>Missing values resulting from absence of detection of a feature,
+despite ions being present at detectable concentrations. For example in
+the case of ion suppression or as a results from the stochastic,
+data-dependant nature of the MS acquisition method. These missing value
+are expected to be randomly distributed in the data and are defined as
+<em>missing at random</em> (MAR) or <em>missing completely at
+random</em> (MCAR)</p></li>
+<li><p>Biologically relevant missing values, resulting from the absence
+of the low abundance of ions (below the limit of detection of the
+instrument). These missing values are not expected to be randomly
+distributed in the data and are defined as <em>missing not at
+random</em> (MNAR).</p></li>
+</ul>
+<p>See <a href="https://rformassspectrometry.github.io/QFeatures/articles/Imputation.html" class="external-link">Imputing
+quantitative proteomics data</a> for more informations.</p>
+<p>First choose an imputation method (<code>A</code>):</p>
+<ul>
+<li><p><code>knn</code> : Nearest neighbour averaging, as implemented in
+the <a href="https://www.bioconductor.org/packages/release/bioc/html/impute.html" class="external-link"><code>impute::impute.knn</code></a>
+function. Note that this function is used with default
+parameters.</p></li>
+<li><p><code>MinDet</code> : Performs the imputation of left-censored
+missing data using a deterministic minimal value approach. Considering
+an expression data with <code>n</code> samples and <code>p</code>
+features, for each sample, the missing entries are replaced with a
+minimal value observed in that sample. The minimal value observed is
+estimated as being the q-th quantile (default q = 0.01) of the observed
+values in that sample. Implemented in the <a href="https://rdrr.io/cran/imputeLCMD/man/impute.MinDet.html" class="external-link"><code>imputeLCMD::impute.MinDet</code></a>.
+Note that this function is used with default parameters.</p></li>
+<li><p><code>zero</code> : Replaces the missing values with 0.</p></li>
+</ul>
+<p>Then click on <code>Apply imputation</code> (<code>B</code>), once
+the imputation has run the page will display a Post-imputation density
+plot which you can color by colData (<code>C</code>). Once the
+imputation step is finished, do not forget to
+<code>Save the processed sets</code> (<code>D</code>).</p>
+</div>
+<div class="section level2">
+<h2 id="aggregation">Aggregation<a class="anchor" aria-label="anchor" href="#aggregation"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/aggregate.jpg" class="r-plt" alt="Aggregation page" width="100%"><p class="caption">
+Aggregation page
+</p>
+</div>
+<p>At this stage, it is possible to use the peptide-level intensities or
+aggregate the peptide-level data into protein intensities.</p>
+<p>To do this, a quantitative feature aggregation function is required.
+This function, called <code>function to aggregate</code>
+(<code>A</code>) takes a matrix as input and returns a vector of length
+equal to <code>ncol(x)</code>. The functions can be one of the following
+types :</p>
+<ul>
+<li><p><code><a href="https://rdrr.io/pkg/MsCoreUtils/man/medianPolish.html" class="external-link">MsCoreUtils::medianPolish()</a></code> to fits an additive
+model (two way of decomposition) using Tukey’s median polish_procedure
+using <code><a href="https://rdrr.io/r/stats/medpolish.html" class="external-link">stats::medpolish()</a></code>.</p></li>
+<li><p><code><a href="https://rdrr.io/pkg/MsCoreUtils/man/robustSummary.html" class="external-link">MsCoreUtils::robustSummary</a></code> to calculate a robust
+aggregation using <code><a href="https://rdrr.io/pkg/MASS/man/rlm.html" class="external-link">MASS::rlm()</a></code> (default).</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">base::colMeans()</a></code> to use the mean of each
+column.</p></li>
+<li><p><code><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">matrixStats::colMedians()</a></code> to use the median of each
+column.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">base::colSums()</a></code> to use the sum of each
+column.</p></li>
+</ul>
+<p>See <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/aggregate.html" class="external-link">MsCoreUtils::aggregate_by_vector()</a></code> for more
+aggregation functions.</p>
+<p>A rowData variable (<code>B</code>) is also needed defining how to
+aggregate the features of the assays.</p>
+<p>Once these two variable has been set click on <code>Aggregate</code>
+(<code>C</code>).</p>
+<p>An aggregation boxplot will be display. This boxplot shows a feature
+color by a value of the colData Once the aggregation is done click on
+<code>Save the processed sets</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="join">Join<a class="anchor" aria-label="anchor" href="#join"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/join.jpg" class="r-plt" alt="Join page" width="100%"><p class="caption">
+Join page
+</p>
+</div>
+<p>Join tab will combine the results from the previous step into a
+single dataset for further analysis or export. Simply give it a new
+assay name (<code>A</code>). Then click
+<code>Join and save the processed sets</code> (<code>B</code>).</p>
+</div>
+<div class="section level2">
+<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h2>
+<div class="figure">
+<img src="screenshots/summary.jpg" class="r-plt" alt="Summary page" width="100%"><p class="caption">
+Summary page
+</p>
+</div>
+<p>The summary page display the various assays present in the QFeatures
+object and indicates their interrelationships. Finally a download button
+provide a zip file containing the final QFeatures object the script used
+to generate it, and the Rsession with the package version.</p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
