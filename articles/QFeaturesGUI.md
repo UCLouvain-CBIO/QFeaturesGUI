@@ -31,7 +31,7 @@ Additional applications will be added in future releases.
 infrastructures for proteomics. To use the GUI applications effectively,
 it is recommended to understand how the underlying packages handle
 proteomics data. This section provides a brief overview; refer to the
-respective package documentations for more detailed information.
+respective package documentation for more detailed information.
 
 ### The `QFeatures` Package
 
@@ -102,7 +102,7 @@ remotes::install_github("UCLouvain-CBIO/QFeaturesGUI")
 library(QFeaturesGUI)
 ```
 
-### Applications launch
+### Application launch
 
 `QFeaturesGUI` is composed of multiple Shiny applications, each
 dedicated to a specific step of the proteomics data analysis workflow.

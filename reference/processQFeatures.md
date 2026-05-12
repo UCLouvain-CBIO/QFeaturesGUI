@@ -39,12 +39,12 @@ processQFeatures(
 
   A character vector specifying the initial workflow steps to display
   when the application launches. Steps must be provided using their
-  internal identifiers (e.g. `"sample_filtering"`,
-  `"feature_filtering"`, `"normalisation"`).
+  internal identifiers (e.g. `"sampleFiltering"`, `"featureFiltering"`,
+  `"normalisation"`).
 
 ## Value
 
-The processQFeatures shiny application.
+The processQFeatures Shiny application.
 
 ## Details
 

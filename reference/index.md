@@ -12,4 +12,4 @@
 - [`inputTable`](https://uclouvain-cbio.github.io/QFeaturesGUI/reference/inputTable.md)
   : Example MaxQuant/SCoPE2 output
 - [`sampleTable`](https://uclouvain-cbio.github.io/QFeaturesGUI/reference/sampleTable.md)
-  : Single cell sample annotation
+  : Single-cell sample annotation
