@@ -1,5 +1,7 @@
 # QFeaturesGUI
 
+![](stickers/QFeaturesGUI.png)
+
 **QFeaturesGUI** is a collection of Shiny applications that provide
 graphical user interfaces for MS-based proteomics data analysis using
 the Bioconductor ecosystem. It supports both **bulk** and **single-cell
