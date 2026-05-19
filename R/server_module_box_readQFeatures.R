@@ -71,12 +71,11 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     }
                     if (input$logTransform) {
                         qfeatures <- error_handler(
-                            QFeatures::logTransform,
+                            log_transform_existing_sets,
                             component_name = "Log transforming QFeatures",
                             object = qfeatures,
                             i = seq_along(qfeatures),
-                            base = 2,
-                            name = paste0(names(qfeatures), "_logTransformed")
+                            base = 2
                         )
                     }
                     if (input$singlecell) {
@@ -178,10 +177,10 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                         tmpdir <- tempdir()
                         final_qfeatures <- qfeatures()
                         names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-                        rds_file <- file.path(tmpdir, "initial_QFeatures.rds")
+                        rds_file <- file.path(tmpdir, "importQFeatures_QFeatures_object.rds")
                         saveRDS(final_qfeatures, rds_file)
-                        rmd_file <- file.path(tmpdir, "sessionInfo.Rmd")
-                        SI_file <- file.path(tmpdir, "initial_QFeatures_sessionInfo.html")
+                        rmd_file <- file.path(tmpdir, "importQFeatures_sessionInfo.Rmd")
+                        SI_file <- file.path(tmpdir, "importQFeatures_sessionInfo.html")
                         r_file <- file.path(tmpdir, "importQFeatures_script.R")
                         writeLines(
                             c(

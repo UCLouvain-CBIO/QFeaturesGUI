@@ -51,7 +51,7 @@ code_generator_read_qfeatures <- function(input_table, sample_table, qfeatures, 
         codeLines <- c(codeLines, "\nqfeatures <- zeroIsNA(\n\tobject = qfeatures,\n\ti = seq_along(qfeatures)\n)")
     }
     if (logTransform) {
-        codeLines <- c(codeLines, "\nqfeatures <- logTransform(\n\tobject = qfeatures,\n\ti = seq_along(qfeatures),\n\tbase = 2,\n\tname = paste0(names(qfeatures), '_logTransformed')\n)")
+        codeLines <- c(codeLines, "\nfor (i in seq_along(qfeatures)) {\n\tqfeatures[[i]] <- logTransform(\n\t\tobject = qfeatures[[i]],\n\t\tbase = 2\n\t)\n}")
     }
     if (singlcelldata) {
         codeLines <- c(codeLines, "\nqfeatures <- setQFeaturesType(\n\tqfeatures,\n\ttype = 'scp'\n)")

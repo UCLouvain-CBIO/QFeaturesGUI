@@ -82,10 +82,10 @@ server_module_summary_tab <- function(id) {
                 tmpdir <- tempdir()
                 final_qfeatures <- .qf$qfeatures
                 names(final_qfeatures) <- remove_QFeaturesGUI(names(final_qfeatures))
-                rds_file <- file.path(tmpdir, "final_QFeatures.rds")
+                rds_file <- file.path(tmpdir, "processQFeatures_QFeatures_object.rds")
                 saveRDS(final_qfeatures, rds_file)
                 rmd_file <- file.path(tmpdir, "sessionInfo.Rmd")
-                SI_file <- file.path(tmpdir, "final_QFeatures_sessionInfo.html")
+                SI_file <- file.path(tmpdir, "processQFeatures_sessionInfo.html")
                 r_file <- file.path(tmpdir, "processQFeatures_script.R")
                 writeLines(
                   c(
