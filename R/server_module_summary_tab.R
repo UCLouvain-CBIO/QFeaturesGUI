@@ -73,7 +73,7 @@ server_module_summary_tab <- function(id) {
         
         output$download_qfeatures <- downloadHandler(
           filename = function() {
-            "qfeatures_object.zip"
+            "processQFeatures_files.zip"
           },
           content = function(file) {
             with_task_loader(

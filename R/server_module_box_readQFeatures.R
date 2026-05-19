@@ -169,7 +169,7 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
         })
         output$downloadQFeatures <- downloadHandler(
             filename = function() {
-                "qfeatures_object.zip"
+                "importQFeatures_files.zip"
             },
             content = function(file) {
                 with_task_loader(
